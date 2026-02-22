@@ -1,0 +1,1737 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GANWALK | OFICIAL (C) 2026</title>
+    
+    <!-- Three.js e Post-Processing -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
+
+    <!-- Fontes -->
+    <link href="https://fonts.googleapis.com/css2?family=Astloch:wght@400;700&display=block" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Nova Fonte: Amiko -->
+    <link href="https://fonts.googleapis.com/css2?family=Amiko:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Nova Fonte Pixel: Silkscreen -->
+    <link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- GERAL --- */
+        :root {
+            --control-bg: rgba(0, 0, 0, 0.9);
+            --border-color: rgba(255, 255, 255, 0.2);
+            --shadow-color: rgba(255, 255, 255, 0.15);
+            --text-color: #ccc;
+            --highlight-color: #fff;
+            --record-color: #ff3333;
+            --mustard: #E1AD01;
+            
+            /* Syntax Highlighting Colors */
+            --code-keyword: #c678dd; /* Roxo */
+            --code-string: #98c379;  /* Verde */
+            --code-var: #e06c75;     /* Vermelho/Rosa */
+            --code-func: #61afef;    /* Azul */
+            --code-comment: #7f848e; /* Cinza */
+            --code-operator: #56b6c2; /* Ciano */
+        }
+
+        body.mustard-theme {
+            --highlight-color: #E1AD01;
+            --border-color: #E1AD01;
+            --shadow-color: rgba(225, 173, 1, 0.5);
+            --text-color: #E1AD01;
+            --code-keyword: #E1AD01; 
+            --code-string: #fff;
+            --code-var: #E1AD01;
+        }
+
+        html, body {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            overflow: hidden; background-color: #000;
+            font-family: 'Inter', sans-serif; color: #fff;
+        }
+
+        /* --- NAVEGAÇÃO --- */
+        #top-nav {
+            position: fixed; top: 0; left: 0; width: 100%; height: 60px; z-index: 9999;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 20px; box-sizing: border-box;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.9), rgba(0,0,0,0));
+            opacity: 0; transition: opacity 1s ease; pointer-events: none;
+        }
+        #top-nav.visible { opacity: 1; pointer-events: auto; }
+
+        .nav-brand {
+            font-family: 'Astloch', serif; font-weight: 700; font-size: 2rem;
+            color: var(--highlight-color); 
+            text-shadow: 0 0 10px rgba(255,255,255,0.6);
+            cursor: pointer; letter-spacing: 2px;
+            transition: color 0.5s ease;
+        }
+
+        .nav-menu { 
+            display: flex; gap: 15px; align-items: center; 
+            overflow-x: auto; scrollbar-width: none; padding-left: 20px;
+        }
+        .nav-menu::-webkit-scrollbar { display: none; }
+
+        .nav-item {
+            background: transparent; border: none; 
+            color: var(--text-color);
+            font-family: 'Amiko', sans-serif; 
+            font-size: 0.9rem; 
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px; cursor: pointer; transition: all 0.3s;
+            padding: 5px 0; position: relative; white-space: nowrap;
+        }
+        .nav-item:hover, .nav-item.active { 
+            background: transparent;
+            border: none;
+            color: var(--highlight-color);
+            text-shadow: 0 0 8px var(--shadow-color);
+        }
+        .nav-item.active::after { 
+            content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 1px; 
+            background: var(--highlight-color);
+            transition: background 0.5s ease;
+        }
+
+        /* --- MOBILE ELEMENTS --- */
+        #mobile-menu-btn {
+            display: none; 
+            background: transparent; border: none; padding: 0;
+            width: 40px; height: 40px;
+            cursor: pointer;
+        }
+        #mobile-menu-btn svg {
+            fill: var(--highlight-color);
+            width: 30px; height: 30px;
+            transition: fill 0.5s ease;
+        }
+
+        #mobile-exp-bar {
+            display: none; 
+            position: fixed; top: 60px; left: 0; width: 100%; height: 40px;
+            z-index: 9998;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.8), rgba(0,0,0,0));
+            align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 1s ease;
+        }
+        #mobile-exp-bar.visible { opacity: 1; pointer-events: auto; }
+        .mobile-exp-item {
+            flex: 1; text-align: center;
+            background: transparent; border: none;
+            color: var(--text-color);
+            font-family: 'Amiko', sans-serif;
+            font-size: 0.9rem; 
+            font-weight: 600;
+            text-transform: uppercase; letter-spacing: 1px;
+            height: 100%; cursor: pointer;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+        .mobile-exp-item.active { color: var(--highlight-color); text-shadow: 0 0 8px var(--shadow-color); }
+        .mobile-exp-item:hover { background: transparent; border: none; }
+
+        #mobile-menu-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); backdrop-filter: blur(15px);
+            z-index: 10000;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            gap: 30px;
+            opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
+        }
+        #mobile-menu-overlay.open { opacity: 1; pointer-events: auto; }
+        .mobile-overlay-link {
+            font-family: 'Amiko', sans-serif;
+            font-size: 2rem; color: #fff;
+            text-decoration: none; cursor: pointer;
+            transition: color 0.3s, transform 0.3s;
+            text-transform: uppercase;
+        }
+        .mobile-overlay-link:hover { color: var(--mustard); transform: scale(1.1); }
+        #mobile-close-btn {
+            position: absolute; top: 20px; right: 20px;
+            background: transparent; border: none; color: #fff; font-size: 2rem; cursor: pointer;
+        }
+
+        /* --- SEÇÕES --- */
+        .screen-section {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0; pointer-events: none; transition: opacity 0.8s ease;
+            z-index: 0; display: none; background: #000;
+        }
+        .screen-section.active { opacity: 1; pointer-events: auto; display: block; z-index: 10; }
+
+        /* --- LOADING SCREEN --- */
+        #global-loader {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #000; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; z-index: 5000;
+            transition: opacity 1.5s ease;
+        }
+        #loader-title {
+            font-family: 'Astloch', serif; font-weight: 700; font-size: 12vw;
+            color: #fff; margin-bottom: 20px; line-height: 1; text-align: center;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(200, 200, 200, 0.6);
+        }
+        #click-to-start-text {
+            font-size: 1.5rem; color: #fff; cursor: pointer; z-index: 5001;
+            transition: color 0.3s ease, opacity 0.5s ease; text-align: center; padding: 0 20px;
+        }
+        #click-to-start-text.loading { pointer-events: none; color: #777; cursor: default; }
+        .faça-glow { text-shadow: 0 0 5px #fff, 0 0 10px #fff; animation: faça-flicker 2s infinite alternate; }
+        @keyframes faça-flicker { 0%,100%{text-shadow:0 0 5px #fff,0 0 10px #fff;} 50%{text-shadow:0 0 2px #fff,0 0 5px #fff;} }
+        @keyframes ellipsis { 0%{content:".";} 33%{content:"..";} 66%{content:"...";} }
+        #click-to-start-text.loading::after { content: "..."; animation: ellipsis 1.5s infinite; display: inline-block; width: 20px; text-align: left; }
+
+        /* --- ESTILOS EXP 1 (VISUALIZER) --- */
+        #p1-container { position: relative; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; }
+        canvas#p1-canvas { display: block; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
+        
+        #p1-main-text {
+            font-family: 'Astloch', serif; font-weight: 700; font-size: 10vw;
+            color: var(--highlight-color); position: relative; z-index: 1;
+            pointer-events: none; text-align: center; line-height: 1; opacity: 0;
+            transition: opacity 0.5s ease, text-shadow 0.1s ease-out, transform 0.1s ease, color 0.5s ease;
+        }
+        .ganwalk-neon-glow { text-shadow: 0 0 10px rgba(255,255,255,0.8), 0 0 20px rgba(200,200,200,0.6); }
+        body.mustard-theme .ganwalk-neon-glow { text-shadow: 0 0 10px rgba(225,173,1,0.8), 0 0 20px rgba(225,173,1,0.6); }
+        .ganwalk-glitch { animation: glitch-effect 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
+        @keyframes glitch-effect {
+            0% { text-shadow: 2px 2px 10px rgba(255,0,0,0.8), -2px -2px 10px rgba(0,255,255,0.6); transform: translate(-2px,2px); }
+            10% { text-shadow: -2px 2px 10px rgba(0,255,0,0.8), 2px -2px 10px rgba(255,0,255,0.6); transform: translate(2px,-2px); }
+            20% { text-shadow: 0 0 10px var(--highlight-color), 0 0 20px rgba(200,200,200,0.6); transform: translate(0,0); }
+            40%,100% { text-shadow: 0 0 10px var(--highlight-color), 0 0 20px rgba(200,200,200,0.6); transform: translate(0,0); }
+        }
+
+        #p1-interaction-tooltip {
+            position: absolute; top: 50%; left: 50%; transform: translate(180px, -140px);
+            pointer-events: none; opacity: 0; transition: opacity 0.5s ease;
+            display: flex; flex-direction: column; align-items: flex-start; z-index: 10;
+        }
+        #p1-interaction-tooltip.visible { opacity: 1; }
+        .tooltip-line { width: 60px; height: 1px; background-color: var(--highlight-color); transform: rotate(135deg); transform-origin: top left; margin-left: 0px; margin-top: 10px; box-shadow: 0 0 5px var(--highlight-color); }
+        /* AJUSTE FONTE INTERAJA */
+        .tooltip-text { color: var(--highlight-color); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; margin-left: 20px; margin-top: -5px; text-shadow: 0 0 5px var(--highlight-color); font-family: 'Silkscreen', cursive; }
+
+        #p1-controls-bar {
+            position: absolute; bottom: 85px; left: 50%; transform: translateX(-50%) translateY(20px);
+            background: var(--control-bg); backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color); box-shadow: 0 0 30px var(--shadow-color);
+            width: 90vw; max-width: 800px; padding: 20px 25px; border-radius: 8px;
+            z-index: 100; box-sizing: border-box; opacity: 0; pointer-events: none;
+            transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+        }
+        #p1-controls-bar.expanded { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+
+        #p1-toggle-button {
+            position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+            width: 50px; height: 50px; border-radius: 50%;
+            background: var(--control-bg); border: 1px solid var(--border-color);
+            box-shadow: 0 0 20px var(--shadow-color); display: flex; align-items: center; justify-content: center;
+            cursor: pointer; pointer-events: auto; transition: background-color 0.2s, opacity 0.5s ease;
+            backdrop-filter: blur(10px); z-index: 101; opacity: 0;
+        }
+        #p1-toggle-button.visible { opacity: 1; }
+        #p1-toggle-arrow { fill: var(--highlight-color); width: 24px; height: 24px; transition: transform 0.4s ease-in-out, fill 0.5s ease; }
+
+        /* AJUSTE COLUNAS EXP II */
+        .controls-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); 
+            gap: 25px; 
+        }
+        .control-group { display: flex; flex-direction: column; gap: 12px; height: 100%; }
+        .control-group label { 
+            font-size: 10px; 
+            text-transform: uppercase; letter-spacing: 0.5px; 
+            color: var(--text-color); margin-bottom: -4px; 
+            font-weight: 400; font-family: 'Silkscreen', cursive; 
+            transition: color 0.5s ease; 
+        }
+        /* AJUSTE TAMANHO FONTE BOTÕES */
+        button { background: #111; border: 1px solid #444; color: var(--highlight-color); padding: 10px; font-family: 'Silkscreen', cursive; font-size: 11px; border-radius: 4px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; width: 100%; text-transform: uppercase; }
+        button:hover { background: #222; border-color: #666; }
+        input[type="range"] { -webkit-appearance: none; width: 100%; background: transparent; height: 20px; padding: 0; margin: 0; border: none; }
+        input[type="range"]::-webkit-slider-runnable-track { width: 100%; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; height: 14px; width: 14px; background: var(--highlight-color); border-radius: 50%; margin-top: -5px; box-shadow: 0 0 5px rgba(0,0,0,0.5); cursor: pointer; transition: background 0.5s ease; }
+        
+        #p1-mini-container { flex-grow: 0; height: 30px; margin-top: auto; background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); border-radius: 6px; overflow: hidden; width: 100%; position: relative; }
+        #p1-mini-canvas { width: 100%; height: 100%; display: block; }
+
+        /* --- ESTILOS EXP 2 (RECORDER) --- */
+        #p2-canvas-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+        canvas#p2-output-canvas { display: block; width: 100%; height: 100%; }
+        #p2-controls-bar { position: absolute; bottom: 85px; left: 50%; transform: translateX(-50%); background: var(--control-bg); backdrop-filter: blur(10px); border: 1px solid var(--border-color); box-shadow: 0 0 30px rgba(255,255,255,0.15); width: 90vw; max-width: 800px; padding: 20px 25px; border-radius: 8px; z-index: 100; transition: opacity 0.4s; opacity: 0; pointer-events: none; }
+        #p2-controls-bar.expanded { opacity: 1; pointer-events: auto; }
+        #p2-toggle-button { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); width: 50px; height: 50px; border-radius: 50%; background: var(--control-bg); border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 101; }
+        #p2-toggle-button svg { fill: #fff; width: 24px; height: 24px; }
+        #p2-record-indicator { position: absolute; top: 85px; right: 20px; display: flex; align-items: center; gap: 10px; opacity: 0; pointer-events: none; transition: 0.3s; z-index: 150; }
+        #p2-record-indicator.active { opacity: 1; }
+        .rec-dot { width: 15px; height: 15px; background-color: var(--record-color); border-radius: 50%; box-shadow: 0 0 10px var(--record-color); animation: blink 1s infinite; }
+        .rec-text { color: var(--record-color); font-weight: bold; font-size: 14px; letter-spacing: 1px; font-family: 'Silkscreen', cursive; }
+        @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+        #p2-create-prompt { position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%); color: var(--text-color); font-size: 1.2rem; pointer-events: none; transition: opacity 0.4s; font-family: 'Silkscreen', cursive; }
+        #p2-controls-bar.expanded ~ #p2-create-prompt { opacity: 0; }
+        input[type="color"] { width: 100%; height: 30px; border: 1px solid #444; background: transparent; padding: 0; border-radius: 4px; cursor: pointer; }
+        input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--highlight-color); cursor: pointer; }
+        #p2-record-btn.recording { background-color: rgba(255, 50, 50, 0.2); border-color: var(--record-color); color: var(--record-color); }
+
+        /* --- PÁGINAS DE TEXTO (CODE EDITOR STYLE) --- */
+        .text-page { 
+            background: #000; /* FUNDO PRETO PURO */
+            overflow-y: auto; 
+            padding: 80px 20px; 
+            display: flex; flex-direction: column; align-items: flex-start; 
+            font-family: 'Silkscreen', cursive; 
+            font-size: 1rem;
+            font-weight: 400;
+            color: #abb2bf;
+        }
+        .info-content { 
+            max-width: 900px; width: 100%; margin: 0 auto; 
+            position: relative;
+        }
+        /* Cursor Animation */
+        .cursor {
+            display: inline-block; width: 10px; height: 1.2em; background-color: var(--highlight-color);
+            vertical-align: bottom; animation: blink-cursor 1s infinite;
+        }
+        @keyframes blink-cursor { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+        /* Syntax Highlighting Classes */
+        .c-kw { color: var(--code-keyword); }
+        .c-str { color: var(--code-string); }
+        .c-var { color: var(--code-var); }
+        .c-func { color: var(--code-func); }
+        .c-comm { color: var(--code-comment); font-style: italic; }
+        .c-op { color: var(--code-operator); }
+        .c-ln { color: #4b5263; display: inline-block; width: 30px; text-align: right; margin-right: 15px; user-select: none; font-size: 0.9rem; }
+        
+        .code-link { color: var(--code-string); text-decoration: underline; cursor: pointer; }
+        .code-link:hover { color: var(--mustard); }
+
+        /* RENDERED CONTENT STYLES (LINKTREE & PHOTOS) */
+        .linktree-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+            max-width: 400px;
+            margin: 30px auto;
+            opacity: 0;
+            animation: fadeIn 1s forwards;
+            align-items: center;
+        }
+
+        .linktree-btn {
+            display: block;
+            width: 100%;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--highlight-color);
+            text-align: center;
+            text-decoration: none;
+            font-family: 'Silkscreen', cursive;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            border-radius: 4px;
+        }
+
+        .linktree-btn:hover {
+            background: #fff; /* Branco no hover */
+            color: #000;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.6); /* Sombra branca */
+            border-color: #fff;
+            transform: scale(1.02);
+        }
+
+        .gallery-grid-final {
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+            gap: 20px; 
+            margin-top: 30px;
+            width: 100%;
+            opacity: 0;
+            animation: fadeIn 1s forwards;
+        }
+
+        .gallery-img-container {
+            height: 250px;
+            background: #111;
+            border: 1px solid #444;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #555;
+            transition: all 0.3s ease;
+            font-family: 'Silkscreen', cursive;
+            font-size: 1rem;
+            position: relative;
+        }
+
+        .gallery-img-container:hover {
+            border-color: #fff; /* Borda branca */
+            color: #fff; /* Texto branco */
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3); /* Sombra branca */
+        }
+        
+        .ascii-block {
+            font-family: monospace; /* Fonte padrão mono para alinhar ASCII */
+            font-size: 2px; /* Reduzido pela metade (4px -> 2px) */
+            line-height: 2px;
+            white-space: pre;
+            color: var(--highlight-color);
+            display: block;
+            margin-bottom: 20px; /* Space after art */
+            overflow: hidden;
+            letter-spacing: 0px;
+        }
+
+        /* AJUSTE ESPECÍFICO PARA CRÉDITOS */
+        #credits-screen {
+            font-family: monospace; /* Fonte monoespaçada */
+            font-size: 0.9rem; /* Tamanho reduzido (era 1.2rem do .text-page) */
+            line-height: 1.4;
+        }
+
+        @keyframes fadeIn { to { opacity: 1; } }
+
+        @media (max-width: 768px) {
+            #ganwalk-text-p1 { font-size: 15vw; }
+            #p1-controls-bar, #p2-controls-bar { width: 95vw; bottom: 75px; padding: 15px; max-height: 60vh; overflow-y: auto; }
+            .controls-grid { grid-template-columns: 1fr; }
+            
+            /* Mobile Nav Layout */
+            #top-nav { justify-content: center; } /* Center brand */
+            .nav-brand { margin: 0 auto; }
+            .nav-menu { display: none; } /* Hide standard menu */
+            
+            #mobile-menu-btn { 
+                display: block; 
+                position: absolute; left: 20px; top: 15px;
+            }
+            #mobile-exp-bar { display: flex; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAV -->
+    <nav id="top-nav">
+        <!-- Hambúrguer (Mobile) -->
+        <button id="mobile-menu-btn" onclick="Nav.toggleMobileMenu()">
+            <svg viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+        </button>
+
+        <div class="nav-brand" onclick="Nav.goToExperience1()">GANWALK</div>
+        
+        <!-- Desktop Menu -->
+        <div class="nav-menu">
+            <button class="nav-item active" id="btn-exp1" onclick="Nav.goToExperience1()">Exp I</button>
+            <button class="nav-item" id="btn-exp2" onclick="Nav.goToExperience2()">Exp II</button>
+            <button class="nav-item" id="btn-links" onclick="Nav.goToSection('links-screen', 'btn-links')">Links</button>
+            <button class="nav-item" id="btn-fotos" onclick="Nav.goToSection('photos-screen', 'btn-fotos')">Fotos</button>
+            <button class="nav-item" id="btn-creditos" onclick="Nav.goToSection('credits-screen', 'btn-creditos')">Créditos</button>
+        </div>
+    </nav>
+
+    <!-- Mobile Exp Bar (Lado a Lado) -->
+    <div id="mobile-exp-bar">
+        <button class="mobile-exp-item active" id="m-btn-exp1" onclick="Nav.goToExperience1()">Exp I</button>
+        <button class="mobile-exp-item" id="m-btn-exp2" onclick="Nav.goToExperience2()">Exp II</button>
+    </div>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu-overlay">
+        <button id="mobile-close-btn" onclick="Nav.toggleMobileMenu()">✕</button>
+        <div class="mobile-overlay-link" onclick="Nav.goToSection('links-screen', 'btn-links')">Links</div>
+        <div class="mobile-overlay-link" onclick="Nav.goToSection('photos-screen', 'btn-fotos')">Fotos</div>
+        <div class="mobile-overlay-link" onclick="Nav.goToSection('credits-screen', 'btn-creditos')">Créditos</div>
+    </div>
+
+    <!-- LOADING -->
+    <div id="global-loader">
+        <div id="loader-title">GANWALK</div>
+        <div id="click-to-start-text" class="loading">Iniciando sistemas</div>
+    </div>
+
+    <!-- EXP 1 -->
+    <section id="experience-1" class="screen-section">
+        <div id="p1-container">
+            <div id="p1-main-text">GANWALK</div>
+            <div id="p1-interaction-tooltip">
+                <div class="tooltip-line"></div><div class="tooltip-text">Interaja</div>
+            </div>
+            <canvas id="p1-canvas"></canvas>
+
+            <div id="p1-controls-bar">
+                <div class="controls-grid">
+                    <div class="control-group">
+                        <label>Reprodução</label>
+                        <div style="display:flex; gap:10px; background:rgba(255,255,255,0.05); padding:10px; border-radius:6px; border:1px solid var(--border-color);">
+                            <button id="p1-play-btn" style="width:40px; height:40px; border-radius:50%; padding:0; flex-shrink:0;"><svg viewBox="0 0 24 24" width="24" fill="#fff"><path d="M8 5v14l11-7z"/></svg></button>
+                            <button id="p1-reverse-btn" style="width:40px; height:40px; border-radius:50%; padding:0; flex-shrink:0;"><svg viewBox="0 0 24 24" width="24" fill="#fff"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg></button>
+                            <div style="flex-grow:1; display:flex; flex-direction:column; gap:4px;">
+                                <input type="range" id="p1-progress" min="0" step="0.1" value="0">
+                                <span id="p1-time-display" style="font-size:11px; color:var(--text-color); align-self:flex-end; font-family:'Silkscreen';">0:00</span>
+                            </div>
+                        </div>
+                        <label>Volume</label>
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <svg id="p1-volume-icon" viewBox="0 0 24 24" width="20" height="20" style="fill:var(--highlight-color); transition: fill 0.5s ease;"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.81 5 3.54 5 6.71s-2.11 5.9-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+                            <input type="range" id="p1-volume" min="0" max="1" step="0.01" value="0.5">
+                        </div>
+                        <div id="p1-mini-container"><canvas id="p1-mini-canvas"></canvas></div>
+                    </div>
+                    <div class="control-group">
+                        <label>Eco Profundo</label><input type="range" id="p1-delay" min="0" max="1" step="0.01" value="0">
+                        <label>Câmara Etérea (Rastro)</label><input type="range" id="p1-reverb" min="0" max="1" step="0.01" value="0">
+                        <label>Oscilador de Realidades</label><input type="range" id="p1-chorus" min="0" max="1" step="0.01" value="0">
+                        <label>Véu Sonoro</label><input type="range" id="p1-filter" min="0" max="100" step="1" value="0">
+                    </div>
+                    <div class="control-group">
+                        <label>Distorção Cósmica</label><input type="range" id="p1-overdrive" min="0" max="1" step="0.01" value="0">
+                        <label>Tom (Velocidade)</label><input type="range" id="p1-pitch" min="0.1" max="2" step="0.01" value="1">
+                        <label>EQ (L/M/H)</label>
+                        <div style="display:flex; gap:10px;">
+                            <input type="range" id="p1-eq-low" min="-20" max="20" value="0">
+                            <input type="range" id="p1-eq-mid" min="-20" max="20" value="0">
+                            <input type="range" id="p1-eq-high" min="-20" max="20" value="0">
+                        </div>
+                        <button id="p1-clear-effects" style="margin-top:auto;">Limpar Efeitos</button>
+                    </div>
+                </div>
+            </div>
+            <div id="p1-toggle-button">
+                <svg id="p1-toggle-arrow" viewBox="0 0 24 24"><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg>
+            </div>
+        </div>
+    </section>
+
+    <!-- EXP 2 -->
+    <section id="experience-2" class="screen-section">
+        <canvas id="p2-output-canvas"></canvas>
+        <div id="p2-record-indicator"><div class="rec-dot"></div><div class="rec-text">REC</div></div>
+        
+        <img id="p2-source-image" alt="source" style="display:none;">
+        <video id="p2-video" autoplay playsinline muted loop style="display:none;" crossOrigin="anonymous"></video>
+        <canvas id="p2-hidden-canvas" style="display:none;"></canvas>
+        <input type="file" id="p2-upload-input" accept="video/*, image/*" style="display:none;">
+        <audio id="p2-background-audio" src="https://audio.jukehost.co.uk/nEuRJdPoMNUs1TaOipQi1LHjduQEMJWg" loop style="display:none;" crossOrigin="anonymous"></audio>
+
+        <div id="p2-controls-bar">
+            <div class="controls-grid">
+                <div class="control-group">
+                    <div style="display:flex; gap:10px;">
+                        <button id="p2-clip-btn">Clipe</button><button id="p2-upload-btn">Carregar</button><button id="p2-webcam-btn">Webcam</button>
+                    </div>
+                    <!-- REPRODUTOR EXP 2 AJUSTADO -->
+                    <div style="display:flex; align-items:center; gap:10px; background:#111; padding:10px; border-radius:6px; border:1px solid #444;">
+                        <button id="p2-play-music" style="width:40px; height:40px; padding:0; flex-shrink:0; border-radius:50%;"><svg id="p2-play-icon" viewBox="0 0 24 24" width="20" fill="#fff"><path d="M8 5v14l11-7z"/></svg></button>
+                        <div style="flex-grow:1; display:flex; flex-direction:column; gap:4px;">
+                            <input type="range" id="p2-music-slider" min="0" value="0" step="1">
+                            <span id="p2-music-time" style="font-size:11px; color:#ccc; align-self:flex-end; font-family:'Silkscreen';">0:00</span>
+                        </div>
+                    </div>
+                    <!-- FIM REPRODUTOR -->
+                    <div style="display:flex; gap:10px;">
+                        <button id="p2-export-img">Foto</button><button id="p2-record-btn">Gravar</button>
+                    </div>
+                    <div style="font-family:'Astloch'; font-weight:700; font-size:2.5rem; color:#fff; margin-top:auto;">GANWALK</div>
+                </div>
+                <div class="control-group">
+                    <label>Fundo</label><input type="color" id="p2-bg-color">
+                    <label>Fonte 1</label><input type="color" id="p2-font-color1">
+                    <label>Fonte 2</label><input type="color" id="p2-font-color2">
+                    <div style="display:flex; justify-content:space-between;"><label>Fundo Mídia</label><input type="checkbox" id="p2-bg-check"></div>
+                    <label>Opacidade</label><input type="range" id="p2-bg-opacity" min="0" max="100">
+                </div>
+                <div class="control-group">
+                    <label>Tamanho</label><input type="range" id="p2-font-size" min="1" max="20" value="10">
+                    <label>Resolução</label><input type="range" id="p2-res" min="10" max="150" value="35">
+                    <label>Limiar</label><input type="range" id="p2-thresh" min="0" max="255" value="0">
+                    <div style="display:flex; justify-content:space-between;"><label>Inverter</label><input type="checkbox" id="p2-invert"></div>
+                    <label>Caos</label><input type="range" id="p2-random" min="0" max="20" value="0">
+                </div>
+            </div>
+        </div>
+        <div id="p2-create-prompt">Clique para <span class="faça-glow">criar</span>.</div>
+        <div id="p2-toggle-button"><svg viewBox="0 0 24 24" width="24" fill="#fff"><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg></div>
+    </section>
+
+    <!-- TEXT PAGES (EMPTY CONTAINERS FOR DYNAMIC CODE) -->
+    <section id="links-screen" class="screen-section text-page"></section>
+    <section id="photos-screen" class="screen-section text-page"></section>
+    <section id="credits-screen" class="screen-section text-page"></section>
+
+    <script>
+        // --- Content Generator for "Live Coding" Effect ---
+        const ContentGenerator = {
+            links: {
+                code: `
+<span class="c-ln">1</span><span class="c-kw">const</span> <span class="c-var">socialLinks</span> <span class="c-op">=</span> [<br>
+<span class="c-ln">2</span>&nbsp;&nbsp;{ <span class="c-var">platform</span>: <span class="c-str">"Instagram"</span>, <span class="c-var">handle</span>: <span class="c-str">"@"</span> },<br>
+<span class="c-ln">3</span>&nbsp;&nbsp;{ <span class="c-var">platform</span>: <span class="c-str">"Spotify"</span>, <span class="c-var">action</span>: <span class="c-str">"Listen"</span> },<br>
+<span class="c-ln">4</span>&nbsp;&nbsp;{ <span class="c-var">platform</span>: <span class="c-str">"YouTube"</span>, <span class="c-var">action</span>: <span class="c-str">"Watch"</span> },<br>
+<span class="c-ln">5</span>&nbsp;&nbsp;{ <span class="c-var">platform</span>: <span class="c-str">"SoundCloud"</span>, <span class="c-var">action</span>: <span class="c-str">"Stream"</span> }<br>
+<span class="c-ln">6</span>];<br>
+<span class="c-ln">7</span><br>
+<span class="c-ln">8</span><span class="c-func">render</span>(<span class="c-var">socialLinks</span>);`,
+                render: `
+                <div class="linktree-container">
+                    <a href="#" class="linktree-btn">Instagram</a>
+                    <a href="#" class="linktree-btn">Spotify</a>
+                    <a href="#" class="linktree-btn">YouTube</a>
+                    <a href="#" class="linktree-btn">SoundCloud</a>
+                </div>`
+            },
+            
+            credits: {
+                code: `<div class="ascii-block">
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::-:-::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::-
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::-=-:::-:::::::::::-:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::-::-:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::--:::::-:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::-:::::-:::--:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::-::::::::::=-=::::::::::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::-=::::::::-:::-:::----:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::-:::-:::::--:::::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::-------------::::::::::::::::::::::-:::::::::::::::::::::::::::::::::::::::::::::::::::::::::--:::::-:::::-:::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::-::::::::::::::::::::::--::::::::::----::::::::-:----:---::---:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::-:-::::::::::
+::::::::::::::::::::::::::::::-:::::::::::::::::::::::-*::::::::::::::::::-::::::::---::-----:::::::::::::--------::::----:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::--::::::::--::::
+:::::::::::::::::::::::::::::::::::::::--=:+=:::::::::::::::::::-:::::::::::::::------:-::::::::::::::::::::::::----:-----:-::::::::::::::::::::::::::::::::::::::::::::::::::::::::::---::::::::::::::
+::::::::::::::::::::::::::::::-:::-::-:::::::::-::*::::::::-:::::::::::::::::::-------:::-::::::::::::::::::::::::::-----:---:-::--:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::-:::::-::
+::::::::::::::::::::::::::::::::-:::::::::::::::::--:::::::::::::::::::::--:::--:-:::::::::-----------:::::::--:::--:::::::::---::--:::::::::::::::::::::::::::::::::::::::::::::::::::::-:::-:-::::::-
+:::::::::::::::::::::::-=++-:::::::::::::::::::::::::::::::::::::::::::::------::::::::::-------:-:---------=---------::::::::-----::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:::::::::::::::::::::::::::::::::::::-:::::::::::::::::::::::-:::::::::------:::::::::----------------------------------::::::::-------:::::::::::::::::::::::::::::::::::::::::::::::::::::::=-:::::--
+::::::--::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::----::::::-------------===+=+===-=+++==---=--------::-:--::-::::--:::-:::::::::::=-:::::::--:::::::--:::::::=-::::::::-::::::-:::
+::::::::::::::::::::-:::::::::::::::::::::::::::::::::::::::::::::::::-:::::::------------+++++-===---==+====--=++++----===+------:::::-:::--:::::::::::::::::::-%=-::-:::::::::::-=::::-::::::::::::::
+::-::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::--::::::::::-------=-----++++-=+********+++++++====--=+=+++++=----------::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::-::::::---:------=-=+++---==+*****************************+++++==------==-:::::::::::::::::::::::::--::::::::::::::::::::::::::::::--:
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::---:-:-::--------=-+++*********************#*###*#************+++++==---:--::::::-::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:::::::::::::::::::::::-#-::::::::::::::::::::::::::::::::::::-----:-:---=-----=+++**************###*###*#*######***#*********+++++===--------:--:::::::::::::::::::::::::::::::::::::-::::::::::::::=-
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::-::--::::------==++**************************###****************++++++===-------:-:::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:::::::::::::::::-:::::::::::::::::::::::::::::::::::::::::::::::--:::-----=++++**********************##****###*****************+++++===-------:-::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::--:-----==+++++*************************#***#********************++++====-------::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::--::----==+++++****************##################***#*************++++====--------:::::::::::::::::::::::::::::::::::::::::::::::::::::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::---:---===+++++************##############################**********+++=====---:-----:::::::::::::::::::::::::::::::::::::::::---:::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::-:::--:::::::::----=---=++++++**********####**##*#########################********++++====---:::---:::::::::::::::::::::::::::::::::::::::::::::::::::
+::::::::::::::::::::::::::::::::::-*+=--::::::::::---=-::::::::::----:-==++++++++**++++++===+=+*+***###%%%%%%#######**++++*********+++=====---------::::::::::::::::::::::::::::::::::::::::::::=::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::-----:::::::::::--::-==+==--:::::::::::::::----------=+****###***+=--:::-:::::::::::---====-----:---:::::::::::::::::::::::::::::::::::::::-::::::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::--::::--::::::::::::::::::::::::::----------------------:::::::::::::::::::::-:-:----:::::::::::::::::::::::::::::::::::::::::::::::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::---:::-:-::::::::::::::::::::::::::::::------:------===----------::::::::::::::::=-::::::----::::::::::::::::::::::::::::::::::::::-::::::::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::----::::-:::::::::::::::::::::::::::::::--#@#--::---=*@%*==-----%*---::::::::::::::::::::::::---::::::::::::::::::::::::::::::::::::-+-:::::::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::-::::::::::::::::::::::-::-------::-----+**+------+*=---:-::::::::::::::::-:::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::-:-:-::::::::::::::::::::::::::::::::::---=+****+=---------:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::-=-=::::--::::::::::::::::::::::::::::::---=+*****++=-:----::::::::::::::::::::::--:----:::::::::::::::::::::::::::::::::::::::::--:::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::-+++**=-::::::::::::::::::::::::::::::::::--=++******++=-::::::::::::::::::::::::::-::-++++-::::::::::::::::::::::::::::::::::::::::::::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::+**++*+-=-::::::::::::::::::::::::::::::::-++++******++==--:::::::::::::::::::::::-::-++++*=::::::::::::::::::::::::::::::::::::::-----::-::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::-**+***+====--:::::::::::::::::::::::--:---+++++*******++===-:::::::::::::::::::::::---=+*+**-::::::::::::::::::::::::::::::::::::-:--------:
+::::::::::::::::::::::::-::::::::::::::::::::::::::::::::::**+***+===+==-::::::::::::::-:---:-:---++++++++*******+++++==-::::::::::::::::::::-==--+*+*#-::::::::::::::::::::::::::::::::::::::::--::--:
+::::::::::::::::::::::::-::::::::::::::::::::::::::::::::::*+***++===+++++++========+++++**************++++*******++++++++**++=----------==++++==-*****=:::::::::::::::::::::::::::::::::::::::::::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*+*##++===++++***********#####*###*********++++********+++++++++***##****#******++++==-+#*+*=:::::::::::::::::::::::::::::::::::::::::::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::**##*+*==+++++*********#############***+++++++**********+++++++****###***********+++==-+##**=:::::::::::::::::::::::::::::::::::::::::::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::=*##*+*==+++++*******#############***++++++++*******#****+++=++++**###########****+++=-+*#**-:::::::::::::::::::::::::::::::::::::::::::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::-*###**+==++++***#############*##*********+*******#####****+++==++**##########****+===-+*#*=::::::::::::::::::::::::::::::::::::::::::::::::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::+**+++*==+++****###########**##*****************#######****++*++++**##########***++==-++*+-::::::::::::::::::::::::::::::::::::::::::::::::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::-+*+*+*==+++****#########*************+++******###%%%%%#***++**++*****########****+==-++++:::::::::::::::::::::::::::::::::::::::::::::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::+*++*++==++*****#####***********************+***#######**++==++***********##*#***+=-=+++=:::::::::::::::::::::::::::::::::::::::::::::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::-+**+**=+++*******#**************************+++*******++***********************+++-++*+-:::::::::::::::::::::::::::::::::::::::::::::::::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::=-=***==++*****#*******************************+*++++++************************+++-*++=::::::::::::::::::::::::::-:::::::::::::::::::::::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::--+*+--=++************************+*+++*+*************++++++++++***************+++-+*+-::::::::::::::::::::::::::-:::::::::::::::::::::::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*:--::-=++*******+*****+**++++++=+=+==++==+++=+++**++++====+=====++++****++****+++----#=:::::::::::::::::::::::::::::::::::::::::::::::::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::-:::::=++*******++++++++*=++==+=======+===++=====++++=====+=====+++++++++++**+**++----=-:::::::::::::::::::::::::::::::::::::::::::::::::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::--::---=++*****+++===++++=+++=++=========++===+==+*=++=+=+++===++++++=++===+****+=------:::::::::::::::::::::::::::::::::::::::::::::::::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::---::-++******======+++++++++++++===+=+++==+++*+*+***++++++++======+=+++=+***+++=+%#+-:::::::::::::::::::::::::::-:::::::::::::::::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::-=++*****+=+++++++==+==+++++++++++++++++**********+++++++++*++++**+=++**+++#@@@=-:::::::::::::---:-::----:---:::::::::::::::--::::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::=+******+++****++++****+*++***++++++*********+++*##**#*#***+++******+*++==+*##-::::::::::::::::::::::::::::-:::::::::::::::---:::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::-=++************+++=#*#*##**###*####*##%%###%%#####*#****++++*******+++=--++*=-::::::::::::::::::::::::::::::::::::::::::::------
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::-+++*************+++=***##*######%###%@%%#@@%#*##**#**+++++*******+++=-:-===-:::::::::::::::::::::::::::::::::::::::::::::---:::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::-=++**************++++++++###**###*##%%##%###*+++++++++++*******++++--:::---:::::::::::::::::::::::::::::::::::::::::::::::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::-=+++**************++++++++++++++++++++++++++++++++++++********++=-:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::-=+++****************++++++++++***+*+++***++++++++++*********++=-::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::-==++++*******************+++++**#********++++++++++********+==--::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::====+++****************************************++++**+****+==---::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::-++===+++**************+++**+++*****++**++++++++++***+**++==-=-:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::-=+++===+++*************+++++++++++*++++++++++*****++++++==-==-=-:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::-=++++====++***+*********+===+++++++=+=++++*******++++++=-====-+=:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+--::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::-====+++++====+++*+*********++++++++===+=+=++******++++++=--=====-+=-::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+=========--::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::-=+++==+++++=====++++********+++++===*++==+++=+*****++++=-====+====+==-:::::::::::::::::::::::::::::::::::::::::::::::::::::-===
+=+=================--:::::::::::::::::::::::::::::::::::::::::::::::::=++++++=++++++++=====+++++++++++++=+++++==++=+++++++++==-=++++++====++===:::::::::::::::::::::::::::::::::::::::---===========+++
+++++++++++++++=============-----::::::::::::::::::::::::::::::::::--==++++++==++++++++++=---===========+=+*+++==+=+++==+===---=+++++++===+++==+++-:::::::::::::::::::::::::----===========+++++++++++++
++++++++++++++++++++++++===============--:::::::::::::::::::::-=======++=+=++===+++++****++=---=======++==++======+=++=====---+++*+++++===++===++++========-::::::::-======+==++++++++++++++++++++++++++
+++++++++++++++++++++++++++++++++=++============---:-------========+++++=+=+++==+++++********+=----=================+===---=+****++++++==+++===+++++++++=++===--:-=======+++++++++++++++++++++++++++++++
++++++++++++++++++++++++++++++++++++++++===========+=++=====+*+**+++++++==+=++===++++**********+=--------===-=======-==-=++******++++++=+++====++++++++++++++*+===-:--==++++++++++++++++++++++++++++++++
+++++++++++++++++++++++++++++++++++++++++++++===========+++++*+++++++++++++++++==+++++***********+++==--------------==++*+******++++++++++====++++++++++****+++++*++++=----==+++++++++++++++++++++++++++
+**++++++++++++++++++++++++++++++++++++===========++++++**+++++++++++++++++++++++++++******************++====-==+**************++++++++*++===+++++++*******+******+++++++++=--=+++++++++++++++++++++++++
+**********++++++++++++++++++++++==+****************+***++*++++++++++++++++++++++++++++****************************************+++++++*+++===+++++******++******++++**+++***++=--=++++++++++++++++******
+***************===++++++++++++=+****************+****++++****+++++++++++++++++++++++++***************************************+++++++*+++====+++++++++++++***+******++**+**++++++=--+++++++*************
+*****************=********++=++*************+*****+********++++++++++++++++++++++++++++*************************************++++++*++++====++++++++++++++++++***+++++*+++**+**++++=-=******************
+**************************+++****************************+++++++++++++++++++++++++++++++**********************************+++++++**+++=====+++++++++++++++*+++++++***++*******++++++--*****************
+************************+++**************************++++++++++++++++++++++++++++++++++++++******************************++++++**+++====+++++++++++++++*++++++*+++*+++********++++++=:=****************
+*++++******************++************************++*****++++++++++++++++++++++++++++++++++******************************++++**+++++==+=++++++++++++++++++++++**++***********+++++++++=-+**********+*+++
+********+++**********+**+*****************++******++++++++++++++++++++++++++++++++++++++++++***************************+++***++++++++++++++++++**++++++++++++++++****+*******+++++++++-:+**+++++++*****
+***************++++**++*******************++++***+****++++++++++++++++++++++++++++++++++++++++*****************************++++++++++++++++++++++++++++++**+++***+******++++****++++++=:-+*************
+********************+++******++************++++*********++++++++++++++++++++++++++++++++++++++++*************************++++++++++++=+++++++++++++++++++*+*+++++*+******+******+++++++--**************
+*********************++*******+***********++++************+*+++++++++++++++++++++++++++++++++++++++*************#***#**++++++++++++++++++++++=+++*+++++++++++++****++***+********++++++=:+*************
+********************++++******++************++***************++++++++++++++++++++++++++++++++++++++++****###########*++++++++++++++++++++++++=+++*++++++++++***++++++++**********++++*++--*************
+********************++++******+++************+++++*************+++++++++++++++++++++++++++++++++++++++*****######**+++++***+=++++++++++=+++++=+++*+*+++++++******+++************++++*+++-:*************
+********************+++++******++++**********++++++***********++++++++++++++++++++++++++++++++++++++++*+***#**##**+++==+*+++*+++++++++++++++++++++++++++++**********+**********+**++++++=:*************
+********************+++++******+++++**********++++++********++++++++**++++++++++++++++++++++++++++=++++*==+###**==++=+*++++++=++++++++++++*++*++*+++++++++++**+*****+*********+**+++*+++--*************
+********************++++++******+++++************+++*********++++++++*****+++++++++*+++++++++++++++++++++==#@#+=++++++++=+==+++++++++++++++++++++++++++++++******************+**++++++++--*************
+********************=++++++*******+++**************+********+++++++++++++++++++=+++++++++++++++++++++++++=+#+%=++++++==++++++++++++++++++++++++++++++++**+**+***++**********++*+++*+++*+-=*************
+********************=+++++*******+*++***********+***+**++*+*+*+++++++++++++++++++++++**++++++++++==++++++==###=++++==++++++++++++++++++++++++++++++++*++*+****+++++*********+*+++*+++**=:**************
+********************++++*++++*******+++****+***+*****+++++++*+*++++++++++++++++++++++++++++***+++++++++===+%@++++++++++++++++++++++++++++++++++++++++++**++++**************+*++++++++*+--**************
+********************=++++++++******++++***++**********+++++++**+++++++++++++++++++++++++++++++++++++++++=++*#=+=+++++++++++++++++++++++++++++++++++++++++++++**+**********++++++++++*++:=**************
+***+***************+++++++++++******++*+++*++**++++*+++++++++*+++++++++++++++++++++++++=======++++++++++=+=**=++++++++++++++++++++++++++++++++++++++++*++++++*++*********+++++++++++++-:***************
+**+*********+*******++++++++++*+*******++*+**++++++++**++++++++++++++++++++++++++++++++++===+======+++++++=**=+=++++++==+++++++++++++++++++++++++++++++++++++++*********+++++*++++++++:-***************
+*+++**+******++*+***+++++++++***********+****+*++++++*++++++++++++++++++++++++++++++++++++++++++++++++++++=+#++=++++=++++++++++++++++++++++++++++++++++++++++***********+++**++++++++-:+***************
+**+***********+*****++*++++++***+*****+++++*****+++++**+++++++++++++++++++++++++++++++++++++++++++++++++++=+*=+=+++=++++++++++++++++++++++++++++++++++++++++**********+=++*+++++++++=:-****************
+****++++*+*********+++*+++++++********++++++++*+++++++**++++++++++++++++++++++++++++++++++++++++++++++++++=++++=++++++++++++++++++++++++++++++++++++++++++++*++****++*+=+++++=++++++-:+****************
++++*****+*+***++****++*++++++*********++++++++++++++++++++++*+++++++++++++++++++++++++++++++++==+++++++++++**+++++++++++++++++++++++++++++++++++++++++++++*+********+++*++++=++++++=--****************+
++++++*++*++**********+*++++++*****++*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++=+=+++++++++=+++=++++++++++++++++++++++++++++++++++++++++*++++++*****+++*++++=+++++++-:=***************+*
+++++++*+++**++*+*+***+++*+++++*********+++++++**++++++++++++++++++++++++++++++++++++++++++++++++++++++++++=+++++++++++++++++++++++++++++++++++++++*+++**++++++***++++**++++++++++++-:+**+*************+
+++++++++++++++*++++***++**+++******++*++*++++++**+++++++++++++++++++++++++++++++++++++++++++++++++++++++++=+++++++++++++++++++++++++++++++++++++**+++++*++++*++***+++++++=++++++++=:-*****+********++++
++++++++++++++*+++++*++++++++++++**+*+++++**++++++++++++++++++***++++++++++++++++++++++++++++++=======++++==+=+=+++++++++++++++++++++++++++++++++*+++++++++++++++++=++++==+++++++++-:=************++++++
++++++++++++++++++++++*+++++*++++++++*+*++++*+++++++++++++++++*++++++++++++++++++++++++++++++++===+=+++++===*=++++++++++++++++++++++++++++++++++++++++++++++++++++=++++=++*+++++++=--+******+*++++++++++
+++++++++++++++++++++++++=+++*+++++++*++*+++++*++++++++++++++++++++++++++++++++++++++++++++++++===++++++++==+===+++++++++++++++++++++++++++++++++++++++++++++++++=++++=+++++++++++=:-***++*++**+++++++++
++++++++++++++++++++++++++=+++*+++++++****++++**+++++++++++++*++++++++++++++++++++++++++++++++++=++++++++===+=++++++++++++++++++++++++++++++++++++++++++++++++++=++++=++++++++++++--++++***+*+++++++++++
++++++++++++++++++++++++++==++++*++++++*****++++++++++++++++***+*++++++++++++++++++++++++++++++++===+++++===+==+++++++++++++++++++++++++++++++++++++++++++++++++++++=++++++++++++-:=++++++++++++++++++++
++++++++++++++++++++++++++===++++++++++******+++++++++++++++**+++*+++++++++++++++++++++++++++++++=====++=====+=++++++==+++++++++++++++++++++++++++++++++++++++++++++++++++++++++=:=*++++++++++++++++++++
+++++++++++++++++++++++++++====++++*+++++++**+++++++++++++++****+++++++++++++++++++++++++++++++++=====++=====+=++++++===++++=++++++++++++++++++++++++++++++++++++++++++++++++++=:-++++++++++++++++++++++
+++++++++++++++++++++++++++======++++++++++*++++++++++++++++++++*+**++++++++++++++++++++++++++++++====++====+++++++++++++++=++++++++++++++++++++++++++++++++++++++++++++++++++=--+++++++++++++++++++++++
+++++++++++++++++++++++++++========+++*=+++++*+++++++++++++++++++***+++++++++++++++++++++++++++++====+=+===+++=++++++++++++++=+++++++++++++++++++++++++++++++++++++++++++++++=-:=+++++++++++++++++++++++
++++++++++++++++++++++++++++========+++**=+==++++++++++++++++++++++++++++++++++++++++++++++=+++========+=====+++++++++++++++++++++++++++++++++++++++++++++=++++++++++++++++++-:=++++++++++++++++++++++++
++++++++++++++++++++++++++++==========++**++++=++++++++++++++++++++++++++++++++++++++==++++=++++======++++===+=+++++++==++++++++++++++++++++++++++++++++++++++++++++++++++++=:-+++++++++++++++++++++++++
+++++++++++++++++++++++++++++===========+***+++==++++++++++++++++++++++++++++++++====++++++=++++======++======++=+++++=++++++++++++++=++++++++++++++++++=++++++++++++++++===--++++++++++++++++++++++++++
+++++++++++++++++++++++++++++============+++**+++=++++++++++++++++++++++++++++++++======++===++++++++=++===+==+=+++++=======+=++++++=++++++++++++++++++=+++++++++++++++++==-:=++++++++++++++++++++++++++
++++++++++++++++++++++++++++++==========++++++**=+==++++++++++++++++++++++++++=========++=++++++++==++++=+=+=====++++===========+=++++++++++++++++++=+++++++++++++++++++==-:=+++++++++++++++++++++++++++
++++++++++++++++++++++++++++++====++++++++++++++*++==++===+++++++++++++++++++++=======++++++++++++=+==++++=+=======++============+++++++++++++++=+=++=+++++++++++++++++==-:-+++++++++++++++++++++++++===
+=++++++++++++++++++++++++++++======++++++++++++++*+++==++=++++++++++++++++++++========+++++++++++==++++++=+==+=====+==============++++++++++==++====+++++++++++++++=====:-+++++++++++++++++++++++======
+===+++++++++++++++++++++++++++=======++++++++++++++*+++++=++++++++++++++++++++========++++++++++++=++++++=+==++==+===========++=====+++++++==+==++=++++++++++++++++==+=-:=++++++++++++++++++++=========
+=======+++++++++++++++++++++++========++++++++++++++++++++=+=+++++++++++++++++++======+++++++++++==+++++=====+=+==+=====++==+++++===++++++=====++++++++++++++++++===+=-:=++++++++++++++++++++==========
+==============+++++++++++++++++==========+++++++++++++*+==+++++++++++++++++++=++=======++++++++++=+++++++==+++++++==========+++++++++++++++++++++++++++*++++++++===+=-:-+++++++++++++++++==============
+</div>
+<span class="c-ln">1</span><span class="c-comm">/**</span><br>
+<span class="c-ln">2</span><span class="c-comm">música e experiências por: @ganwalk</span><br>
+<span class="c-ln">3</span><span class="c-comm">violões e percussões adicionais: @kiiiiiiiron</span><br>
+<span class="c-ln">4</span><span class="c-comm">mixagem e masterização por: @bodimm_</span><br>
+<span class="c-ln">5</span><span class="c-comm">_</span><br>
+<span class="c-ln">6</span><span class="c-comm">_</span><br>
+<span class="c-ln">7</span><span class="c-comm">(c) 2026 </span><br>
+<span class="c-ln">8</span><span class="c-comm">_</span><br>
+<span class="c-ln">9</span><span class="c-comm">_</span><br>
+<span class="c-ln">10</span><span class="c-comm">Estamos aí! ᕕ(⌐□_□)ᕗ ♪♬</span>`,
+                render: null 
+            },
+
+            photos: {
+                code: `
+<span class="c-ln">1</span><span class="c-kw">import</span> <span class="c-var">Gallery</span> <span class="c-kw">from</span> <span class="c-str">'./reality'</span>;<br>
+<span class="c-ln">2</span><br>
+<span class="c-ln">3</span><span class="c-comm">// Rendering visual assets...</span><br>
+<span class="c-ln">4</span><span class="c-kw">const</span> <span class="c-var">visuals</span> <span class="c-op">=</span> <span class="c-func">loadAssets</span>(<span class="c-str">"./img/*.jpg"</span>);<br>
+<span class="c-ln">5</span><br>
+<span class="c-ln">6</span><span class="c-kw">return</span> <span class="c-op"><</span><span class="c-var">Gallery</span> <span class="c-kw">items</span>={<span class="c-var">visuals</span>} <span class="c-op">/></span>;`,
+                render: `
+                <div class="gallery-grid-final">
+                    <div class="gallery-img-container">FOTO 1</div>
+                    <div class="gallery-img-container">FOTO 2</div>
+                    <div class="gallery-img-container">FOTO 3</div>
+                    <div class="gallery-img-container">FOTO 4</div>
+                </div>`
+            }
+        };
+
+        const CodeTyper = {
+            activeInterval: null,
+            stop: function() {
+                if (this.activeInterval) {
+                    clearInterval(this.activeInterval);
+                    this.activeInterval = null;
+                }
+            },
+            type: function(containerId, htmlContent, onComplete, charsPerTick = 4) {
+                this.stop(); // Stop any previous typing
+                
+                const container = document.getElementById(containerId);
+                container.innerHTML = '<span class="cursor">|</span>'; // Start with cursor
+                
+                let i = 0;
+                const chunks = [];
+                let tagBuffer = '';
+                let isTag = false;
+                
+                for (let char of htmlContent) {
+                    if (char === '<') { isTag = true; tagBuffer += char; continue; }
+                    if (char === '>') { isTag = false; tagBuffer += char; chunks.push(tagBuffer); tagBuffer = ''; continue; }
+                    if (isTag) { tagBuffer += char; }
+                    else { chunks.push(char); }
+                }
+                
+                // Rapid typing - Process MULTIPLE chunks per tick for speed
+                this.activeInterval = setInterval(() => {
+                    // Process charsPerTick chars at once for speed
+                    for(let k=0; k<charsPerTick; k++) {
+                        if (i >= chunks.length) {
+                            clearInterval(this.activeInterval);
+                            if(onComplete) onComplete();
+                            return;
+                        }
+                        
+                        const currentHTML = container.innerHTML;
+                        const cleanHTML = currentHTML.replace('<span class="cursor">|</span>', '');
+                        container.innerHTML = cleanHTML + chunks[i] + '<span class="cursor">|</span>';
+                        i++;
+                    }
+                    container.scrollTop = container.scrollHeight;
+                }, 5); 
+            }
+        };
+
+        const Nav = {
+            currentMode: null, 
+            init: function() {
+                const l = document.getElementById('global-loader');
+                const t = document.getElementById('click-to-start-text');
+                const msgs = ["Sintonizando o éter", "Tecendo a realidade", "Escutando o vazio", "Decifrando ecos"];
+                let i = 0;
+                const iv = setInterval(() => { if(!t.classList.contains('ready')) t.innerText=msgs[i++%msgs.length]; }, 2000);
+
+                App1.init().then(() => {
+                    clearInterval(iv);
+                    t.classList.remove('loading'); t.classList.add('ready');
+                    t.innerHTML = 'Clique, ouça e <span class="faça-glow">faça</span>.';
+                    
+                    t.onclick = () => {
+                        l.style.opacity = 0;
+                        setTimeout(() => l.style.display = 'none', 1500);
+                        document.getElementById('top-nav').classList.add('visible');
+                        document.getElementById('mobile-exp-bar').classList.add('visible');
+                        this.goToExperience1();
+                    };
+                });
+                App2.init();
+            },
+            toggleMobileMenu: function() {
+                const overlay = document.getElementById('mobile-menu-overlay');
+                overlay.classList.toggle('open');
+            },
+            goToExperience1: function() {
+                CodeTyper.stop();
+                if (this.currentMode === 'exp2') {
+                    App2.transitionOut();
+                }
+                
+                if (this.currentMode === 'exp1') {
+                    App1.setLowPass(false);
+                    if (!App1.isPlaying) App1.restart();
+                } else {
+                    App1.setLowPass(false);
+                    App1.restart();
+                    this.currentMode = 'exp1';
+                }
+                
+                this.nav('experience-1', 'btn-exp1');
+                this.updateMobileExpButtons('m-btn-exp1');
+                setTimeout(() => App1.resume(), 100);
+            },
+            goToExperience2: function() {
+                CodeTyper.stop();
+                if (this.currentMode === 'exp1') {
+                    App1.transitionOut();
+                    document.body.classList.remove('mustard-theme'); 
+                }
+
+                if (this.currentMode === 'exp2') {
+                    App2.setLowPass(false);
+                    if(!App2.isActive) App2.restart();
+                } else {
+                    App2.setLowPass(false);
+                    App2.restart();
+                    if(!App2.video.src && App2.mode==='video') App2.loadOriginalClip();
+                    this.currentMode = 'exp2';
+                }
+
+                this.nav('experience-2', 'btn-exp2');
+                this.updateMobileExpButtons('m-btn-exp2');
+                setTimeout(() => App2.resume(), 100);
+            },
+            goToSection: function(id, btnId) {
+                CodeTyper.stop(); 
+                
+                if (this.currentMode === 'exp1') App1.setLowPass(true);
+                if (this.currentMode === 'exp2') App2.setLowPass(true); 
+                
+                if (this.currentMode === 'exp1' && document.body.classList.contains('mustard-theme')) {
+                    document.body.classList.remove('mustard-theme');
+                }
+
+                // Close mobile menu if open
+                document.getElementById('mobile-menu-overlay').classList.remove('open');
+                this.nav(id, btnId);
+
+                // Trigger Code Typing Effect based on section
+                let key = '';
+                if(id === 'links-screen') key = 'links';
+                if(id === 'photos-screen') key = 'photos';
+                if(id === 'credits-screen') key = 'credits';
+
+                const content = ContentGenerator[key];
+                
+                // Customize speed for credits to handle large ASCII
+                const speed = (key === 'credits') ? 150 : 4;
+
+                if (content) {
+                    CodeTyper.type(id, content.code, () => {
+                        if(content.render) {
+                            setTimeout(() => {
+                                document.getElementById(id).innerHTML = content.render;
+                            }, 500); 
+                        }
+                    }, speed);
+                }
+            },
+            nav: function(id, btnId) {
+                document.querySelectorAll('.screen-section').forEach(el => {
+                    el.classList.remove('active');
+                    if(el.classList.contains('text-page')) el.style.display='none';
+                });
+                document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+                const s = document.getElementById(id);
+                if(s.classList.contains('text-page')) s.style.display='flex';
+                setTimeout(() => s.classList.add('active'), 10);
+                if(btnId) document.getElementById(btnId).classList.add('active');
+            },
+            updateMobileExpButtons: function(activeId) {
+                document.querySelectorAll('.mobile-exp-item').forEach(el => el.classList.remove('active'));
+                const el = document.getElementById(activeId);
+                if(el) el.classList.add('active');
+            }
+        };
+
+        const App1 = {
+            scene: null, camera: null, renderer: null, composer: null, bloomPass: null,
+            fadeScene: null, fadeCamera: null, fadeMesh: null,
+            audioContext: null, analyser: null, sourceNode: null,
+            gainNode: null, eqNodes: {}, overdriveNode: null, filterNode: null,
+            interactionPanner: null, interactionFilter: null, interactionHighpass: null,
+            chorusNode: null, chorusGain: null,
+            delayNode: null, feedbackNode: null, convolverNode: null, reverbGain: null,
+            masterFilter: null,
+            
+            buffer: null, reversedBuffer: null,
+            visualGroup: null, centralShape: null, gridLines: [], waveLines: [], waveLinesGroup: null,
+            
+            isPlaying: false, isReversed: false,
+            startTime: 0, pausedTime: 0,
+            isActive: false, animationId: null,
+            transitionTimer: null,
+
+            mouse: new THREE.Vector2(), raycaster: new THREE.Raycaster(),
+            isDragging: false, dragMode: 'none', prevMouse: {x:0, y:0},
+            isScrubbing: false, lastScrub: 0, wasPlayingBeforeScrub: false, userHasInteracted: false,
+            
+            targetWaveY: -25, targetWaveScale: 1, colorChangedTriggered: false,
+
+            mustardYellowThree: new THREE.Color(0xE1AD01),
+            whiteThree: new THREE.Color(0xffffff),
+
+            init: async function() {
+                try { this.audioContext = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) { return; }
+                this.setupAudioGraph();
+                try {
+                    const res = await fetch("https://audio.jukehost.co.uk/n7NGLDAosvHLu79pkZeSrCenu35K9PRV");
+                    const ab = await res.arrayBuffer();
+                    this.buffer = await this.audioContext.decodeAudioData(ab);
+                    this.reversedBuffer = this.reverseBuffer(this.buffer);
+                    document.getElementById('p1-progress').max = this.buffer.duration;
+                } catch(e) {}
+                this.initThree();
+                this.setupUI();
+                this.setupInteraction();
+            },
+
+            setupAudioGraph: function() {
+                const ctx = this.audioContext;
+                this.analyser = ctx.createAnalyser(); this.analyser.fftSize = 256;
+                this.gainNode = ctx.createGain(); this.gainNode.gain.value = 0.5;
+
+                this.eqNodes = { low: ctx.createBiquadFilter(), mid: ctx.createBiquadFilter(), high: ctx.createBiquadFilter() };
+                this.eqNodes.low.type = "lowshelf"; this.eqNodes.low.frequency.value = 320;
+                this.eqNodes.mid.type = "peaking"; this.eqNodes.mid.frequency.value = 1000;
+                this.eqNodes.high.type = "highshelf"; this.eqNodes.high.frequency.value = 3200;
+
+                this.overdriveNode = ctx.createWaveShaper(); this.overdriveNode.curve = null;
+                this.filterNode = ctx.createBiquadFilter(); this.filterNode.type = "lowpass"; this.filterNode.frequency.value = 20000;
+
+                this.interactionFilter = ctx.createBiquadFilter(); this.interactionFilter.type = "lowpass"; this.interactionFilter.frequency.value = 20000;
+                this.interactionHighpass = ctx.createBiquadFilter(); this.interactionHighpass.type = "highpass"; this.interactionHighpass.frequency.value = 20;
+                this.interactionPanner = ctx.createStereoPanner(); this.interactionPanner.pan.value = 0;
+
+                this.chorusNode = ctx.createPanner();
+                const chorusOsc = ctx.createOscillator(); chorusOsc.frequency.value = 4;
+                this.chorusGain = ctx.createGain(); this.chorusGain.gain.value = 0;
+                chorusOsc.connect(this.chorusGain); this.chorusGain.connect(this.chorusNode.positionX); chorusOsc.start(0);
+
+                this.delayNode = ctx.createDelay(2.0);
+                this.feedbackNode = ctx.createGain(); this.feedbackNode.gain.value = 0.5;
+                this.delayNode.connect(this.feedbackNode); this.feedbackNode.connect(this.delayNode);
+
+                this.convolverNode = ctx.createConvolver();
+                this.convolverNode.buffer = this.createImpulse();
+                this.reverbGain = ctx.createGain(); this.reverbGain.gain.value = 0;
+
+                this.masterFilter = ctx.createBiquadFilter();
+                this.masterFilter.type = "lowpass";
+                this.masterFilter.frequency.value = 20000;
+
+                this.gainNode.connect(this.eqNodes.low);
+                this.eqNodes.low.connect(this.eqNodes.mid);
+                this.eqNodes.mid.connect(this.eqNodes.high);
+                this.eqNodes.high.connect(this.overdriveNode);
+                this.overdriveNode.connect(this.filterNode);
+                this.filterNode.connect(this.interactionFilter);
+                this.interactionFilter.connect(this.interactionHighpass);
+                this.interactionHighpass.connect(this.interactionPanner);
+                this.interactionPanner.connect(this.chorusNode);
+
+                this.chorusNode.connect(this.analyser);
+                this.chorusNode.connect(this.delayNode); 
+                this.chorusNode.connect(this.convolverNode); this.convolverNode.connect(this.reverbGain);
+
+                this.analyser.connect(this.masterFilter);
+                this.delayNode.connect(this.masterFilter);
+                this.reverbGain.connect(this.masterFilter);
+
+                this.masterFilter.connect(ctx.destination);
+            },
+
+            setLowPass: function(active) {
+                if(!this.masterFilter) return;
+                const freq = active ? 200 : 20000;
+                this.masterFilter.frequency.setTargetAtTime(freq, this.audioContext.currentTime, 0.5);
+            },
+            
+            // NEW: Optimized background mode
+            setBackground: function(isBackground) {
+                this.setLowPass(isBackground);
+                if (isBackground) {
+                    this.isActive = false; // Stop visual loop
+                    if (this.animationId) cancelAnimationFrame(this.animationId);
+                } else {
+                    if (this.isPlaying && !this.isActive) {
+                        this.isActive = true;
+                        this.animate(); // Restart visual loop
+                    }
+                }
+            },
+
+            transitionOut: function() {
+                if(this.transitionTimer) clearTimeout(this.transitionTimer);
+
+                if(this.delayNode && this.feedbackNode) {
+                    this.delayNode.delayTime.setTargetAtTime(0.5, this.audioContext.currentTime, 0.1);
+                    this.feedbackNode.gain.setTargetAtTime(0.9, this.audioContext.currentTime, 0.1);
+                }
+                
+                this.transitionTimer = setTimeout(() => {
+                    this.stopSourceOnly(); 
+                    this.isActive = false; 
+                    if(this.animationId) { cancelAnimationFrame(this.animationId); this.animationId = null; }
+                }, 100);
+            },
+
+            stopSourceOnly: function() {
+                // CORREÇÃO: Definir flag e limpar evento ANTES de parar o nó
+                this.isPlaying = false; 
+                if(this.sourceNode) { 
+                    this.sourceNode.onended = null; // Remove listener para evitar loop acidental
+                    try{this.sourceNode.stop();}catch(e){} 
+                    this.sourceNode.disconnect(); 
+                    this.sourceNode=null; 
+                }
+                document.getElementById('p1-play-btn').innerHTML='<svg viewBox="0 0 24 24" width="24" fill="#fff"><path d="M8 5v14l11-7z"/></svg>';
+            },
+
+            restart: function() {
+                if(this.transitionTimer) clearTimeout(this.transitionTimer);
+                if(this.animationId) { cancelAnimationFrame(this.animationId); this.animationId = null; }
+                this.stopAudio();
+                this.pausedTime = 0;
+                this.isReversed = false;
+                this.startAudio(0);
+            },
+            
+            // ... (Rest of App1 methods remain unchanged for brevity, keeping all existing logic) ...
+
+            createImpulse: function() {
+                const len = this.audioContext.sampleRate * 2; const buf = this.audioContext.createBuffer(2, len, this.audioContext.sampleRate);
+                for(let i=0;i<len;i++) { buf.getChannelData(0)[i]=Math.random()*(1-i/len); buf.getChannelData(1)[i]=Math.random()*(1-i/len); }
+                return buf;
+            },
+
+            makeDistortionCurve: function(amount) {
+                if(amount===0) return null;
+                const k=amount, n=44100, c=new Float32Array(n);
+                const deg=Math.PI/180;
+                for(let i=0;i<n;i++){ const x=i*2/n-1; c[i]=(3+k)*x*20*deg/(Math.PI+k*Math.abs(x)); }
+                return c;
+            },
+
+            reverseBuffer: function(buf) {
+                const newBuf = this.audioContext.createBuffer(buf.numberOfChannels, buf.length, buf.sampleRate);
+                for(let i=0; i<buf.numberOfChannels; i++) {
+                    const orig=buf.getChannelData(i), dest=newBuf.getChannelData(i);
+                    for(let j=0;j<orig.length;j++) dest[j]=orig[orig.length-1-j];
+                }
+                return newBuf;
+            },
+
+            initThree: function() {
+                const cvs = document.getElementById('p1-canvas');
+                this.scene = new THREE.Scene();
+                this.camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000); 
+                this.camera.position.z=50;
+
+                this.renderer = new THREE.WebGLRenderer({canvas:cvs, antialias:true, alpha:true, preserveDrawingBuffer:true});
+                this.renderer.setSize(window.innerWidth, window.innerHeight);
+                this.renderer.setPixelRatio(window.devicePixelRatio);
+                this.renderer.autoClear = false;
+
+                const rp = new THREE.RenderPass(this.scene, this.camera);
+                this.bloomPass = new THREE.UnrealBloomPass(new THREE.Vector2(window.innerWidth,window.innerHeight), 0, 0.4, 0);
+                this.composer = new THREE.EffectComposer(this.renderer);
+                this.composer.addPass(rp);
+                this.composer.addPass(this.bloomPass);
+
+                this.fadeScene = new THREE.Scene();
+                this.fadeCamera = new THREE.OrthographicCamera(-1,1,1,-1,0,1);
+                this.fadeMesh = new THREE.Mesh(new THREE.PlaneGeometry(2,2), new THREE.MeshBasicMaterial({color:0x000000, transparent:true, opacity:1.0}));
+                this.fadeScene.add(this.fadeMesh);
+
+                this.visualGroup = new THREE.Group(); this.visualGroup.position.y=12; this.scene.add(this.visualGroup);
+                this.centralShape = new THREE.Mesh(new THREE.IcosahedronGeometry(8,0), new THREE.MeshBasicMaterial({color:0xffffff, wireframe:true, transparent:true, opacity:0})); 
+                this.visualGroup.add(this.centralShape);
+
+                const gridGroup = new THREE.Group(); gridGroup.position.y=12; this.scene.add(gridGroup);
+                const lm = new THREE.LineBasicMaterial({color:0xffffff, transparent:true, opacity:0});
+                for(let i=0;i<=30;i++) {
+                    let pts=[]; for(let j=0;j<=30;j++) pts.push(new THREE.Vector3(j-15,i-15,0));
+                    let g=new THREE.BufferGeometry().setFromPoints(pts); g.setAttribute('initialPosition',g.attributes.position.clone());
+                    let l=new THREE.Line(g,lm.clone()); gridGroup.add(l); this.gridLines.push(l);
+                    pts=[]; for(let j=0;j<=30;j++) pts.push(new THREE.Vector3(i-15,j-15,0));
+                    g=new THREE.BufferGeometry().setFromPoints(pts); g.setAttribute('initialPosition',g.attributes.position.clone());
+                    l=new THREE.Line(g,lm.clone()); gridGroup.add(l); this.gridLines.push(l);
+                }
+
+                this.waveLinesGroup = new THREE.Group(); this.waveLinesGroup.position.y=-25; this.scene.add(this.waveLinesGroup);
+                for(let k=-1;k<=1;k++) {
+                    let pts=[]; for(let j=0;j<=100;j++) pts.push(new THREE.Vector3((j/100-0.5)*70,k,0));
+                    let g=new THREE.BufferGeometry().setFromPoints(pts); g.setAttribute('initialPosition',g.attributes.position.clone());
+                    let l=new THREE.Line(g,lm.clone()); this.waveLinesGroup.add(l); this.waveLines.push(l);
+                }
+                window.addEventListener('resize', ()=>this.onResize());
+            },
+
+            setupInteraction: function() {
+                const cvs = document.getElementById('p1-canvas');
+                cvs.addEventListener('mousedown', e => this.onDown(e));
+                window.addEventListener('mouseup', e => this.onUp(e));
+                cvs.addEventListener('mousemove', e => this.onMove(e));
+                cvs.addEventListener('touchstart', e => this.onDown(e.touches[0]));
+                window.addEventListener('touchend', e => this.onUp(e));
+                cvs.addEventListener('touchmove', e => { e.preventDefault(); this.onMove(e.touches[0]); });
+            },
+
+            onDown: function(e) {
+                this.mouse.x = (e.clientX/window.innerWidth)*2-1;
+                this.mouse.y = -(e.clientY/window.innerHeight)*2+1;
+                this.raycaster.setFromCamera(this.mouse, this.camera);
+                if(this.raycaster.intersectObject(this.centralShape).length > 0) {
+                    this.isDragging = true; this.dragMode = 'none'; this.prevMouse = {x:e.clientX, y:e.clientY};
+                    this.userHasInteracted = true;
+                    document.body.style.cursor = 'grabbing';
+                    document.getElementById('p1-interaction-tooltip').classList.remove('visible');
+                }
+            },
+
+            onUp: function() {
+                if(this.isDragging) {
+                    this.isDragging = false; document.body.style.cursor = 'default';
+                    if(this.interactionPanner) this.interactionPanner.pan.value = 0;
+                    if(this.interactionFilter) this.interactionFilter.frequency.setTargetAtTime(20000, this.audioContext.currentTime, 0.1);
+                    if(this.interactionHighpass) this.interactionHighpass.frequency.setTargetAtTime(20, this.audioContext.currentTime, 0.1);
+                    if(this.isScrubbing) {
+                        if(this.wasPlayingBeforeScrub) this.startAudio(this.pausedTime);
+                        this.isScrubbing = false;
+                    }
+                }
+            },
+
+            onMove: function(e) {
+                this.mouse.x = (e.clientX/window.innerWidth)*2-1;
+                this.mouse.y = -(e.clientY/window.innerHeight)*2+1;
+                if(!this.isDragging) {
+                    this.raycaster.setFromCamera(this.mouse, this.camera);
+                    if(this.raycaster.intersectObject(this.centralShape).length > 0) document.body.style.cursor = 'pointer';
+                    else document.body.style.cursor = 'default';
+                    return;
+                }
+                const dx = e.clientX - this.prevMouse.x;
+                const dy = e.clientY - this.prevMouse.y;
+                if(this.dragMode === 'none') {
+                    if(Math.abs(dx)>Math.abs(dy) && Math.abs(dx)>2) this.dragMode = 'horizontal';
+                    else if(Math.abs(dy)>2) this.dragMode = 'vertical';
+                }
+                this.centralShape.rotation.y += dx*0.005;
+                this.centralShape.rotation.x += dy*0.005;
+                if(this.dragMode === 'horizontal') {
+                    if(!this.isScrubbing) { this.isScrubbing=true; this.wasPlayingBeforeScrub=this.isPlaying; if(this.isPlaying) this.stopAudio(); }
+                    let t = (this.sourceNode && this.isPlaying) ? (this.audioContext.currentTime - this.startTime) : this.pausedTime;
+                    let n = Math.max(0, Math.min(this.buffer.duration, t + dx*0.05));
+                    this.pausedTime = n;
+                    document.getElementById('p1-progress').value = n;
+                    this.updateTimeDisplay(n);
+                    if(this.audioContext.currentTime - this.lastScrub > 0.1) {
+                        const s = this.audioContext.createBufferSource();
+                        s.buffer = this.isReversed ? this.reversedBuffer : this.buffer;
+                        s.playbackRate.value = 0.5 + Math.random()*1.5;
+                        const g = this.audioContext.createGain(); g.gain.value = 0.5;
+                        s.connect(g); g.connect(this.overdriveNode);
+                        s.start(0, n, 0.1);
+                        this.lastScrub = this.audioContext.currentTime;
+                    }
+                    const dVal = parseFloat(document.getElementById('p1-delay').value);
+                    this.visualGroup.scale.setScalar(1 + dVal*0.2 + Math.min(1, Math.abs(dx)*0.05)*0.5);
+                } else if(this.dragMode === 'vertical') {
+                    const ny = e.clientY/window.innerHeight;
+                    if(ny > 0.5) {
+                        const f = (ny-0.5)*2;
+                        this.interactionFilter.frequency.value = 20000 * Math.pow(50/20000, f);
+                        this.interactionHighpass.frequency.value = 20;
+                    } else {
+                        const f = 1.0 - (ny*2);
+                        this.interactionHighpass.frequency.value = 20 * Math.pow(5000/20, 1-f);
+                        this.interactionFilter.frequency.value = 20000;
+                    }
+                }
+                this.prevMouse = {x:e.clientX, y:e.clientY};
+            },
+
+            startAudio: function(off) {
+                if(this.transitionTimer) clearTimeout(this.transitionTimer);
+                if(!this.buffer) return;
+                this.stopSourceOnly();
+                
+                this.sourceNode = this.audioContext.createBufferSource();
+                this.sourceNode.buffer = this.isReversed ? this.reversedBuffer : this.buffer;
+                this.sourceNode.playbackRate.value = parseFloat(document.getElementById('p1-pitch').value);
+                this.sourceNode.connect(this.gainNode);
+                
+                let start = this.isReversed ? (this.buffer.duration - off) : off;
+                if(start<0) start=0;
+                this.sourceNode.start(0, start);
+                this.startTime = this.audioContext.currentTime - start;
+                this.isPlaying = true;
+
+                this.sourceNode.onended = () => {
+                    if(this.isPlaying) {
+                        this.stopAudio();
+                        this.isReversed = !this.isReversed;
+                        this.startAudio(this.isReversed ? this.buffer.duration : 0);
+                    }
+                };
+
+                document.getElementById('p1-play-btn').innerHTML='<svg viewBox="0 0 24 24" width="24" fill="#fff"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
+                document.getElementById('p1-main-text').style.opacity=1;
+                document.getElementById('p1-main-text').classList.add('ganwalk-neon-glow');
+                document.getElementById('p1-toggle-button').classList.add('visible');
+                document.getElementById('p1-controls-bar').classList.add('expanded');
+                this.targetWaveY = -25; this.targetWaveScale = 1;
+                this.centralShape.material.opacity=1; 
+                this.gridLines.forEach(l=>l.material.opacity=0.6);
+                this.waveLines.forEach(l=>l.material.opacity=0.8);
+                
+                // TOOLTIP LOGIC: Show if interaction not happened
+                if(!this.userHasInteracted) document.getElementById('p1-interaction-tooltip').classList.add('visible');
+                
+                this.onResize(); 
+                this.resume();
+            },
+
+            stopAudio: function() {
+                this.stopSourceOnly();
+                const elap = this.audioContext.currentTime - this.startTime;
+                this.pausedTime = this.isReversed ? (this.buffer.duration - elap) : elap;
+            },
+
+            setupUI: function() {
+                const get = id => document.getElementById(id);
+                get('p1-play-btn').onclick = () => { if(this.isPlaying) this.stopAudio(); else this.startAudio(this.pausedTime); };
+                get('p1-reverse-btn').onclick = () => {
+                    const was = this.isPlaying; if(was) this.stopAudio();
+                    this.isReversed = !this.isReversed; if(was) this.startAudio(this.pausedTime);
+                };
+                const bind = (id, node, param, map) => {
+                    get(id).addEventListener('input', e => { node[param].value = map ? map(parseFloat(e.target.value)) : parseFloat(e.target.value); });
+                };
+                bind('p1-volume', this.gainNode, 'gain');
+                bind('p1-delay', this.delayNode, 'delayTime');
+                bind('p1-chorus', this.chorusGain, 'gain', v=>v*10);
+                bind('p1-eq-low', this.eqNodes.low, 'gain');
+                bind('p1-eq-mid', this.eqNodes.mid, 'gain');
+                bind('p1-eq-high', this.eqNodes.high, 'gain');
+                get('p1-pitch').addEventListener('input', e => { if(this.sourceNode) this.sourceNode.playbackRate.value = parseFloat(e.target.value); });
+                get('p1-overdrive').addEventListener('input', e => { this.overdriveNode.curve = this.makeDistortionCurve(parseFloat(e.target.value)*1000); });
+                get('p1-reverb').addEventListener('input', e => {
+                    const v=parseFloat(e.target.value);
+                    this.reverbGain.gain.value = v*4;
+                    if(this.bloomPass) this.bloomPass.strength = v*2.0;
+                });
+                get('p1-filter').addEventListener('input', e => {
+                    const v=parseFloat(e.target.value);
+                    this.filterNode.frequency.value = 20000 * Math.pow(20/20000, v/100);
+                    this.gridLines.forEach(l => l.material.opacity = ((100-v)/100)*0.6);
+                });
+                get('p1-progress').addEventListener('input', e => {
+                    if(this.isPlaying) this.stopAudio();
+                    this.pausedTime = parseFloat(e.target.value);
+                    this.updateTimeDisplay(this.pausedTime);
+                });
+                get('p1-progress').addEventListener('mouseup', e => { this.startAudio(this.pausedTime); });
+                get('p1-clear-effects').onclick = () => {
+                    ['p1-delay','p1-reverb','p1-chorus','p1-filter','p1-overdrive','p1-eq-low','p1-eq-mid','p1-eq-high'].forEach(id => { get(id).value = 0; get(id).dispatchEvent(new Event('input')); });
+                    get('p1-pitch').value = 1; get('p1-pitch').dispatchEvent(new Event('input'));
+                    document.body.classList.remove('mustard-theme');
+                    this.colorChangedTriggered = false;
+                    this.centralShape.material.color.set(this.whiteThree);
+                    this.gridLines.forEach(l => l.material.color.set(this.whiteThree));
+                    this.waveLines.forEach(l => l.material.color.set(this.whiteThree));
+                };
+                get('p1-toggle-button').onclick = () => {
+                    const bar = get('p1-controls-bar');
+                    bar.classList.toggle('expanded');
+                    get('p1-toggle-arrow').style.transform = bar.classList.contains('expanded') ? 'rotate(180deg)' : 'rotate(0deg)';
+                    if(bar.classList.contains('expanded')) {
+                        this.targetWaveY = -25; this.targetWaveScale = 1;
+                        this.waveLines.forEach(l=>l.material.opacity=0);
+                        get('p1-interaction-tooltip').classList.remove('visible');
+                        setTimeout(() => this.onResize(), 400);
+                    } else {
+                        this.targetWaveY = -12; this.targetWaveScale = 4;
+                        this.waveLines.forEach(l=>l.material.opacity=0.8);
+                        if(!this.userHasInteracted) get('p1-interaction-tooltip').classList.add('visible');
+                    }
+                };
+            },
+
+            updateTimeDisplay: function(t) {
+                const fmt=s=>`${Math.floor(s/60)}:${Math.floor(s%60).toString().padStart(2,'0')}`;
+                document.getElementById('p1-time-display').innerText=`${fmt(t)} / ${fmt(this.buffer.duration)}`;
+            },
+
+            animate: function() {
+                if(!this.isActive) return;
+                this.animationId = requestAnimationFrame(() => this.animate());
+                const t = this.audioContext.currentTime;
+                const dir = this.isReversed ? -1 : 1;
+                const freq = new Uint8Array(this.analyser.frequencyBinCount);
+                this.analyser.getByteFrequencyData(freq);
+                let b=0, m=0, h=0;
+                for(let i=0;i<freq.length;i++) { const v=freq[i]/255; if(i<freq.length*0.1)b+=v; else if(i<freq.length*0.4)m+=v; else h+=v; }
+                b/=(freq.length*0.1); m/=(freq.length*0.3); h/=(freq.length*0.6);
+                const avg = (b+m+h)/3;
+
+                if(this.isPlaying) {
+                    const elap = t - this.startTime;
+                    const cur = this.isReversed ? (this.buffer.duration - elap) : elap;
+                    document.getElementById('p1-progress').value = cur;
+                    this.updateTimeDisplay(cur);
+
+                    // Only manage theme if in exp1
+                    if (Nav.currentMode === 'exp1') {
+                        if(cur > 126 && !this.colorChangedTriggered) {
+                            this.colorChangedTriggered = true; document.body.classList.add('mustard-theme');
+                            this.centralShape.material.color.set(this.mustardYellowThree);
+                            this.gridLines.forEach(l=>l.material.color.set(this.mustardYellowThree));
+                            this.waveLines.forEach(l=>l.material.color.set(this.mustardYellowThree));
+                        } else if (cur <= 126 && this.colorChangedTriggered) {
+                            this.colorChangedTriggered = false; document.body.classList.remove('mustard-theme');
+                            this.centralShape.material.color.set(this.whiteThree);
+                            this.gridLines.forEach(l=>l.material.color.set(this.whiteThree));
+                            this.waveLines.forEach(l=>l.material.color.set(this.whiteThree));
+                        }
+                    } else {
+                        // Prevent theme logic from running if not in exp1 view
+                        if (this.colorChangedTriggered) {
+                             // Logic handled by Nav.goToSection but keep internal state consistent
+                             // This block might not be reached often as Nav handles class removal
+                        }
+                    }
+                }
+
+                const dVal = parseFloat(document.getElementById('p1-delay').value);
+                const rVal = parseFloat(document.getElementById('p1-reverb').value);
+                const odVal = parseFloat(document.getElementById('p1-overdrive').value);
+                const cVal = parseFloat(document.getElementById('p1-chorus').value);
+
+                document.getElementById('p1-main-text').style.transform = `scale(${1+avg*0.05*dir})`;
+                this.fadeMesh.material.opacity = 0.02 + 0.98 * Math.pow(1.0 - rVal, 3);
+                this.renderer.setClearColor(0x000000, 1 - (dVal*0.9));
+                this.visualGroup.rotation.y += (0.005 + avg*0.01)*dir;
+                if(!this.isScrubbing) this.visualGroup.scale.setScalar(1 + dVal*0.1 + Math.sin(t*2)*dVal*0.1);
+                this.centralShape.rotation.x += (0.005 + h*0.02)*dir;
+                this.centralShape.rotation.y += (0.005 + m*0.02)*dir;
+                this.centralShape.rotation.z += cVal*0.05*dir;
+                this.centralShape.scale.set(1 + b*0.5 + odVal*0.5, 1+b*0.5-odVal*0.5, 1 + b*0.5 + odVal*0.5);
+
+                this.gridLines.forEach(l => {
+                    const pos = l.geometry.attributes.position.array;
+                    const init = l.geometry.attributes.initialPosition.array;
+                    l.material.linewidth = Math.max(1, 1+m*0.1);
+                    for(let i=0; i<pos.length; i+=3) {
+                        const x=init[i], y=init[i+1];
+                        const w = Math.sin(x*0.5 + t*2*dir)*b*5 + Math.cos(y*0.5 + t*3*dir)*m*3 + Math.sin(Math.sqrt(x*x+y*y)*0.5 - t*5)*dVal*5;
+                        const jit = (Math.random()-0.5)*h*0.8*(rVal*8)*dir;
+                        pos[i] = x+jit; pos[i+1] = y+jit; pos[i+2] = w;
+                    }
+                    l.geometry.attributes.position.needsUpdate=true;
+                });
+
+                this.waveLinesGroup.position.y += (this.targetWaveY - this.waveLinesGroup.position.y)*0.05;
+                this.waveLinesGroup.scale.y += (this.targetWaveScale - this.waveLinesGroup.scale.y)*0.05;
+                this.waveLines.forEach((l, idx) => {
+                    const pos = l.geometry.attributes.position.array;
+                    const band = idx===0?b : (idx===1?m:h);
+                    for(let i=0; i<pos.length; i+=3) pos[i+2] = Math.sin(pos[i]*(0.3+idx*0.1) + t*(5+idx)*dir) * band * (idx===0?45 : (idx===1?20:15));
+                    l.geometry.attributes.position.needsUpdate=true;
+                    l.material.opacity = Math.min(1, 0.5 + band*0.5);
+                });
+
+                if(!this.isDragging) {
+                    this.interactionPanner.pan.value += (0 - this.interactionPanner.pan.value)*0.05;
+                    this.interactionFilter.frequency.value += (20000 - this.interactionFilter.frequency.value)*0.05;
+                    this.interactionHighpass.frequency.value += (20 - this.interactionHighpass.frequency.value)*0.05;
+                }
+
+                this.renderer.render(this.fadeScene, this.fadeCamera);
+                this.renderer.clearDepth();
+                this.composer.render();
+
+                if(document.getElementById('p1-controls-bar').classList.contains('expanded')) {
+                    this.drawMiniCanvas(b, m, h, t, dir, rVal, parseFloat(document.getElementById('p1-filter').value), odVal, cVal);
+                }
+            },
+
+            drawMiniCanvas: function(b, m, h, time, dir, reverb, filter, od, chorus) {
+                const mc = document.getElementById('p1-mini-canvas');
+                if(!mc) return;
+                const ctx = mc.getContext('2d');
+                const w = mc.width, hC = mc.height;
+                ctx.fillStyle = `rgba(0,0,0,${0.02 + 0.98 * Math.pow(1.0 - reverb, 3)})`;
+                ctx.fillRect(0,0,w,hC);
+                const col = this.colorChangedTriggered ? '#E1AD01' : '#FFFFFF';
+                const alpha = Math.max(0, ((100-filter)/100))*0.8;
+                ctx.lineWidth = 1 + od*2;
+                const vShift = Math.sin(time*2)*chorus*10;
+                const draw = (amp, freq, spd, yOff) => {
+                    ctx.beginPath(); ctx.strokeStyle = col; ctx.globalAlpha = alpha;
+                    for(let x=0; x<w; x++) {
+                        const y = yOff + Math.sin(((x/w - 0.5)*4)*freq + time*spd*dir)*(amp*20) + vShift + (Math.random()-0.5)*od*3;
+                        if(x===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+                    }
+                    ctx.stroke(); ctx.globalAlpha = 1;
+                };
+                draw(b, 2.0, 5, hC/2); draw(m, 3.0, 6, hC/2); draw(h, 4.0, 7, hC/2);
+            },
+
+            onResize: function() {
+                if(!this.camera) return;
+                this.camera.aspect=window.innerWidth/window.innerHeight; this.camera.updateProjectionMatrix();
+                this.renderer.setSize(window.innerWidth, window.innerHeight);
+                this.composer.setSize(window.innerWidth, window.innerHeight);
+                document.getElementById('p1-main-text').style.fontSize=(10*(window.innerWidth/100))+'px';
+                const mc = document.getElementById('p1-mini-canvas');
+                if(mc && mc.parentElement) { mc.width = mc.parentElement.clientWidth; mc.height = mc.parentElement.clientHeight; }
+            },
+
+            resume: function() {
+                if(this.transitionTimer) clearTimeout(this.transitionTimer);
+                if(this.audioContext.state==='suspended') this.audioContext.resume();
+                this.isActive = true;
+                this.onResize();
+                if(this.animationId) cancelAnimationFrame(this.animationId);
+                this.animate();
+            },
+            pause: function() {
+                this.isActive=false; cancelAnimationFrame(this.animationId); this.animationId=null;
+                if(this.isPlaying) this.stopAudio();
+            }
+        };
+
+        const App2 = {
+            settings:{bg:'#000000',font1:'#00ffff',font2:'#ff7100',size:10,res:35,thresh:0,invert:false,chaos:0,bgMix:false,bgOp:72},
+            video:null,img:null,hiddenC:null,outC:null,ctxH:null,ctxO:null,audio:null,stream:null,mode:'video',loopId:null,rec:null,chunks:[],isActive:false,
+            audioCtx: null, audioSource: null, audioGain: null, audioFilter: null, audioDelay: null, audioFeedback: null,
+            delayWet: null,
+            transitionTimer: null,
+            ORIGINAL_CLIP:'https://raw.githubusercontent.com/ganwalk/ganwalkascii/main/1002%20(1)%20(1).mp4',
+            
+            init: function() {
+                this.video=document.getElementById('p2-video'); this.img=document.getElementById('p2-source-image');
+                this.hiddenC=document.getElementById('p2-hidden-canvas'); this.outC=document.getElementById('p2-output-canvas');
+                this.ctxH=this.hiddenC.getContext('2d',{willReadFrequently:true}); this.ctxO=this.outC.getContext('2d');
+                this.audio=document.getElementById('p2-background-audio');
+                window.addEventListener('resize', ()=>{this.outC.width=window.innerWidth; this.outC.height=window.innerHeight;});
+                this.outC.width=window.innerWidth; this.outC.height=window.innerHeight;
+                this.bindUI();
+            },
+
+            initAudioContext: function() {
+                if(this.audioCtx) return;
+                try {
+                    this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                    this.audioGain = this.audioCtx.createGain();
+                    
+                    // Filter (Only effectively used if we want room-next-door, currently disabled for Exp 2)
+                    this.audioFilter = this.audioCtx.createBiquadFilter();
+                    this.audioFilter.type = "lowpass";
+                    this.audioFilter.frequency.value = 20000;
+                    
+                    this.audioDelay = this.audioCtx.createDelay(1.0);
+                    this.audioFeedback = this.audioCtx.createGain();
+                    this.audioFeedback.gain.value = 0; 
+                    
+                    // Delay Loop
+                    this.audioDelay.connect(this.audioFeedback);
+                    this.audioFeedback.connect(this.audioDelay);
+
+                    // Delay Output Control (To silence delay normally)
+                    this.delayWet = this.audioCtx.createGain();
+                    this.delayWet.gain.value = 0; // Silent by default (Original Audio only)
+
+                    // Routing:
+                    // 1. Dry Path (Original Audio)
+                    this.audioGain.connect(this.audioFilter);
+                    this.audioFilter.connect(this.audioCtx.destination);
+
+                    // 2. Wet Path (Transition Delay)
+                    this.audioGain.connect(this.audioDelay);
+                    this.audioDelay.connect(this.delayWet);
+                    this.delayWet.connect(this.audioCtx.destination); // Bypass filter or through filter? Through filter ensures consistency if filter is used.
+                    // Connecting wet to destination directly for now to ensure it works simply.
+
+                    const s1 = this.audioCtx.createMediaElementSource(this.video);
+                    const s2 = this.audioCtx.createMediaElementSource(this.audio);
+                    s1.connect(this.audioGain);
+                    s2.connect(this.audioGain);
+
+                } catch(e) { console.log("Audio Context Error (App2)", e); }
+            },
+
+            setLowPass: function(active) {
+                if(!this.audioCtx) this.initAudioContext();
+                if(this.audioCtx.state === 'suspended') this.audioCtx.resume();
+                const freq = active ? 200 : 20000;
+                if(this.audioFilter) this.audioFilter.frequency.setTargetAtTime(freq, this.audioCtx.currentTime, 0.5);
+            },
+            
+            // NEW: Optimized background mode
+            setBackground: function(isBackground) {
+                this.setLowPass(isBackground); // Handles audio filter
+                if (isBackground) {
+                    this.isActive = false; // Stop ASCII loop
+                    if (this.loopId) cancelAnimationFrame(this.loopId);
+                } else {
+                    if (!this.isActive) {
+                        this.isActive = true;
+                        this.draw(); // Restart loop
+                    }
+                }
+            },
+
+            transitionOut: function() {
+                if(this.transitionTimer) clearTimeout(this.transitionTimer);
+                if(!this.audioCtx) return;
+                if(this.audioCtx.state === 'suspended') this.audioCtx.resume();
+                
+                // Activate delay for transition
+                this.audioDelay.delayTime.value = 0.5;
+                this.audioFeedback.gain.setTargetAtTime(0.8, this.audioCtx.currentTime, 0.1);
+                this.delayWet.gain.setTargetAtTime(1.0, this.audioCtx.currentTime, 0.1); // Fade in delay
+                
+                this.transitionTimer = setTimeout(() => {
+                    this.video.pause();
+                    this.audio.pause();
+                    this.isActive = false;
+                    
+                    // Reset for next time
+                    this.audioFeedback.gain.setTargetAtTime(0, this.audioCtx.currentTime + 1, 0.1);
+                    this.delayWet.gain.setTargetAtTime(0, this.audioCtx.currentTime + 1, 0.1); 
+                    
+                    if(this.loopId) { cancelAnimationFrame(this.loopId); this.loopId = null; }
+                }, 400);
+            },
+
+            restart: function() {
+                if(this.transitionTimer) clearTimeout(this.transitionTimer);
+                this.initAudioContext();
+                if(this.audioCtx && this.audioCtx.state === 'suspended') this.audioCtx.resume();
+                
+                this.video.currentTime = 0;
+                this.audio.currentTime = 0;
+                
+                // Ensure pure audio on restart
+                if(this.audioFeedback) this.audioFeedback.gain.value = 0;
+                if(this.delayWet) this.delayWet.gain.value = 0;
+            },
+
+            bindUI: function() {
+                const get=id=>document.getElementById(id);
+                this.loadOriginalClip = () => {
+                    this.mode='video'; if(this.stream) { this.stream.getTracks().forEach(t=>t.stop()); this.stream=null; }
+                    this.video.srcObject=null; this.video.src=this.ORIGINAL_CLIP; this.video.loop=true;
+                    this.restart(); // Reset time
+                    this.video.play(); this.audio.play();
+                    this.video.onloadedmetadata = () => { const s=()=>{if(!this.audio.paused)this.video.currentTime=this.audio.currentTime%this.video.duration;}; s(); setInterval(s,1000); };
+                    get('p2-controls-bar').classList.add('expanded'); get('p2-create-prompt').style.opacity=0;
+                    this.initAudioContext();
+                };
+                get('p2-clip-btn').onclick=this.loadOriginalClip;
+                get('p2-webcam-btn').onclick=async()=>{
+                    try { if(this.stream)this.stream.getTracks().forEach(t=>t.stop()); this.stream=await navigator.mediaDevices.getUserMedia({video:true}); this.video.srcObject=this.stream; this.video.src=""; this.mode='video'; this.video.play(); get('p2-bg-check').checked=true; this.settings.bgMix=true; } catch(e){alert("Webcam error");}
+                };
+                get('p2-upload-btn').onclick=()=>get('p2-upload-input').click();
+                get('p2-upload-input').onchange=e=>{
+                    const f=e.target.files[0]; if(!f)return; const u=URL.createObjectURL(f);
+                    this.restart();
+                    if(f.type.startsWith('image')){this.mode='image';this.img.src=u;} else {this.mode='video';this.video.src=u;this.video.loop=true;this.video.play();}
+                    get('p2-bg-check').checked=true; this.settings.bgMix=true;
+                    this.initAudioContext();
+                };
+                get('p2-play-music').onclick=()=>{
+                    this.initAudioContext();
+                    const i=get('p2-play-icon');
+                    if(this.audio.paused){this.audio.play(); if(this.mode==='video')this.video.play(); i.innerHTML='<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';}
+                    else{this.audio.pause(); if(this.mode==='video'&&this.video.currentSrc===this.ORIGINAL_CLIP)this.video.pause(); i.innerHTML='<path d="M8 5v14l11-7z"/>';}
+                };
+                get('p2-music-slider').oninput=e=>{this.audio.currentTime=e.target.value; if(this.video.duration)this.video.currentTime=e.target.value%this.video.duration;};
+                this.audio.ontimeupdate=()=>{
+                    get('p2-music-slider').value=this.audio.currentTime; get('p2-music-slider').max=this.audio.duration||100;
+                    const f=s=>`${Math.floor(s/60)}:${Math.floor(s%60).toString().padStart(2,'0')}`;
+                    get('p2-music-time').innerText=`${f(this.audio.currentTime)} / ${f(this.audio.duration)}`;
+                };
+                const v=(id,k)=>get(id).oninput=e=>this.settings[k]=e.target.value; const c=(id,k)=>get(id).onchange=e=>this.settings[k]=e.target.checked;
+                v('p2-bg-color','bg'); v('p2-font-color1','font1'); v('p2-font-color2','font2'); c('p2-bg-check','bgMix'); v('p2-bg-opacity','bgOp');
+                v('p2-font-size','size'); v('p2-res','res'); v('p2-thresh','thresh'); c('p2-invert','invert'); v('p2-random','chaos');
+                
+                // Initialize Color Inputs with defaults from settings
+                get('p2-bg-color').value = this.settings.bg;
+                get('p2-font-color1').value = this.settings.font1;
+                get('p2-font-color2').value = this.settings.font2;
+
+                get('p2-toggle-button').onclick=()=>get('p2-controls-bar').classList.toggle('expanded');
+                get('p2-export-img').onclick=()=>{const a=document.createElement('a'); a.download='ganwalk.png'; a.href=this.outC.toDataURL(); a.click();};
+                get('p2-record-btn').onclick=()=>{
+                    const btn=get('p2-record-btn'); const ind=get('p2-record-indicator');
+                    if(this.rec&&this.rec.state==='recording'){this.rec.stop(); btn.innerText="Gravar"; ind.classList.remove('active');}
+                    else {
+                        this.chunks=[]; const s=this.outC.captureStream(30); try{this.rec=new MediaRecorder(s,{mimeType:'video/webm;codecs=vp9'});}catch(e){this.rec=new MediaRecorder(s);}
+                        this.rec.ondataavailable=e=>{if(e.data.size>0)this.chunks.push(e.data);};
+                        this.rec.onstop=()=>{const b=new Blob(this.chunks,{type:'video/webm'}); const u=URL.createObjectURL(b); const a=document.createElement('a'); a.href=u; a.download='ganwalk.webm'; a.click();};
+                        this.rec.start(); btn.innerText="Parar"; ind.classList.add('active');
+                    }
+                };
+            },
+            hex2rgb: function(h) { const b=parseInt(h.slice(1),16); return {r:(b>>16)&255,g:(b>>8)&255,b:b&255}; },
+            draw: function() {
+                if(!this.isActive) return;
+                this.loopId=requestAnimationFrame(()=>this.draw());
+                let src=this.mode==='video'?this.video:this.img;
+                if(this.mode==='video' && (!src.videoWidth || src.paused && !src.ended)) return;
+                const w=this.outC.width, h=this.outC.height; const res=parseInt(this.settings.res); const asp=w/h;
+                let gw=asp>=1?Math.floor(res*2*asp):Math.floor(res*2); let gh=asp>=1?Math.floor(res*2):Math.floor(res*2/asp);
+                this.hiddenC.width=gw; this.hiddenC.height=gh;
+                let sW=(this.mode==='video')?src.videoWidth:src.naturalWidth; let sH=(this.mode==='video')?src.videoHeight:src.naturalHeight;
+                let sx=0,sy=0,sw=sW,sh=sH; const sa=sW/sH; const ga=gw/gh;
+                if(sa>ga){sw=sH*ga; sx=(sW-sw)/2;} else {sh=sW/ga; sy=(sH-sh)/2;}
+                this.ctxH.drawImage(src,sx,sy,sw,sh,0,0,gw,gh);
+                const data=this.ctxH.getImageData(0,0,gw,gh).data;
+                this.ctxO.fillStyle=this.settings.bg; this.ctxO.fillRect(0,0,w,h);
+                if(this.settings.bgMix){this.ctxO.globalAlpha=this.settings.bgOp/100; this.ctxO.imageSmoothingEnabled=false; this.ctxO.drawImage(this.hiddenC,0,0,w,h); this.ctxO.imageSmoothingEnabled=true; this.ctxO.globalAlpha=1;}
+                const cw=w/gw, ch=h/gh; const chars="ganwalk"; const c1=this.hex2rgb(this.settings.font1); const c2=this.hex2rgb(this.settings.font2);
+                const th=parseInt(this.settings.thresh); let ci=0;
+                this.ctxO.textAlign='center'; this.ctxO.textBaseline='middle';
+                for(let y=0;y<gh;y++){
+                    for(let x=0;x<gw;x++){
+                        const i=(y*gw+x)*4; let v=0.299*data[i]+0.587*data[i+1]+0.114*data[i+2];
+                        if(this.settings.invert)v=255-v; if(v<th)continue;
+                        let idx=ci; if(this.settings.chaos>0)idx+=Math.floor((Math.random()-0.5)*this.settings.chaos);
+                        const chReq=chars[Math.abs(idx)%chars.length]; ci++;
+                        const t=v/255; const r=Math.floor(c1.r+(c2.r-c1.r)*t); const g=Math.floor(c1.g+(c2.g-c1.g)*t); const b=Math.floor(c1.b+(c2.b-c1.b)*t);
+                        this.ctxO.fillStyle=`rgb(${r},${g},${b})`;
+                        const sz=t*ch*(this.settings.size/5); if(sz<1)continue;
+                        this.ctxO.font=`${sz}px monospace`; this.ctxO.fillText(chReq,x*cw+cw/2,y*ch+ch/2);
+                    }
+                }
+            },
+            resume: function() {
+                if(this.transitionTimer) clearTimeout(this.transitionTimer);
+                this.isActive=true; 
+                
+                // Force play video if available
+                if(this.mode==='video' && this.video.src) {
+                    this.video.play().catch(e => console.error("Video play failed", e));
+                }
+                
+                // Force play audio
+                this.audio.play().catch(e => console.error("Audio play failed", e));
+                
+                if(this.loopId) cancelAnimationFrame(this.loopId);
+                this.draw();
+            },
+            pause: function() {
+                this.isActive=false; cancelAnimationFrame(this.loopId); if(this.mode==='video')this.video.pause(); this.audio.pause();
+            }
+        };
+
+        window.onload = function() { document.fonts.ready.then(() => Nav.init()); };
+    </script>
+</body>
+</html>

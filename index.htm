@@ -123,9 +123,9 @@
         .nav-item {
             background: transparent; border: none; 
             color: var(--text-color);
-            font-family: 'Amiko', sans-serif; 
+            font-family: 'Silkscreen', cursive; 
             font-size: 0.9rem; 
-            font-weight: 600;
+            font-weight: 400;
             text-transform: uppercase;
             letter-spacing: 1px; cursor: pointer; transition: all 0.3s;
             padding: 5px 0; position: relative; white-space: nowrap;
@@ -186,9 +186,9 @@
             flex: 1; text-align: center;
             background: transparent; border: none;
             color: var(--text-color);
-            font-family: 'Amiko', sans-serif;
+            font-family: 'Silkscreen', cursive;
             font-size: 0.9rem; 
-            font-weight: 600;
+            font-weight: 400;
             text-transform: uppercase; letter-spacing: 1px;
             height: 100%; cursor: pointer;
             transition: color 0.3s ease;
@@ -207,7 +207,7 @@
         }
         #mobile-menu-overlay.open { opacity: 1; pointer-events: auto; }
         .mobile-overlay-link {
-            font-family: 'Amiko', sans-serif;
+            font-family: 'Silkscreen', cursive;
             font-size: 2rem; color: #fff;
             text-decoration: none; cursor: pointer;
             transition: color 0.3s, transform 0.3s, text-shadow 0.3s;
@@ -451,6 +451,8 @@
             margin-bottom: 20px; /* Space after art */
             overflow: hidden;
             letter-spacing: 0px;
+            -webkit-text-size-adjust: none; /* Previne aumento automático em iOS */
+            text-size-adjust: none;
         }
 
         /* AJUSTE ESPECÍFICO PARA CRÉDITOS */
@@ -458,25 +460,53 @@
             font-family: monospace; /* Fonte monoespaçada */
             font-size: 0.9rem; /* Tamanho reduzido (era 1.2rem do .text-page) */
             line-height: 1.4;
+            -webkit-text-size-adjust: none; /* Previne aumento automático em iOS */
+            text-size-adjust: none;
         }
 
         @keyframes fadeIn { to { opacity: 1; } }
 
         @media (max-width: 768px) {
-            #ganwalk-text-p1 { font-size: 15vw; }
+            #p1-main-text { font-size: 15vw !important; }
             #p1-controls-bar, #p2-controls-bar { width: 95vw; bottom: 75px; padding: 15px; max-height: 60vh; overflow-y: auto; }
             .controls-grid { grid-template-columns: 1fr; }
             
-            /* Mobile Nav Layout */
-            #top-nav { justify-content: center; } /* Center brand */
-            .nav-brand { margin: 0 auto; }
+            /* Mobile Nav Layout Centralizado */
+            #top-nav { justify-content: center; align-items: center; } 
+            .nav-brand { 
+                position: absolute; 
+                left: 50%; 
+                transform: translateX(-50%); 
+                margin: 0; 
+                text-align: center; 
+                width: max-content; 
+            }
             .nav-menu { display: none; } /* Hide standard menu */
             
             #mobile-menu-btn { 
-                display: block; 
-                position: absolute; left: 20px; top: 15px;
+                display: flex; 
+                align-items: center;
+                justify-content: center;
+                position: absolute; 
+                left: 20px; 
+                top: 50%;
+                transform: translateY(-50%);
             }
-            #mobile-exp-bar { display: flex; }
+            #mobile-exp-bar { display: none !important; }
+
+            /* AJUSTES DE TAMANHO CRÉDITOS MOBILE */
+            .ascii-block {
+                font-size: 0.45vw; /* Garante as 200 colunas no mobile sem quebrar */
+                line-height: 0.45vw;
+            }
+            #credits-screen {
+                font-size: 0.65rem; /* Letra da bio menor */
+            }
+            .c-ln {
+                font-size: 0.65rem;
+                width: 20px;
+                margin-right: 8px;
+            }
         }
     </style>
 </head>
@@ -990,7 +1020,8 @@
                 const content = ContentGenerator[key];
                 
                 // Customize speed for credits to handle large ASCII
-                const speed = (key === 'credits') ? 150 : 4;
+                const isMobile = window.innerWidth <= 768;
+                const speed = (key === 'credits') ? (isMobile ? 500 : 150) : 4; // 500 chars/tick no mobile
 
                 if (content) {
                     CodeTyper.type(id, content.code, () => {

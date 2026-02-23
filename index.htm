@@ -58,9 +58,47 @@
             font-family: 'Inter', sans-serif; color: #fff;
         }
 
+        /* --- LETREIRO TOP (MARQUEE) --- */
+        #top-marquee {
+            position: fixed; top: 0; left: 0; width: 100%; height: 30px;
+            background: #000; border-bottom: 1px solid var(--border-color);
+            color: #fff; font-family: 'Silkscreen', monospace;
+            font-size: 13px; display: flex; align-items: center;
+            text-decoration: none; overflow: hidden; z-index: 10000;
+            opacity: 0; pointer-events: none; transform: translateY(-100%);
+            transition: all 0.8s ease;
+        }
+        #top-marquee.visible {
+            opacity: 1; pointer-events: auto; transform: translateY(0);
+        }
+        #top-marquee:hover {
+            background: #fff; color: #000; border-bottom-color: #fff;
+        }
+        #top-marquee:hover .marquee-content span {
+            text-shadow: none; animation: none;
+        }
+        .marquee-content {
+            display: flex; white-space: nowrap;
+            animation: scroll-marquee 25s linear infinite;
+        }
+        .marquee-content span {
+            padding-right: 50px;
+            letter-spacing: 1px;
+            text-shadow: 0 0 5px rgba(255,255,255,0.5);
+            animation: marquee-glow 2s infinite alternate;
+        }
+        @keyframes scroll-marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        @keyframes marquee-glow {
+            0%, 100% { text-shadow: 0 0 5px #fff, 0 0 10px #fff; }
+            50% { text-shadow: 0 0 2px rgba(255,255,255,0.3); opacity: 0.8; }
+        }
+
         /* --- NAVEGAÇÃO --- */
         #top-nav {
-            position: fixed; top: 0; left: 0; width: 100%; height: 60px; z-index: 9999;
+            position: fixed; top: 30px; left: 0; width: 100%; height: 60px; z-index: 9999;
             display: flex; justify-content: space-between; align-items: center;
             padding: 0 20px; box-sizing: border-box;
             background: linear-gradient(to bottom, rgba(0,0,0,0.9), rgba(0,0,0,0));
@@ -104,6 +142,24 @@
             transition: background 0.5s ease;
         }
 
+        /* --- CLASSE EM BREVE (EXP II) --- */
+        .coming-soon {
+            cursor: default !important;
+        }
+        .coming-soon span {
+            pointer-events: none;
+        }
+        .coming-soon:hover span, .coming-soon:active span {
+            display: none;
+        }
+        .coming-soon::before {
+            content: attr(data-hover);
+            display: none;
+        }
+        .coming-soon:hover::before, .coming-soon:active::before {
+            display: inline-block;
+        }
+
         /* --- MOBILE ELEMENTS --- */
         #mobile-menu-btn {
             display: none; 
@@ -119,7 +175,7 @@
 
         #mobile-exp-bar {
             display: none; 
-            position: fixed; top: 60px; left: 0; width: 100%; height: 40px;
+            position: fixed; top: 90px; left: 0; width: 100%; height: 40px;
             z-index: 9998;
             background: linear-gradient(to bottom, rgba(0,0,0,0.8), rgba(0,0,0,0));
             align-items: center; justify-content: center;
@@ -154,10 +210,10 @@
             font-family: 'Amiko', sans-serif;
             font-size: 2rem; color: #fff;
             text-decoration: none; cursor: pointer;
-            transition: color 0.3s, transform 0.3s;
+            transition: color 0.3s, transform 0.3s, text-shadow 0.3s;
             text-transform: uppercase;
         }
-        .mobile-overlay-link:hover { color: var(--mustard); transform: scale(1.1); }
+        .mobile-overlay-link:hover { color: #fff; text-shadow: 0 0 15px rgba(255, 255, 255, 0.8); transform: scale(1.1); }
         #mobile-close-btn {
             position: absolute; top: 20px; right: 20px;
             background: transparent; border: none; color: #fff; font-size: 2rem; cursor: pointer;
@@ -220,7 +276,6 @@
         }
         #p1-interaction-tooltip.visible { opacity: 1; }
         .tooltip-line { width: 60px; height: 1px; background-color: var(--highlight-color); transform: rotate(135deg); transform-origin: top left; margin-left: 0px; margin-top: 10px; box-shadow: 0 0 5px var(--highlight-color); }
-        /* AJUSTE FONTE INTERAJA */
         .tooltip-text { color: var(--highlight-color); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; margin-left: 20px; margin-top: -5px; text-shadow: 0 0 5px var(--highlight-color); font-family: 'Silkscreen', cursive; }
 
         #p1-controls-bar {
@@ -244,7 +299,6 @@
         #p1-toggle-button.visible { opacity: 1; }
         #p1-toggle-arrow { fill: var(--highlight-color); width: 24px; height: 24px; transition: transform 0.4s ease-in-out, fill 0.5s ease; }
 
-        /* AJUSTE COLUNAS EXP II */
         .controls-grid { 
             display: grid; 
             grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); 
@@ -258,7 +312,6 @@
             font-weight: 400; font-family: 'Silkscreen', cursive; 
             transition: color 0.5s ease; 
         }
-        /* AJUSTE TAMANHO FONTE BOTÕES */
         button { background: #111; border: 1px solid #444; color: var(--highlight-color); padding: 10px; font-family: 'Silkscreen', cursive; font-size: 11px; border-radius: 4px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; width: 100%; text-transform: uppercase; }
         button:hover { background: #222; border-color: #666; }
         input[type="range"] { -webkit-appearance: none; width: 100%; background: transparent; height: 20px; padding: 0; margin: 0; border: none; }
@@ -293,7 +346,7 @@
             padding: 80px 20px; 
             display: flex; flex-direction: column; align-items: flex-start; 
             font-family: 'Silkscreen', cursive; 
-            font-size: 1rem;
+            font-size: 1.2rem;
             font-weight: 400;
             color: #abb2bf;
         }
@@ -317,8 +370,8 @@
         .c-op { color: var(--code-operator); }
         .c-ln { color: #4b5263; display: inline-block; width: 30px; text-align: right; margin-right: 15px; user-select: none; font-size: 0.9rem; }
         
-        .code-link { color: var(--code-string); text-decoration: underline; cursor: pointer; }
-        .code-link:hover { color: var(--mustard); }
+        .code-link { color: var(--code-string); text-decoration: underline; cursor: pointer; transition: all 0.3s ease; }
+        .code-link:hover { color: #fff; text-shadow: 0 0 8px rgba(255, 255, 255, 0.6); }
 
         /* RENDERED CONTENT STYLES (LINKTREE & PHOTOS) */
         .linktree-container {
@@ -429,6 +482,16 @@
 </head>
 <body>
 
+    <!-- MARQUEE NO TOPO -->
+    <a href="#" target="_blank" id="top-marquee">
+        <div class="marquee-content">
+            <span>LANÇAMENTO DIA 03.03.2026 - FAÇA O PRÉ-SAVE AGORA ///&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <span>LANÇAMENTO DIA 03.03.2026 - FAÇA O PRÉ-SAVE AGORA ///&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <span>LANÇAMENTO DIA 03.03.2026 - FAÇA O PRÉ-SAVE AGORA ///&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <span>LANÇAMENTO DIA 03.03.2026 - FAÇA O PRÉ-SAVE AGORA ///&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        </div>
+    </a>
+
     <!-- NAV -->
     <nav id="top-nav">
         <!-- Hambúrguer (Mobile) -->
@@ -441,7 +504,8 @@
         <!-- Desktop Menu -->
         <div class="nav-menu">
             <button class="nav-item active" id="btn-exp1" onclick="Nav.goToExperience1()">Exp I</button>
-            <button class="nav-item" id="btn-exp2" onclick="Nav.goToExperience2()">Exp II</button>
+            <button class="nav-item coming-soon" id="btn-exp2" data-hover="Em Breve"><span>Exp II</span></button>
+            <button class="nav-item" id="btn-presave" onclick="window.open('#', '_blank')">Pré-save</button>
             <button class="nav-item" id="btn-links" onclick="Nav.goToSection('links-screen', 'btn-links')">Links</button>
             <button class="nav-item" id="btn-fotos" onclick="Nav.goToSection('photos-screen', 'btn-fotos')">Fotos</button>
             <button class="nav-item" id="btn-creditos" onclick="Nav.goToSection('credits-screen', 'btn-creditos')">Créditos</button>
@@ -451,12 +515,13 @@
     <!-- Mobile Exp Bar (Lado a Lado) -->
     <div id="mobile-exp-bar">
         <button class="mobile-exp-item active" id="m-btn-exp1" onclick="Nav.goToExperience1()">Exp I</button>
-        <button class="mobile-exp-item" id="m-btn-exp2" onclick="Nav.goToExperience2()">Exp II</button>
+        <button class="mobile-exp-item coming-soon" id="m-btn-exp2" data-hover="Em Breve"><span>Exp II</span></button>
     </div>
 
     <!-- Mobile Menu Overlay -->
     <div id="mobile-menu-overlay">
         <button id="mobile-close-btn" onclick="Nav.toggleMobileMenu()">✕</button>
+        <div class="mobile-overlay-link" onclick="window.open('#', '_blank')">Pré-save</div>
         <div class="mobile-overlay-link" onclick="Nav.goToSection('links-screen', 'btn-links')">Links</div>
         <div class="mobile-overlay-link" onclick="Nav.goToSection('photos-screen', 'btn-fotos')">Fotos</div>
         <div class="mobile-overlay-link" onclick="Nav.goToSection('credits-screen', 'btn-creditos')">Créditos</div>
@@ -826,6 +891,7 @@
 
         const Nav = {
             currentMode: null, 
+            marqueeVisible: false,
             init: function() {
                 const l = document.getElementById('global-loader');
                 const t = document.getElementById('click-to-start-text');
@@ -848,6 +914,12 @@
                 });
                 App2.init();
             },
+            showMarquee: function() {
+                if(!this.marqueeVisible) {
+                    this.marqueeVisible = true;
+                    document.getElementById('top-marquee').classList.add('visible');
+                }
+            },
             toggleMobileMenu: function() {
                 const overlay = document.getElementById('mobile-menu-overlay');
                 overlay.classList.toggle('open');
@@ -859,10 +931,10 @@
                 }
                 
                 if (this.currentMode === 'exp1') {
-                    App1.setLowPass(false);
+                    App1.setBackground(false); // Enable visualizer
                     if (!App1.isPlaying) App1.restart();
                 } else {
-                    App1.setLowPass(false);
+                    App1.setBackground(false);
                     App1.restart();
                     this.currentMode = 'exp1';
                 }
@@ -873,16 +945,18 @@
             },
             goToExperience2: function() {
                 CodeTyper.stop();
+                this.showMarquee(); // Mostra caso o usuário navegue antes dos 5s
+                
                 if (this.currentMode === 'exp1') {
                     App1.transitionOut();
                     document.body.classList.remove('mustard-theme'); 
                 }
 
                 if (this.currentMode === 'exp2') {
-                    App2.setLowPass(false);
+                    App2.setBackground(false); // Enable visualizer
                     if(!App2.isActive) App2.restart();
                 } else {
-                    App2.setLowPass(false);
+                    App2.setBackground(false);
                     App2.restart();
                     if(!App2.video.src && App2.mode==='video') App2.loadOriginalClip();
                     this.currentMode = 'exp2';
@@ -894,6 +968,7 @@
             },
             goToSection: function(id, btnId) {
                 CodeTyper.stop(); 
+                this.showMarquee(); // Mostra caso o usuário navegue antes dos 5s
                 
                 if (this.currentMode === 'exp1') App1.setLowPass(true);
                 if (this.currentMode === 'exp2') App2.setLowPass(true); 
@@ -962,6 +1037,7 @@
             startTime: 0, pausedTime: 0,
             isActive: false, animationId: null,
             transitionTimer: null,
+            menuTimeout: null, // Novo: timer para o menu automático
 
             mouse: new THREE.Vector2(), raycaster: new THREE.Raycaster(),
             isDragging: false, dragMode: 'none', prevMouse: {x:0, y:0},
@@ -976,7 +1052,8 @@
                 try { this.audioContext = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) { return; }
                 this.setupAudioGraph();
                 try {
-                    const res = await fetch("https://audio.jukehost.co.uk/n7NGLDAosvHLu79pkZeSrCenu35K9PRV");
+                    // Link raw do GitHub para ler o arquivo mp3 direto
+                    const res = await fetch("https://raw.githubusercontent.com/ganwalk/2026/main/intro.mp3");
                     const ab = await res.arrayBuffer();
                     this.buffer = await this.audioContext.decodeAudioData(ab);
                     this.reversedBuffer = this.reverseBuffer(this.buffer);
@@ -1048,16 +1125,15 @@
                 this.masterFilter.frequency.setTargetAtTime(freq, this.audioContext.currentTime, 0.5);
             },
             
-            // NEW: Optimized background mode
             setBackground: function(isBackground) {
                 this.setLowPass(isBackground);
                 if (isBackground) {
-                    this.isActive = false; // Stop visual loop
+                    this.isActive = false; 
                     if (this.animationId) cancelAnimationFrame(this.animationId);
                 } else {
                     if (this.isPlaying && !this.isActive) {
                         this.isActive = true;
-                        this.animate(); // Restart visual loop
+                        this.animate(); 
                     }
                 }
             },
@@ -1078,10 +1154,9 @@
             },
 
             stopSourceOnly: function() {
-                // CORREÇÃO: Definir flag e limpar evento ANTES de parar o nó
                 this.isPlaying = false; 
                 if(this.sourceNode) { 
-                    this.sourceNode.onended = null; // Remove listener para evitar loop acidental
+                    this.sourceNode.onended = null; 
                     try{this.sourceNode.stop();}catch(e){} 
                     this.sourceNode.disconnect(); 
                     this.sourceNode=null; 
@@ -1097,8 +1172,6 @@
                 this.isReversed = false;
                 this.startAudio(0);
             },
-            
-            // ... (Rest of App1 methods remain unchanged for brevity, keeping all existing logic) ...
 
             createImpulse: function() {
                 const len = this.audioContext.sampleRate * 2; const buf = this.audioContext.createBuffer(2, len, this.audioContext.sampleRate);
@@ -1282,14 +1355,33 @@
                 document.getElementById('p1-main-text').style.opacity=1;
                 document.getElementById('p1-main-text').classList.add('ganwalk-neon-glow');
                 document.getElementById('p1-toggle-button').classList.add('visible');
-                document.getElementById('p1-controls-bar').classList.add('expanded');
-                this.targetWaveY = -25; this.targetWaveScale = 1;
-                this.centralShape.material.opacity=1; 
-                this.gridLines.forEach(l=>l.material.opacity=0.6);
+                
+                // NOVO: Menu passa 5s escondido, depois sobe (se não houver clique)
+                const bar = document.getElementById('p1-controls-bar');
+                const arrow = document.getElementById('p1-toggle-arrow');
+                
+                bar.classList.remove('expanded');
+                arrow.style.transform = 'rotate(0deg)';
+                this.targetWaveY = -12; this.targetWaveScale = 4;
                 this.waveLines.forEach(l=>l.material.opacity=0.8);
                 
-                // TOOLTIP LOGIC: Show if interaction not happened
                 if(!this.userHasInteracted) document.getElementById('p1-interaction-tooltip').classList.add('visible');
+                
+                if(this.menuTimeout) clearTimeout(this.menuTimeout);
+                this.menuTimeout = setTimeout(() => {
+                    if(!bar.classList.contains('expanded')) {
+                        bar.classList.add('expanded');
+                        arrow.style.transform = 'rotate(180deg)';
+                        this.targetWaveY = -25; this.targetWaveScale = 1;
+                        this.waveLines.forEach(l=>l.material.opacity=0);
+                        document.getElementById('p1-interaction-tooltip').classList.remove('visible');
+                        setTimeout(() => this.onResize(), 400);
+                    }
+                    Nav.showMarquee(); // Mostra o letreiro junto com o menu
+                }, 5000);
+
+                this.centralShape.material.opacity=1; 
+                this.gridLines.forEach(l=>l.material.opacity=0.6);
                 
                 this.onResize(); 
                 this.resume();
@@ -1345,6 +1437,9 @@
                     this.waveLines.forEach(l => l.material.color.set(this.whiteThree));
                 };
                 get('p1-toggle-button').onclick = () => {
+                    if (this.menuTimeout) { clearTimeout(this.menuTimeout); this.menuTimeout = null; }
+                    Nav.showMarquee(); // Mostra o letreiro se o usuário forçar a abertura do menu
+                    
                     const bar = get('p1-controls-bar');
                     bar.classList.toggle('expanded');
                     get('p1-toggle-arrow').style.transform = bar.classList.contains('expanded') ? 'rotate(180deg)' : 'rotate(0deg)';
@@ -1386,12 +1481,16 @@
 
                     // Only manage theme if in exp1
                     if (Nav.currentMode === 'exp1') {
-                        if(cur > 126 && !this.colorChangedTriggered) {
+                        // EVENTO AMARELO (LATENTE): Atualmente setado para false. 
+                        // Para reativar no futuro, mude "false" para a condição desejada, ex: (cur > 126)
+                        const isYellowEventActive = false; 
+
+                        if(isYellowEventActive && !this.colorChangedTriggered) {
                             this.colorChangedTriggered = true; document.body.classList.add('mustard-theme');
                             this.centralShape.material.color.set(this.mustardYellowThree);
                             this.gridLines.forEach(l=>l.material.color.set(this.mustardYellowThree));
                             this.waveLines.forEach(l=>l.material.color.set(this.mustardYellowThree));
-                        } else if (cur <= 126 && this.colorChangedTriggered) {
+                        } else if (!isYellowEventActive && this.colorChangedTriggered) {
                             this.colorChangedTriggered = false; document.body.classList.remove('mustard-theme');
                             this.centralShape.material.color.set(this.whiteThree);
                             this.gridLines.forEach(l=>l.material.color.set(this.whiteThree));

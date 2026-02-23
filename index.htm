@@ -24,6 +24,10 @@
 
     <style>
         /* --- GERAL --- */
+        *, *::before, *::after {
+            box-sizing: border-box; /* Garante que o padding nunca aumente a largura total */
+        }
+
         :root {
             --control-bg: rgba(0, 0, 0, 0.9);
             --border-color: rgba(255, 255, 255, 0.2);
@@ -56,6 +60,7 @@
             margin: 0; padding: 0; width: 100%; height: 100%;
             overflow: hidden; background-color: #000;
             font-family: 'Inter', sans-serif; color: #fff;
+            max-width: 100vw; /* Previne scroll horizontal acidental */
         }
 
         /* --- LETREIRO TOP (MARQUEE) --- */
@@ -100,7 +105,7 @@
         #top-nav {
             position: fixed; top: 30px; left: 0; width: 100%; height: 60px; z-index: 9999;
             display: flex; justify-content: space-between; align-items: center;
-            padding: 0 20px; box-sizing: border-box;
+            padding: 0 20px;
             background: linear-gradient(to bottom, rgba(0,0,0,0.9), rgba(0,0,0,0));
             opacity: 0; transition: opacity 1s ease; pointer-events: none;
         }
@@ -110,7 +115,9 @@
             font-family: 'Astloch', serif; font-weight: 700; font-size: 2rem;
             color: var(--highlight-color); 
             text-shadow: 0 0 10px rgba(255,255,255,0.6);
-            cursor: pointer; letter-spacing: 2px;
+            cursor: pointer; 
+            letter-spacing: 2px; 
+            padding-left: 2px; /* Compensa o letter-spacing visualmente no centro */
             transition: color 0.5s ease;
         }
 
@@ -123,9 +130,9 @@
         .nav-item {
             background: transparent; border: none; 
             color: var(--text-color);
-            font-family: 'Silkscreen', cursive; 
+            font-family: 'Amiko', sans-serif; 
             font-size: 0.9rem; 
-            font-weight: 400;
+            font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 1px; cursor: pointer; transition: all 0.3s;
             padding: 5px 0; position: relative; white-space: nowrap;
@@ -186,9 +193,9 @@
             flex: 1; text-align: center;
             background: transparent; border: none;
             color: var(--text-color);
-            font-family: 'Silkscreen', cursive;
+            font-family: 'Amiko', sans-serif;
             font-size: 0.9rem; 
-            font-weight: 400;
+            font-weight: 600;
             text-transform: uppercase; letter-spacing: 1px;
             height: 100%; cursor: pointer;
             transition: color 0.3s ease;
@@ -207,7 +214,7 @@
         }
         #mobile-menu-overlay.open { opacity: 1; pointer-events: auto; }
         .mobile-overlay-link {
-            font-family: 'Silkscreen', cursive;
+            font-family: 'Amiko', sans-serif;
             font-size: 2rem; color: #fff;
             text-decoration: none; cursor: pointer;
             transition: color 0.3s, transform 0.3s, text-shadow 0.3s;
@@ -283,7 +290,7 @@
             background: var(--control-bg); backdrop-filter: blur(10px);
             border: 1px solid var(--border-color); box-shadow: 0 0 30px var(--shadow-color);
             width: 90vw; max-width: 800px; padding: 20px 25px; border-radius: 8px;
-            z-index: 100; box-sizing: border-box; opacity: 0; pointer-events: none;
+            z-index: 100; opacity: 0; pointer-events: none;
             transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
         }
         #p1-controls-bar.expanded { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
@@ -471,15 +478,16 @@
             #p1-controls-bar, #p2-controls-bar { width: 95vw; bottom: 75px; padding: 15px; max-height: 60vh; overflow-y: auto; }
             .controls-grid { grid-template-columns: 1fr; }
             
-            /* Mobile Nav Layout Centralizado */
+            /* Mobile Nav Layout Centralizado ABSOLUTO */
             #top-nav { justify-content: center; align-items: center; } 
             .nav-brand { 
                 position: absolute; 
-                left: 50%; 
-                transform: translateX(-50%); 
-                margin: 0; 
+                left: 0; 
+                right: 0;
+                margin: 0 auto; 
                 text-align: center; 
                 width: max-content; 
+                transform: none;
             }
             .nav-menu { display: none; } /* Hide standard menu */
             
@@ -493,6 +501,10 @@
                 transform: translateY(-50%);
             }
             #mobile-exp-bar { display: none !important; }
+            
+            #p1-interaction-tooltip {
+                transform: translate(20px, -80px); /* Previne estourar a largura do ecrã */
+            }
 
             /* AJUSTES DE TAMANHO CRÉDITOS MOBILE */
             .ascii-block {

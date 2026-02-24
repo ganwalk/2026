@@ -37,13 +37,13 @@
             --record-color: #ff3333;
             --mustard: #E1AD01;
             
-            /* Syntax Highlighting Colors */
-            --code-keyword: #c678dd; /* Roxo */
-            --code-string: #98c379;  /* Verde */
-            --code-var: #e06c75;     /* Vermelho/Rosa */
-            --code-func: #61afef;    /* Azul */
-            --code-comment: #7f848e; /* Cinza */
-            --code-operator: #56b6c2; /* Ciano */
+            /* Syntax Highlighting Colors - Monocromático */
+            --code-keyword: #ffffff; /* Branco puro */
+            --code-string: #cccccc;  /* Cinza claro */
+            --code-var: #eeeeee;     /* Quase branco */
+            --code-func: #dddddd;    /* Cinza muito claro */
+            --code-comment: #666666; /* Cinza escuro */
+            --code-operator: #aaaaaa; /* Cinza médio */
         }
 
         body.mustard-theme {
@@ -450,13 +450,13 @@
         
         .ascii-block {
             font-family: monospace; /* Fonte padrão mono para alinhar ASCII */
-            font-size: 2px; /* Reduzido pela metade (4px -> 2px) */
-            line-height: 2px;
-            white-space: pre;
+            font-size: 0.45vw; /* Escala dinâmica garantida para Desktop e Mobile */
+            line-height: 0.45vw;
+            white-space: pre !important; /* Força que as linhas nunca quebrem */
             color: var(--highlight-color);
             display: block;
             margin-bottom: 20px; /* Space after art */
-            overflow: hidden;
+            overflow-x: hidden;
             letter-spacing: 0px;
             -webkit-text-size-adjust: none; /* Previne aumento automático em iOS */
             text-size-adjust: none;
@@ -507,10 +507,6 @@
             }
 
             /* AJUSTES DE TAMANHO CRÉDITOS MOBILE */
-            .ascii-block {
-                font-size: 0.45vw; /* Garante as 200 colunas no mobile sem quebrar */
-                line-height: 0.45vw;
-            }
             #credits-screen {
                 font-size: 0.65rem; /* Letra da bio menor */
             }
@@ -856,7 +852,7 @@
 </div>
 <span class="c-ln">1</span><span class="c-comm">/**</span><br>
 <span class="c-ln">2</span><span class="c-comm">música e experiências por: @ganwalk</span><br>
-<span class="c-ln">3</span><span class="c-comm">violões e percussões adicionais: @kiiiiiiiron</span><br>
+<span class="c-ln">3</span><span class="c-comm">violões e percussões adicionais: @kiiiiiiiron e @jeanuaifi</span><br>
 <span class="c-ln">4</span><span class="c-comm">mixagem e masterização por: @bodimm_</span><br>
 <span class="c-ln">5</span><span class="c-comm">_</span><br>
 <span class="c-ln">6</span><span class="c-comm">_</span><br>
@@ -868,6 +864,7 @@
             },
 
             photos: {
+                staticTop: '',
                 code: `
 <span class="c-ln">1</span><span class="c-kw">import</span> <span class="c-var">Gallery</span> <span class="c-kw">from</span> <span class="c-str">'./reality'</span>;<br>
 <span class="c-ln">2</span><br>
@@ -894,10 +891,10 @@
                 }
             },
             type: function(containerId, htmlContent, onComplete, charsPerTick = 4) {
-                this.stop(); // Stop any previous typing
+                this.stop(); 
                 
                 const container = document.getElementById(containerId);
-                container.innerHTML = '<span class="cursor">|</span>'; // Start with cursor
+                container.innerHTML = '<span class="cursor">|</span>'; 
                 
                 let i = 0;
                 const chunks = [];
@@ -911,22 +908,23 @@
                     else { chunks.push(char); }
                 }
                 
-                // Rapid typing - Process MULTIPLE chunks per tick for speed
+                let buildHTML = '';
                 this.activeInterval = setInterval(() => {
-                    // Process charsPerTick chars at once for speed
                     for(let k=0; k<charsPerTick; k++) {
                         if (i >= chunks.length) {
                             clearInterval(this.activeInterval);
+                            container.innerHTML = buildHTML;
                             if(onComplete) onComplete();
                             return;
                         }
-                        
-                        const currentHTML = container.innerHTML;
-                        const cleanHTML = currentHTML.replace('<span class="cursor">|</span>', '');
-                        container.innerHTML = cleanHTML + chunks[i] + '<span class="cursor">|</span>';
+                        buildHTML += chunks[i];
                         i++;
                     }
+                    container.innerHTML = buildHTML + '<span class="cursor">|</span>';
+                    
+                    // Restaura o scroll automático para todo o conteúdo do site
                     container.scrollTop = container.scrollHeight;
+                    
                 }, 5); 
             }
         };
@@ -1031,11 +1029,16 @@
 
                 const content = ContentGenerator[key];
                 
-                // Customize speed for credits to handle large ASCII
+                // Ajuste dinâmico de velocidade da arte ASCII para manter a estabilidade do scroll
+                // Valores reduzidos para fazer a geração demorar um pouco mais
                 const isMobile = window.innerWidth <= 768;
-                const speed = (key === 'credits') ? (isMobile ? 500 : 150) : 4; // 500 chars/tick no mobile
+                const speed = (key === 'credits') ? (isMobile ? 100 : 50) : 4; 
 
                 if (content) {
+                    const container = document.getElementById(id);
+                    container.innerHTML = ''; // Reset container
+                    
+                    // CodeTyper escreve o código de forma integral novamente
                     CodeTyper.type(id, content.code, () => {
                         if(content.render) {
                             setTimeout(() => {

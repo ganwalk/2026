@@ -521,14 +521,14 @@
 <body>
 
     <!-- MARQUEE NO TOPO -->
-    <a href="#" target="_blank" id="top-marquee">
+    <div id="top-marquee">
         <div class="marquee-content">
-            <span>LANÇAMENTO DIA 03.03.2026 - FAÇA O PRÉ-SAVE AGORA ///&nbsp;&nbsp;&nbsp;&nbsp;</span>
-            <span>LANÇAMENTO DIA 03.03.2026 - FAÇA O PRÉ-SAVE AGORA ///&nbsp;&nbsp;&nbsp;&nbsp;</span>
-            <span>LANÇAMENTO DIA 03.03.2026 - FAÇA O PRÉ-SAVE AGORA ///&nbsp;&nbsp;&nbsp;&nbsp;</span>
-            <span>LANÇAMENTO DIA 03.03.2026 - FAÇA O PRÉ-SAVE AGORA ///&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <span>PRÉ-SAVE EM BREVE - AGUARDE ///&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <span>PRÉ-SAVE EM BREVE - AGUARDE ///&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <span>PRÉ-SAVE EM BREVE - AGUARDE ///&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <span>PRÉ-SAVE EM BREVE - AGUARDE ///&nbsp;&nbsp;&nbsp;&nbsp;</span>
         </div>
-    </a>
+    </div>
 
     <!-- NAV -->
     <nav id="top-nav">
@@ -543,7 +543,7 @@
         <div class="nav-menu">
             <button class="nav-item active" id="btn-exp1" onclick="Nav.goToExperience1()">Exp I</button>
             <button class="nav-item coming-soon" id="btn-exp2" data-hover="Em Breve"><span>Exp II</span></button>
-            <button class="nav-item" id="btn-presave" onclick="window.open('#', '_blank')">Pré-save</button>
+            <button class="nav-item coming-soon" id="btn-presave" data-hover="Em Breve"><span>Pré-save</span></button>
             <button class="nav-item" id="btn-links" onclick="Nav.goToSection('links-screen', 'btn-links')">Links</button>
             <button class="nav-item" id="btn-fotos" onclick="Nav.goToSection('photos-screen', 'btn-fotos')">Fotos</button>
             <button class="nav-item" id="btn-creditos" onclick="Nav.goToSection('credits-screen', 'btn-creditos')">Créditos</button>
@@ -559,7 +559,7 @@
     <!-- Mobile Menu Overlay -->
     <div id="mobile-menu-overlay">
         <button id="mobile-close-btn" onclick="Nav.toggleMobileMenu()">✕</button>
-        <div class="mobile-overlay-link" onclick="window.open('#', '_blank')">Pré-save</div>
+        <div class="mobile-overlay-link coming-soon" data-hover="Em Breve"><span>Pré-save</span></div>
         <div class="mobile-overlay-link" onclick="Nav.goToSection('links-screen', 'btn-links')">Links</div>
         <div class="mobile-overlay-link" onclick="Nav.goToSection('photos-screen', 'btn-fotos')">Fotos</div>
         <div class="mobile-overlay-link" onclick="Nav.goToSection('credits-screen', 'btn-creditos')">Créditos</div>

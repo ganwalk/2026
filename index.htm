@@ -321,6 +321,7 @@
         }
         button { background: #111; border: 1px solid #444; color: var(--highlight-color); padding: 10px; font-family: 'Silkscreen', cursive; font-size: 11px; border-radius: 4px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; width: 100%; text-transform: uppercase; }
         button:hover { background: #222; border-color: #666; }
+        #p1-reverse-btn svg { transition: transform 0.3s ease; }
         input[type="range"] { -webkit-appearance: none; width: 100%; background: transparent; height: 20px; padding: 0; margin: 0; border: none; }
         input[type="range"]::-webkit-slider-runnable-track { width: 100%; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; }
         input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; height: 14px; width: 14px; background: var(--highlight-color); border-radius: 50%; margin-top: -5px; box-shadow: 0 0 5px rgba(0,0,0,0.5); cursor: pointer; transition: background 0.5s ease; }
@@ -521,14 +522,14 @@
 <body>
 
     <!-- MARQUEE NO TOPO -->
-    <div id="top-marquee">
+    <a href="https://ditto.fm/calma-ganwalk" target="_blank" id="top-marquee">
         <div class="marquee-content">
-            <span>PRÉ-SAVE EM BREVE - AGUARDE ///&nbsp;&nbsp;&nbsp;&nbsp;</span>
-            <span>PRÉ-SAVE EM BREVE - AGUARDE ///&nbsp;&nbsp;&nbsp;&nbsp;</span>
-            <span>PRÉ-SAVE EM BREVE - AGUARDE ///&nbsp;&nbsp;&nbsp;&nbsp;</span>
-            <span>PRÉ-SAVE EM BREVE - AGUARDE ///&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <span>LANÇAMENTO DIA 05.04.2026 - FAÇA O PRÉ-SAVE AGORA ///&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <span>LANÇAMENTO DIA 05.04.2026 - FAÇA O PRÉ-SAVE AGORA ///&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <span>LANÇAMENTO DIA 05.04.2026 - FAÇA O PRÉ-SAVE AGORA ///&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <span>LANÇAMENTO DIA 05.04.2026 - FAÇA O PRÉ-SAVE AGORA ///&nbsp;&nbsp;&nbsp;&nbsp;</span>
         </div>
-    </div>
+    </a>
 
     <!-- NAV -->
     <nav id="top-nav">
@@ -543,9 +544,8 @@
         <div class="nav-menu">
             <button class="nav-item active" id="btn-exp1" onclick="Nav.goToExperience1()">Exp I</button>
             <button class="nav-item coming-soon" id="btn-exp2" data-hover="Em Breve"><span>Exp II</span></button>
-            <button class="nav-item coming-soon" id="btn-presave" data-hover="Em Breve"><span>Pré-save</span></button>
+            <button class="nav-item" id="btn-presave" onclick="window.open('https://ditto.fm/calma-ganwalk', '_blank')">Pré-save</button>
             <button class="nav-item" id="btn-links" onclick="Nav.goToSection('links-screen', 'btn-links')">Links</button>
-            <button class="nav-item" id="btn-fotos" onclick="Nav.goToSection('photos-screen', 'btn-fotos')">Fotos</button>
             <button class="nav-item" id="btn-creditos" onclick="Nav.goToSection('credits-screen', 'btn-creditos')">Créditos</button>
         </div>
     </nav>
@@ -559,9 +559,8 @@
     <!-- Mobile Menu Overlay -->
     <div id="mobile-menu-overlay">
         <button id="mobile-close-btn" onclick="Nav.toggleMobileMenu()">✕</button>
-        <div class="mobile-overlay-link coming-soon" data-hover="Em Breve"><span>Pré-save</span></div>
+        <div class="mobile-overlay-link" onclick="window.open('https://ditto.fm/calma-ganwalk', '_blank')">Pré-save</div>
         <div class="mobile-overlay-link" onclick="Nav.goToSection('links-screen', 'btn-links')">Links</div>
-        <div class="mobile-overlay-link" onclick="Nav.goToSection('photos-screen', 'btn-fotos')">Fotos</div>
         <div class="mobile-overlay-link" onclick="Nav.goToSection('credits-screen', 'btn-creditos')">Créditos</div>
     </div>
 
@@ -677,32 +676,35 @@
 
     <!-- TEXT PAGES (EMPTY CONTAINERS FOR DYNAMIC CODE) -->
     <section id="links-screen" class="screen-section text-page"></section>
-    <section id="photos-screen" class="screen-section text-page"></section>
     <section id="credits-screen" class="screen-section text-page"></section>
 
     <script>
         // --- Content Generator for "Live Coding" Effect ---
         const ContentGenerator = {
             links: {
+                staticTop: '',
                 code: `
 <span class="c-ln">1</span><span class="c-kw">const</span> <span class="c-var">socialLinks</span> <span class="c-op">=</span> [<br>
-<span class="c-ln">2</span>&nbsp;&nbsp;{ <span class="c-var">platform</span>: <span class="c-str">"Instagram"</span>, <span class="c-var">handle</span>: <span class="c-str">"@"</span> },<br>
-<span class="c-ln">3</span>&nbsp;&nbsp;{ <span class="c-var">platform</span>: <span class="c-str">"Spotify"</span>, <span class="c-var">action</span>: <span class="c-str">"Listen"</span> },<br>
-<span class="c-ln">4</span>&nbsp;&nbsp;{ <span class="c-var">platform</span>: <span class="c-str">"YouTube"</span>, <span class="c-var">action</span>: <span class="c-str">"Watch"</span> },<br>
-<span class="c-ln">5</span>&nbsp;&nbsp;{ <span class="c-var">platform</span>: <span class="c-str">"SoundCloud"</span>, <span class="c-var">action</span>: <span class="c-str">"Stream"</span> }<br>
-<span class="c-ln">6</span>];<br>
-<span class="c-ln">7</span><br>
-<span class="c-ln">8</span><span class="c-func">render</span>(<span class="c-var">socialLinks</span>);`,
+<span class="c-ln">2</span>&nbsp;&nbsp;{ <span class="c-var">platform</span>: <span class="c-str">"Ouça Agora"</span>, <span class="c-var">link</span>: <span class="c-str">"ditto.fm"</span> },<br>
+<span class="c-ln">3</span>&nbsp;&nbsp;{ <span class="c-var">platform</span>: <span class="c-str">"Instagram"</span>, <span class="c-var">handle</span>: <span class="c-str">"@ganwalk"</span> },<br>
+<span class="c-ln">4</span>&nbsp;&nbsp;{ <span class="c-var">platform</span>: <span class="c-str">"TikTok"</span>, <span class="c-var">handle</span>: <span class="c-str">"@ganwalk"</span> },<br>
+<span class="c-ln">5</span>&nbsp;&nbsp;{ <span class="c-var">platform</span>: <span class="c-str">"YouTube"</span>, <span class="c-var">handle</span>: <span class="c-str">"@ganwalk"</span> },<br>
+<span class="c-ln">6</span>&nbsp;&nbsp;{ <span class="c-var">platform</span>: <span class="c-str">"SoundCloud"</span>, <span class="c-var">handle</span>: <span class="c-str">"ganwalk"</span> }<br>
+<span class="c-ln">7</span>];<br>
+<span class="c-ln">8</span><br>
+<span class="c-ln">9</span><span class="c-func">render</span>(<span class="c-var">socialLinks</span>);`,
                 render: `
                 <div class="linktree-container">
-                    <a href="#" class="linktree-btn">Instagram</a>
-                    <a href="#" class="linktree-btn">Spotify</a>
-                    <a href="#" class="linktree-btn">YouTube</a>
-                    <a href="#" class="linktree-btn">SoundCloud</a>
+                    <a href="https://ditto.fm/calma-ganwalk" target="_blank" class="linktree-btn">Ouça Agora</a>
+                    <a href="https://instagram.com/ganwalk" target="_blank" class="linktree-btn">Instagram</a>
+                    <a href="https://tiktok.com/@ganwalk" target="_blank" class="linktree-btn">TikTok</a>
+                    <a href="https://youtube.com/@ganwalk" target="_blank" class="linktree-btn">YouTube</a>
+                    <a href="https://soundcloud.com/ganwalk" target="_blank" class="linktree-btn">SoundCloud</a>
                 </div>`
             },
             
             credits: {
+                staticTop: '',
                 code: `<div class="ascii-block">
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -861,24 +863,6 @@
 <span class="c-ln">9</span><span class="c-comm">_</span><br>
 <span class="c-ln">10</span><span class="c-comm">Estamos aí! ᕕ(⌐□_□)ᕗ ♪♬</span>`,
                 render: null 
-            },
-
-            photos: {
-                staticTop: '',
-                code: `
-<span class="c-ln">1</span><span class="c-kw">import</span> <span class="c-var">Gallery</span> <span class="c-kw">from</span> <span class="c-str">'./reality'</span>;<br>
-<span class="c-ln">2</span><br>
-<span class="c-ln">3</span><span class="c-comm">// Rendering visual assets...</span><br>
-<span class="c-ln">4</span><span class="c-kw">const</span> <span class="c-var">visuals</span> <span class="c-op">=</span> <span class="c-func">loadAssets</span>(<span class="c-str">"./img/*.jpg"</span>);<br>
-<span class="c-ln">5</span><br>
-<span class="c-ln">6</span><span class="c-kw">return</span> <span class="c-op"><</span><span class="c-var">Gallery</span> <span class="c-kw">items</span>={<span class="c-var">visuals</span>} <span class="c-op">/></span>;`,
-                render: `
-                <div class="gallery-grid-final">
-                    <div class="gallery-img-container">FOTO 1</div>
-                    <div class="gallery-img-container">FOTO 2</div>
-                    <div class="gallery-img-container">FOTO 3</div>
-                    <div class="gallery-img-container">FOTO 4</div>
-                </div>`
             }
         };
 
@@ -1024,7 +1008,6 @@
                 // Trigger Code Typing Effect based on section
                 let key = '';
                 if(id === 'links-screen') key = 'links';
-                if(id === 'photos-screen') key = 'photos';
                 if(id === 'credits-screen') key = 'credits';
 
                 const content = ContentGenerator[key];
@@ -1090,6 +1073,7 @@
             isScrubbing: false, lastScrub: 0, wasPlayingBeforeScrub: false, userHasInteracted: false,
             
             targetWaveY: -25, targetWaveScale: 1, colorChangedTriggered: false,
+            hasStartedOnce: false, // CORREÇÃO: Variável de controlo para a primeira reprodução
 
             mustardYellowThree: new THREE.Color(0xE1AD01),
             whiteThree: new THREE.Color(0xffffff),
@@ -1216,6 +1200,8 @@
                 this.stopAudio();
                 this.pausedTime = 0;
                 this.isReversed = false;
+                document.getElementById('p1-reverse-btn').querySelector('svg').style.transform = 'scaleX(1)';
+                this.hasStartedOnce = false; // CORREÇÃO: Reseta a variável ao reiniciar
                 this.startAudio(0);
             },
 
@@ -1393,6 +1379,7 @@
                     if(this.isPlaying) {
                         this.stopAudio();
                         this.isReversed = !this.isReversed;
+                        document.getElementById('p1-reverse-btn').querySelector('svg').style.transform = this.isReversed ? 'scaleX(-1)' : 'scaleX(1)';
                         this.startAudio(this.isReversed ? this.buffer.duration : 0);
                     }
                 };
@@ -1406,25 +1393,30 @@
                 const bar = document.getElementById('p1-controls-bar');
                 const arrow = document.getElementById('p1-toggle-arrow');
                 
-                bar.classList.remove('expanded');
-                arrow.style.transform = 'rotate(0deg)';
-                this.targetWaveY = -12; this.targetWaveScale = 4;
-                this.waveLines.forEach(l=>l.material.opacity=0.8);
-                
-                if(!this.userHasInteracted) document.getElementById('p1-interaction-tooltip').classList.add('visible');
-                
-                if(this.menuTimeout) clearTimeout(this.menuTimeout);
-                this.menuTimeout = setTimeout(() => {
-                    if(!bar.classList.contains('expanded')) {
-                        bar.classList.add('expanded');
-                        arrow.style.transform = 'rotate(180deg)';
-                        this.targetWaveY = -25; this.targetWaveScale = 1;
-                        this.waveLines.forEach(l=>l.material.opacity=0);
-                        document.getElementById('p1-interaction-tooltip').classList.remove('visible');
-                        setTimeout(() => this.onResize(), 400);
-                    }
-                    Nav.showMarquee(); // Mostra o letreiro junto com o menu
-                }, 5000);
+                // CORREÇÃO: Garante que o menu não se esconde novamente ao navegar (scrub) na música
+                if (!this.hasStartedOnce) {
+                    this.hasStartedOnce = true;
+
+                    bar.classList.remove('expanded');
+                    arrow.style.transform = 'rotate(0deg)';
+                    this.targetWaveY = -12; this.targetWaveScale = 4;
+                    this.waveLines.forEach(l=>l.material.opacity=0.8);
+                    
+                    if(!this.userHasInteracted) document.getElementById('p1-interaction-tooltip').classList.add('visible');
+                    
+                    if(this.menuTimeout) clearTimeout(this.menuTimeout);
+                    this.menuTimeout = setTimeout(() => {
+                        if(!bar.classList.contains('expanded')) {
+                            bar.classList.add('expanded');
+                            arrow.style.transform = 'rotate(180deg)';
+                            this.targetWaveY = -25; this.targetWaveScale = 1;
+                            this.waveLines.forEach(l=>l.material.opacity=0);
+                            document.getElementById('p1-interaction-tooltip').classList.remove('visible');
+                            setTimeout(() => this.onResize(), 400);
+                        }
+                        Nav.showMarquee(); // Mostra o letreiro junto com o menu
+                    }, 5000);
+                }
 
                 this.centralShape.material.opacity=1; 
                 this.gridLines.forEach(l=>l.material.opacity=0.6);
@@ -1444,7 +1436,9 @@
                 get('p1-play-btn').onclick = () => { if(this.isPlaying) this.stopAudio(); else this.startAudio(this.pausedTime); };
                 get('p1-reverse-btn').onclick = () => {
                     const was = this.isPlaying; if(was) this.stopAudio();
-                    this.isReversed = !this.isReversed; if(was) this.startAudio(this.pausedTime);
+                    this.isReversed = !this.isReversed; 
+                    get('p1-reverse-btn').querySelector('svg').style.transform = this.isReversed ? 'scaleX(-1)' : 'scaleX(1)';
+                    if(was) this.startAudio(this.pausedTime);
                 };
                 const bind = (id, node, param, map) => {
                     get(id).addEventListener('input', e => { node[param].value = map ? map(parseFloat(e.target.value)) : parseFloat(e.target.value); });

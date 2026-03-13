@@ -1484,7 +1484,10 @@
                     this.pausedTime = parseFloat(e.target.value);
                     this.updateTimeDisplay(this.pausedTime);
                 });
-                get('p1-progress').addEventListener('mouseup', e => { this.startAudio(this.pausedTime); });
+                
+                // CORREÇÃO: Utiliza 'change' e 'touchend' para suportar mobile e evita que dispare duas vezes
+                get('p1-progress').addEventListener('change', e => { if (!this.isPlaying) this.startAudio(this.pausedTime); });
+                get('p1-progress').addEventListener('touchend', e => { if (!this.isPlaying) this.startAudio(this.pausedTime); });
                 
                 // EVENTOS DE CORES (GLOBAL)
                 get('p1-bg-color').addEventListener('input', e => {

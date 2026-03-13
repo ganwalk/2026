@@ -33,10 +33,11 @@
             --bg-gradient-top: rgba(0, 0, 0, 0.9);
             --bg-gradient-bottom: rgba(0, 0, 0, 0);
             --control-bg: rgba(0, 0, 0, 0.9);
-            --border-color: rgba(255, 255, 255, 0.2);
+            --border-color: rgba(255, 255, 255, 0.3);
             --shadow-color: rgba(255, 255, 255, 0.15);
-            --text-color: #ccc;
+            --text-color: #ffffff;
             --highlight-color: #ffffff;
+            --highlight-rgb: 255, 255, 255;
             --record-color: #ff3333;
             --mustard: #E1AD01;
             
@@ -51,6 +52,7 @@
 
         body.mustard-theme {
             --highlight-color: #E1AD01;
+            --highlight-rgb: 225, 173, 1;
             --border-color: #E1AD01;
             --shadow-color: rgba(225, 173, 1, 0.5);
             --text-color: #E1AD01;
@@ -62,7 +64,7 @@
         html, body {
             margin: 0; padding: 0; width: 100%; height: 100%;
             overflow: hidden; background-color: var(--bg-color);
-            font-family: 'Inter', sans-serif; color: #fff;
+            font-family: 'Inter', sans-serif; color: var(--text-color);
             max-width: 100vw; /* Previne scroll horizontal acidental */
             transition: background-color 0.5s ease;
         }
@@ -71,11 +73,11 @@
         #top-marquee {
             position: fixed; top: 0; left: 0; width: 100%; height: 30px;
             background: var(--bg-color); border-bottom: 1px solid var(--border-color);
-            color: #fff; font-family: 'Silkscreen', monospace;
+            color: var(--text-color); font-family: 'Silkscreen', monospace;
             font-size: 13px; display: flex; align-items: center;
             text-decoration: none; overflow: hidden; z-index: 10000;
             opacity: 0; pointer-events: none; transform: translateY(-100%);
-            transition: opacity 0.8s ease, transform 0.8s ease, background-color 0.5s ease;
+            transition: opacity 0.8s ease, transform 0.8s ease, background-color 0.5s ease, color 0.5s ease;
         }
         #top-marquee.visible {
             opacity: 1; pointer-events: auto; transform: translateY(0);
@@ -93,7 +95,7 @@
         .marquee-content span {
             padding-right: 50px;
             letter-spacing: 1px;
-            text-shadow: 0 0 5px rgba(255,255,255,0.5);
+            text-shadow: 0 0 5px rgba(var(--highlight-rgb), 0.5);
             animation: marquee-glow 2s infinite alternate;
         }
         @keyframes scroll-marquee {
@@ -102,7 +104,7 @@
         }
         @keyframes marquee-glow {
             0%, 100% { text-shadow: 0 0 5px var(--highlight-color), 0 0 10px var(--highlight-color); }
-            50% { text-shadow: 0 0 2px rgba(255,255,255,0.3); opacity: 0.8; }
+            50% { text-shadow: 0 0 2px rgba(var(--highlight-rgb), 0.3); opacity: 0.8; }
         }
 
         /* --- NAVEGAÇÃO --- */
@@ -118,11 +120,11 @@
         .nav-brand {
             font-family: 'Astloch', serif; font-weight: 700; font-size: 2rem;
             color: var(--highlight-color); 
-            text-shadow: 0 0 10px rgba(255,255,255,0.6);
+            text-shadow: 0 0 10px rgba(var(--highlight-rgb), 0.6);
             cursor: pointer; 
             letter-spacing: 2px; 
             padding-left: 2px; /* Compensa o letter-spacing visualmente no centro */
-            transition: color 0.5s ease;
+            transition: color 0.5s ease, text-shadow 0.5s ease;
         }
 
         .nav-menu { 
@@ -219,7 +221,7 @@
         #mobile-menu-overlay.open { opacity: 1; pointer-events: auto; }
         .mobile-overlay-link {
             font-family: 'Amiko', sans-serif;
-            font-size: 2rem; color: var(--highlight-color);
+            font-size: 2rem; color: var(--text-color);
             text-decoration: none; cursor: pointer;
             transition: color 0.3s, transform 0.3s, text-shadow 0.3s;
             text-transform: uppercase;
@@ -249,8 +251,8 @@
         #loader-title {
             font-family: 'Astloch', serif; font-weight: 700; font-size: 12vw;
             color: var(--highlight-color); margin-bottom: 20px; line-height: 1; text-align: center;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(200, 200, 200, 0.6);
-            transition: color 0.5s ease;
+            text-shadow: 0 0 10px rgba(var(--highlight-rgb), 0.8), 0 0 20px rgba(var(--highlight-rgb), 0.6);
+            transition: color 0.5s ease, text-shadow 0.5s ease;
         }
         #click-to-start-text {
             font-size: 1.5rem; color: var(--highlight-color); cursor: pointer; z-index: 5001;
@@ -272,14 +274,13 @@
             pointer-events: none; text-align: center; line-height: 1; opacity: 0;
             transition: opacity 0.5s ease, text-shadow 0.1s ease-out, transform 0.1s ease, color 0.5s ease;
         }
-        .ganwalk-neon-glow { text-shadow: 0 0 10px rgba(255,255,255,0.8), 0 0 20px rgba(200,200,200,0.6); }
-        body.mustard-theme .ganwalk-neon-glow { text-shadow: 0 0 10px rgba(225,173,1,0.8), 0 0 20px rgba(225,173,1,0.6); }
+        .ganwalk-neon-glow { text-shadow: 0 0 10px rgba(var(--highlight-rgb), 0.8), 0 0 20px rgba(var(--highlight-rgb), 0.6); }
         .ganwalk-glitch { animation: glitch-effect 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
         @keyframes glitch-effect {
             0% { text-shadow: 2px 2px 10px rgba(255,0,0,0.8), -2px -2px 10px rgba(0,255,255,0.6); transform: translate(-2px,2px); }
             10% { text-shadow: -2px 2px 10px rgba(0,255,0,0.8), 2px -2px 10px rgba(255,0,255,0.6); transform: translate(2px,-2px); }
-            20% { text-shadow: 0 0 10px var(--highlight-color), 0 0 20px rgba(200,200,200,0.6); transform: translate(0,0); }
-            40%,100% { text-shadow: 0 0 10px var(--highlight-color), 0 0 20px rgba(200,200,200,0.6); transform: translate(0,0); }
+            20% { text-shadow: 0 0 10px rgba(var(--highlight-rgb), 0.8), 0 0 20px rgba(var(--highlight-rgb), 0.6); transform: translate(0,0); }
+            40%,100% { text-shadow: 0 0 10px rgba(var(--highlight-rgb), 0.8), 0 0 20px rgba(var(--highlight-rgb), 0.6); transform: translate(0,0); }
         }
 
         #p1-interaction-tooltip {
@@ -297,7 +298,7 @@
             border: 1px solid var(--border-color); box-shadow: 0 0 30px var(--shadow-color);
             width: 90vw; max-width: 900px; padding: 20px 25px; border-radius: 8px;
             z-index: 100; opacity: 0; pointer-events: none;
-            transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out, background-color 0.5s ease;
+            transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out, background-color 0.5s ease, border-color 0.5s ease;
         }
         #p1-controls-bar.expanded { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
 
@@ -306,7 +307,7 @@
             width: 50px; height: 50px; border-radius: 50%;
             background: var(--control-bg); border: 1px solid var(--border-color);
             box-shadow: 0 0 20px var(--shadow-color); display: flex; align-items: center; justify-content: center;
-            cursor: pointer; pointer-events: auto; transition: background-color 0.5s ease, opacity 0.5s ease;
+            cursor: pointer; pointer-events: auto; transition: background-color 0.5s ease, opacity 0.5s ease, border-color 0.5s ease;
             backdrop-filter: blur(10px); z-index: 101; opacity: 0;
         }
         #p1-toggle-button.visible { opacity: 1; }
@@ -325,32 +326,35 @@
             font-weight: 400; font-family: 'Silkscreen', cursive; 
             transition: color 0.5s ease; 
         }
-        button { background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--highlight-color); padding: 10px; font-family: 'Silkscreen', cursive; font-size: 11px; border-radius: 4px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; width: 100%; text-transform: uppercase; }
+        button { background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-color); padding: 10px; font-family: 'Silkscreen', cursive; font-size: 11px; border-radius: 4px; cursor: pointer; transition: 0.2s, border-color 0.5s ease, color 0.5s ease; display: flex; align-items: center; justify-content: center; width: 100%; text-transform: uppercase; }
         button:hover { background: rgba(255,255,255,0.15); }
-        #p1-reverse-btn svg { transition: transform 0.3s ease, fill 0.5s ease; }
-        #p1-play-btn svg { transition: fill 0.5s ease; }
+        
+        /* Icones SVG herdam a cor de destaque (Cor Foco) */
+        #p1-play-btn svg, #p1-reverse-btn svg, #p2-play-icon { fill: var(--highlight-color); transition: transform 0.3s ease, fill 0.5s ease; }
+        #p1-volume-icon { fill: var(--highlight-color); transition: fill 0.5s ease; }
+
         input[type="range"] { -webkit-appearance: none; width: 100%; background: transparent; height: 20px; padding: 0; margin: 0; border: none; }
-        input[type="range"]::-webkit-slider-runnable-track { width: 100%; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; }
+        input[type="range"]::-webkit-slider-runnable-track { width: 100%; height: 4px; background: var(--border-color); border-radius: 2px; transition: background-color 0.5s ease; }
         input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; height: 14px; width: 14px; background: var(--highlight-color); border-radius: 50%; margin-top: -5px; box-shadow: 0 0 5px rgba(0,0,0,0.5); cursor: pointer; transition: background 0.5s ease; }
         
-        #p1-mini-container { flex-grow: 0; height: 30px; margin-top: auto; background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); border-radius: 6px; overflow: hidden; width: 100%; position: relative; }
+        #p1-mini-container { flex-grow: 0; height: 30px; margin-top: auto; background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); border-radius: 6px; overflow: hidden; width: 100%; position: relative; transition: border-color 0.5s ease; }
         #p1-mini-canvas { width: 100%; height: 100%; display: block; }
 
         /* --- ESTILOS EXP 2 (RECORDER) --- */
         #p2-canvas-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
         canvas#p2-output-canvas { display: block; width: 100%; height: 100%; }
-        #p2-controls-bar { position: absolute; bottom: 85px; left: 50%; transform: translateX(-50%); background: var(--control-bg); backdrop-filter: blur(10px); border: 1px solid var(--border-color); box-shadow: 0 0 30px rgba(255,255,255,0.15); width: 90vw; max-width: 800px; padding: 20px 25px; border-radius: 8px; z-index: 100; transition: opacity 0.4s, background-color 0.5s ease; opacity: 0; pointer-events: none; }
+        #p2-controls-bar { position: absolute; bottom: 85px; left: 50%; transform: translateX(-50%); background: var(--control-bg); backdrop-filter: blur(10px); border: 1px solid var(--border-color); box-shadow: 0 0 30px rgba(255,255,255,0.15); width: 90vw; max-width: 800px; padding: 20px 25px; border-radius: 8px; z-index: 100; transition: opacity 0.4s, background-color 0.5s ease, border-color 0.5s ease; opacity: 0; pointer-events: none; }
         #p2-controls-bar.expanded { opacity: 1; pointer-events: auto; }
-        #p2-toggle-button { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); width: 50px; height: 50px; border-radius: 50%; background: var(--control-bg); border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 101; transition: background-color 0.5s ease; }
+        #p2-toggle-button { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); width: 50px; height: 50px; border-radius: 50%; background: var(--control-bg); border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 101; transition: background-color 0.5s ease, border-color 0.5s ease; }
         #p2-toggle-button svg { fill: var(--highlight-color); width: 24px; height: 24px; transition: fill 0.5s ease; }
         #p2-record-indicator { position: absolute; top: 85px; right: 20px; display: flex; align-items: center; gap: 10px; opacity: 0; pointer-events: none; transition: 0.3s; z-index: 150; }
         #p2-record-indicator.active { opacity: 1; }
         .rec-dot { width: 15px; height: 15px; background-color: var(--record-color); border-radius: 50%; box-shadow: 0 0 10px var(--record-color); animation: blink 1s infinite; }
         .rec-text { color: var(--record-color); font-weight: bold; font-size: 14px; letter-spacing: 1px; font-family: 'Silkscreen', cursive; }
         @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
-        #p2-create-prompt { position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%); color: var(--text-color); font-size: 1.2rem; pointer-events: none; transition: opacity 0.4s; font-family: 'Silkscreen', cursive; }
+        #p2-create-prompt { position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%); color: var(--text-color); font-size: 1.2rem; pointer-events: none; transition: opacity 0.4s, color 0.5s ease; font-family: 'Silkscreen', cursive; }
         #p2-controls-bar.expanded ~ #p2-create-prompt { opacity: 0; }
-        input[type="color"] { width: 100%; height: 30px; border: 1px solid rgba(255,255,255,0.2); background: transparent; padding: 0; border-radius: 4px; cursor: pointer; transition: border-color 0.5s ease; }
+        input[type="color"] { width: 100%; height: 30px; border: 1px solid var(--border-color); background: transparent; padding: 0; border-radius: 4px; cursor: pointer; transition: border-color 0.5s ease; }
         input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--highlight-color); cursor: pointer; }
         #p2-record-btn.recording { background-color: rgba(255, 50, 50, 0.2); border-color: var(--record-color); color: var(--record-color); }
 
@@ -363,7 +367,8 @@
             font-family: 'Silkscreen', cursive; 
             font-size: 1.2rem;
             font-weight: 400;
-            color: #abb2bf;
+            color: var(--text-color);
+            transition: background-color 0.5s ease, color 0.5s ease;
         }
         .info-content { 
             max-width: 900px; width: 100%; margin: 0 auto; 
@@ -384,10 +389,10 @@
         .c-func { color: var(--code-func); }
         .c-comm { color: var(--code-comment); font-style: italic; }
         .c-op { color: var(--code-operator); }
-        .c-ln { color: #4b5263; display: inline-block; width: 30px; text-align: right; margin-right: 15px; user-select: none; font-size: 0.9rem; }
+        .c-ln { color: var(--text-color); opacity: 0.5; display: inline-block; width: 30px; text-align: right; margin-right: 15px; user-select: none; font-size: 0.9rem; transition: color 0.5s ease; }
         
         .code-link { color: var(--code-string); text-decoration: underline; cursor: pointer; transition: all 0.3s ease; }
-        .code-link:hover { color: var(--highlight-color); text-shadow: 0 0 8px rgba(255, 255, 255, 0.6); }
+        .code-link:hover { color: var(--highlight-color); text-shadow: 0 0 8px rgba(var(--highlight-rgb), 0.6); }
 
         /* RENDERED CONTENT STYLES (LINKTREE & PHOTOS) */
         .linktree-container {
@@ -422,7 +427,7 @@
         .linktree-btn:hover {
             background: var(--highlight-color);
             color: var(--bg-color);
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
+            box-shadow: 0 0 20px rgba(var(--highlight-rgb), 0.6);
             border-color: var(--highlight-color);
             transform: scale(1.02);
         }
@@ -562,17 +567,17 @@
                 <div class="controls-grid">
                     <div class="control-group">
                         <label>Reprodução</label>
-                        <div style="display:flex; gap:10px; background:rgba(255,255,255,0.05); padding:10px; border-radius:6px; border:1px solid var(--border-color);">
-                            <button id="p1-play-btn" style="width:40px; height:40px; border-radius:50%; padding:0; flex-shrink:0;"><svg viewBox="0 0 24 24" width="24" fill="var(--highlight-color)"><path d="M8 5v14l11-7z"/></svg></button>
-                            <button id="p1-reverse-btn" style="width:40px; height:40px; border-radius:50%; padding:0; flex-shrink:0;"><svg viewBox="0 0 24 24" width="24" fill="var(--highlight-color)"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg></button>
+                        <div style="display:flex; gap:10px; background:rgba(255,255,255,0.05); padding:10px; border-radius:6px; border:1px solid var(--border-color); transition: border-color 0.5s ease;">
+                            <button id="p1-play-btn" style="width:40px; height:40px; border-radius:50%; padding:0; flex-shrink:0;"><svg viewBox="0 0 24 24" width="24"><path d="M8 5v14l11-7z"/></svg></button>
+                            <button id="p1-reverse-btn" style="width:40px; height:40px; border-radius:50%; padding:0; flex-shrink:0;"><svg viewBox="0 0 24 24" width="24"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg></button>
                             <div style="flex-grow:1; display:flex; flex-direction:column; gap:4px;">
                                 <input type="range" id="p1-progress" min="0" step="0.1" value="0">
-                                <span id="p1-time-display" style="font-size:11px; color:var(--text-color); align-self:flex-end; font-family:'Silkscreen';">0:00</span>
+                                <span id="p1-time-display" style="font-size:11px; color:var(--text-color); align-self:flex-end; font-family:'Silkscreen'; transition: color 0.5s ease;">0:00</span>
                             </div>
                         </div>
                         <label>Volume</label>
                         <div style="display:flex; align-items:center; gap:10px;">
-                            <svg id="p1-volume-icon" viewBox="0 0 24 24" width="20" height="20" style="fill:var(--highlight-color); transition: fill 0.5s ease;"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.81 5 3.54 5 6.71s-2.11 5.9-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+                            <svg id="p1-volume-icon" viewBox="0 0 24 24" width="20" height="20"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.81 5 3.54 5 6.71s-2.11 5.9-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
                             <input type="range" id="p1-volume" min="0" max="1" step="0.01" value="0.5">
                         </div>
                         <div id="p1-mini-container"><canvas id="p1-mini-canvas"></canvas></div>
@@ -625,7 +630,7 @@
                     </div>
                     <!-- REPRODUTOR EXP 2 AJUSTADO -->
                     <div style="display:flex; align-items:center; gap:10px; background:#111; padding:10px; border-radius:6px; border:1px solid #444;">
-                        <button id="p2-play-music" style="width:40px; height:40px; padding:0; flex-shrink:0; border-radius:50%;"><svg id="p2-play-icon" viewBox="0 0 24 24" width="20" fill="#fff"><path d="M8 5v14l11-7z"/></svg></button>
+                        <button id="p2-play-music" style="width:40px; height:40px; padding:0; flex-shrink:0; border-radius:50%;"><svg id="p2-play-icon" viewBox="0 0 24 24" width="20"><path d="M8 5v14l11-7z"/></svg></button>
                         <div style="flex-grow:1; display:flex; flex-direction:column; gap:4px;">
                             <input type="range" id="p2-music-slider" min="0" value="0" step="1">
                             <span id="p2-music-time" style="font-size:11px; color:#ccc; align-self:flex-end; font-family:'Silkscreen';">0:00</span>
@@ -654,7 +659,7 @@
             </div>
         </div>
         <div id="p2-create-prompt">Clique para <span class="faça-glow">criar</span>.</div>
-        <div id="p2-toggle-button"><svg viewBox="0 0 24 24" width="24" fill="#fff"><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg></div>
+        <div id="p2-toggle-button"><svg viewBox="0 0 24 24" width="24"><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg></div>
     </section>
 
     <!-- TEXT PAGES (EMPTY CONTAINERS FOR DYNAMIC CODE) -->
@@ -1065,6 +1070,32 @@
 
             hex2rgb: function(h) { const b=parseInt(h.slice(1),16); return {r:(b>>16)&255,g:(b>>8)&255,b:b&255}; },
 
+            // Calcula uma cor inversa que garante sempre contraste (mesmo entre tons de cinza intermédios)
+            getInverseContrastColor: function(hex) {
+                const b_num = parseInt(hex.slice(1), 16);
+                const r = (b_num >> 16) & 255;
+                const g = (b_num >> 8) & 255;
+                const bl = b_num & 255;
+                
+                // Luminância da cor de fundo atual
+                const lumaBg = 0.2126 * r + 0.7152 * g + 0.0722 * bl;
+                
+                // Tenta fazer a inversão matemática direta
+                let invR = 255 - r;
+                let invG = 255 - g;
+                let invB = 255 - bl;
+                const lumaInv = 0.2126 * invR + 0.7152 * invG + 0.0722 * invB;
+                
+                // Se a cor de fundo e a inversa resultarem no mesmo nível de cinza, força o contraste para Preto ou Branco absoluto
+                if (Math.abs(lumaBg - lumaInv) < 80) {
+                    const isDark = lumaBg < 128;
+                    invR = isDark ? 255 : 0;
+                    invG = isDark ? 255 : 0;
+                    invB = isDark ? 255 : 0;
+                }
+                return { hex: `rgb(${invR}, ${invG}, ${invB})`, r: invR, g: invG, b: invB };
+            },
+
             init: async function() {
                 try { this.audioContext = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) { return; }
                 this.setupAudioGraph();
@@ -1178,7 +1209,7 @@
                     this.sourceNode.disconnect(); 
                     this.sourceNode=null; 
                 }
-                document.getElementById('p1-play-btn').innerHTML='<svg viewBox="0 0 24 24" width="24" fill="var(--highlight-color)"><path d="M8 5v14l11-7z"/></svg>';
+                document.getElementById('p1-play-btn').innerHTML='<svg viewBox="0 0 24 24" width="24"><path d="M8 5v14l11-7z"/></svg>';
             },
 
             restart: function() {
@@ -1371,7 +1402,7 @@
                     }
                 };
 
-                document.getElementById('p1-play-btn').innerHTML='<svg viewBox="0 0 24 24" width="24" fill="var(--highlight-color)"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
+                document.getElementById('p1-play-btn').innerHTML='<svg viewBox="0 0 24 24" width="24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
                 document.getElementById('p1-main-text').style.opacity=1;
                 document.getElementById('p1-main-text').classList.add('ganwalk-neon-glow');
                 document.getElementById('p1-toggle-button').classList.add('visible');
@@ -1460,10 +1491,18 @@
                     this.bgColor = e.target.value;
                     this.bgThree.set(this.bgColor);
                     const rgb = this.hex2rgb(this.bgColor);
+                    
+                    // Altera fundos e gradientes
                     document.documentElement.style.setProperty('--bg-color', this.bgColor);
                     document.documentElement.style.setProperty('--control-bg', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.9)`);
                     document.documentElement.style.setProperty('--bg-gradient-top', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.9)`);
                     document.documentElement.style.setProperty('--bg-gradient-bottom', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0)`);
+                    
+                    // Lógica para forçar um texto invertido com bom contraste dinâmico
+                    const contrast = this.getInverseContrastColor(this.bgColor);
+                    document.documentElement.style.setProperty('--text-color', contrast.hex);
+                    document.documentElement.style.setProperty('--border-color', `rgba(${contrast.r}, ${contrast.g}, ${contrast.b}, 0.3)`);
+
                     this.fadeMesh.material.color.set(this.bgThree);
                     
                     // Sincronizar com a Experiência II se o input dela já existir
@@ -1474,7 +1513,11 @@
                 get('p1-fg-color').addEventListener('input', e => {
                     this.fgColor = e.target.value;
                     this.fgThree.set(this.fgColor);
+                    const rgb = this.hex2rgb(this.fgColor);
+                    
                     document.documentElement.style.setProperty('--highlight-color', this.fgColor);
+                    document.documentElement.style.setProperty('--highlight-rgb', `${rgb.r}, ${rgb.g}, ${rgb.b}`); // Vincula a cor do brilho
+                    
                     if(!this.colorChangedTriggered) {
                         this.centralShape.material.color.set(this.fgThree);
                         this.gridLines.forEach(l => l.material.color.set(this.fgThree));

@@ -29,11 +29,14 @@
         }
 
         :root {
+            --bg-color: #000000;
+            --bg-gradient-top: rgba(0, 0, 0, 0.9);
+            --bg-gradient-bottom: rgba(0, 0, 0, 0);
             --control-bg: rgba(0, 0, 0, 0.9);
             --border-color: rgba(255, 255, 255, 0.2);
             --shadow-color: rgba(255, 255, 255, 0.15);
             --text-color: #ccc;
-            --highlight-color: #fff;
+            --highlight-color: #ffffff;
             --record-color: #ff3333;
             --mustard: #E1AD01;
             
@@ -58,26 +61,27 @@
 
         html, body {
             margin: 0; padding: 0; width: 100%; height: 100%;
-            overflow: hidden; background-color: #000;
+            overflow: hidden; background-color: var(--bg-color);
             font-family: 'Inter', sans-serif; color: #fff;
             max-width: 100vw; /* Previne scroll horizontal acidental */
+            transition: background-color 0.5s ease;
         }
 
         /* --- LETREIRO TOP (MARQUEE) --- */
         #top-marquee {
             position: fixed; top: 0; left: 0; width: 100%; height: 30px;
-            background: #000; border-bottom: 1px solid var(--border-color);
+            background: var(--bg-color); border-bottom: 1px solid var(--border-color);
             color: #fff; font-family: 'Silkscreen', monospace;
             font-size: 13px; display: flex; align-items: center;
             text-decoration: none; overflow: hidden; z-index: 10000;
             opacity: 0; pointer-events: none; transform: translateY(-100%);
-            transition: all 0.8s ease;
+            transition: opacity 0.8s ease, transform 0.8s ease, background-color 0.5s ease;
         }
         #top-marquee.visible {
             opacity: 1; pointer-events: auto; transform: translateY(0);
         }
         #top-marquee:hover {
-            background: #fff; color: #000; border-bottom-color: #fff;
+            background: var(--highlight-color); color: var(--bg-color); border-bottom-color: var(--highlight-color);
         }
         #top-marquee:hover .marquee-content span {
             text-shadow: none; animation: none;
@@ -97,7 +101,7 @@
             100% { transform: translateX(-50%); }
         }
         @keyframes marquee-glow {
-            0%, 100% { text-shadow: 0 0 5px #fff, 0 0 10px #fff; }
+            0%, 100% { text-shadow: 0 0 5px var(--highlight-color), 0 0 10px var(--highlight-color); }
             50% { text-shadow: 0 0 2px rgba(255,255,255,0.3); opacity: 0.8; }
         }
 
@@ -106,8 +110,8 @@
             position: fixed; top: 30px; left: 0; width: 100%; height: 60px; z-index: 9999;
             display: flex; justify-content: space-between; align-items: center;
             padding: 0 20px;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.9), rgba(0,0,0,0));
-            opacity: 0; transition: opacity 1s ease; pointer-events: none;
+            background: linear-gradient(to bottom, var(--bg-gradient-top), var(--bg-gradient-bottom));
+            opacity: 0; transition: opacity 1s ease, background 0.5s ease; pointer-events: none;
         }
         #top-nav.visible { opacity: 1; pointer-events: auto; }
 
@@ -184,9 +188,9 @@
             display: none; 
             position: fixed; top: 90px; left: 0; width: 100%; height: 40px;
             z-index: 9998;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.8), rgba(0,0,0,0));
+            background: linear-gradient(to bottom, var(--bg-gradient-top), var(--bg-gradient-bottom));
             align-items: center; justify-content: center;
-            opacity: 0; pointer-events: none; transition: opacity 1s ease;
+            opacity: 0; pointer-events: none; transition: opacity 1s ease, background 0.5s ease;
         }
         #mobile-exp-bar.visible { opacity: 1; pointer-events: auto; }
         .mobile-exp-item {
@@ -206,53 +210,55 @@
 
         #mobile-menu-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95); backdrop-filter: blur(15px);
+            background: var(--control-bg); backdrop-filter: blur(15px);
             z-index: 10000;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             gap: 30px;
-            opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
+            opacity: 0; pointer-events: none; transition: opacity 0.4s ease, background-color 0.5s ease;
         }
         #mobile-menu-overlay.open { opacity: 1; pointer-events: auto; }
         .mobile-overlay-link {
             font-family: 'Amiko', sans-serif;
-            font-size: 2rem; color: #fff;
+            font-size: 2rem; color: var(--highlight-color);
             text-decoration: none; cursor: pointer;
             transition: color 0.3s, transform 0.3s, text-shadow 0.3s;
             text-transform: uppercase;
         }
-        .mobile-overlay-link:hover { color: #fff; text-shadow: 0 0 15px rgba(255, 255, 255, 0.8); transform: scale(1.1); }
+        .mobile-overlay-link:hover { color: var(--highlight-color); text-shadow: 0 0 15px rgba(255, 255, 255, 0.8); transform: scale(1.1); }
         #mobile-close-btn {
             position: absolute; top: 20px; right: 20px;
-            background: transparent; border: none; color: #fff; font-size: 2rem; cursor: pointer;
+            background: transparent; border: none; color: var(--highlight-color); font-size: 2rem; cursor: pointer;
+            transition: color 0.5s ease;
         }
 
         /* --- SEÇÕES --- */
         .screen-section {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            opacity: 0; pointer-events: none; transition: opacity 0.8s ease;
-            z-index: 0; display: none; background: #000;
+            opacity: 0; pointer-events: none; transition: opacity 0.8s ease, background-color 0.5s ease;
+            z-index: 0; display: none; background: var(--bg-color);
         }
         .screen-section.active { opacity: 1; pointer-events: auto; display: block; z-index: 10; }
 
         /* --- LOADING SCREEN --- */
         #global-loader {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: #000; display: flex; flex-direction: column;
+            background: var(--bg-color); display: flex; flex-direction: column;
             justify-content: center; align-items: center; z-index: 5000;
-            transition: opacity 1.5s ease;
+            transition: opacity 1.5s ease, background-color 0.5s ease;
         }
         #loader-title {
             font-family: 'Astloch', serif; font-weight: 700; font-size: 12vw;
-            color: #fff; margin-bottom: 20px; line-height: 1; text-align: center;
+            color: var(--highlight-color); margin-bottom: 20px; line-height: 1; text-align: center;
             text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(200, 200, 200, 0.6);
+            transition: color 0.5s ease;
         }
         #click-to-start-text {
-            font-size: 1.5rem; color: #fff; cursor: pointer; z-index: 5001;
+            font-size: 1.5rem; color: var(--highlight-color); cursor: pointer; z-index: 5001;
             transition: color 0.3s ease, opacity 0.5s ease; text-align: center; padding: 0 20px;
         }
-        #click-to-start-text.loading { pointer-events: none; color: #777; cursor: default; }
-        .faça-glow { text-shadow: 0 0 5px #fff, 0 0 10px #fff; animation: faça-flicker 2s infinite alternate; }
-        @keyframes faça-flicker { 0%,100%{text-shadow:0 0 5px #fff,0 0 10px #fff;} 50%{text-shadow:0 0 2px #fff,0 0 5px #fff;} }
+        #click-to-start-text.loading { pointer-events: none; color: var(--text-color); cursor: default; }
+        .faça-glow { text-shadow: 0 0 5px var(--highlight-color), 0 0 10px var(--highlight-color); animation: faça-flicker 2s infinite alternate; }
+        @keyframes faça-flicker { 0%,100%{text-shadow:0 0 5px var(--highlight-color),0 0 10px var(--highlight-color);} 50%{text-shadow:0 0 2px var(--highlight-color),0 0 5px var(--highlight-color);} }
         @keyframes ellipsis { 0%{content:".";} 33%{content:"..";} 66%{content:"...";} }
         #click-to-start-text.loading::after { content: "..."; animation: ellipsis 1.5s infinite; display: inline-block; width: 20px; text-align: left; }
 
@@ -282,16 +288,16 @@
             display: flex; flex-direction: column; align-items: flex-start; z-index: 10;
         }
         #p1-interaction-tooltip.visible { opacity: 1; }
-        .tooltip-line { width: 60px; height: 1px; background-color: var(--highlight-color); transform: rotate(135deg); transform-origin: top left; margin-left: 0px; margin-top: 10px; box-shadow: 0 0 5px var(--highlight-color); }
-        .tooltip-text { color: var(--highlight-color); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; margin-left: 20px; margin-top: -5px; text-shadow: 0 0 5px var(--highlight-color); font-family: 'Silkscreen', cursive; }
+        .tooltip-line { width: 60px; height: 1px; background-color: var(--highlight-color); transform: rotate(135deg); transform-origin: top left; margin-left: 0px; margin-top: 10px; box-shadow: 0 0 5px var(--highlight-color); transition: background-color 0.5s ease, box-shadow 0.5s ease; }
+        .tooltip-text { color: var(--highlight-color); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; margin-left: 20px; margin-top: -5px; text-shadow: 0 0 5px var(--highlight-color); font-family: 'Silkscreen', cursive; transition: color 0.5s ease, text-shadow 0.5s ease; }
 
         #p1-controls-bar {
             position: absolute; bottom: 85px; left: 50%; transform: translateX(-50%) translateY(20px);
             background: var(--control-bg); backdrop-filter: blur(10px);
             border: 1px solid var(--border-color); box-shadow: 0 0 30px var(--shadow-color);
-            width: 90vw; max-width: 800px; padding: 20px 25px; border-radius: 8px;
+            width: 90vw; max-width: 900px; padding: 20px 25px; border-radius: 8px;
             z-index: 100; opacity: 0; pointer-events: none;
-            transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+            transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out, background-color 0.5s ease;
         }
         #p1-controls-bar.expanded { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
 
@@ -300,7 +306,7 @@
             width: 50px; height: 50px; border-radius: 50%;
             background: var(--control-bg); border: 1px solid var(--border-color);
             box-shadow: 0 0 20px var(--shadow-color); display: flex; align-items: center; justify-content: center;
-            cursor: pointer; pointer-events: auto; transition: background-color 0.2s, opacity 0.5s ease;
+            cursor: pointer; pointer-events: auto; transition: background-color 0.5s ease, opacity 0.5s ease;
             backdrop-filter: blur(10px); z-index: 101; opacity: 0;
         }
         #p1-toggle-button.visible { opacity: 1; }
@@ -308,7 +314,7 @@
 
         .controls-grid { 
             display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); 
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
             gap: 25px; 
         }
         .control-group { display: flex; flex-direction: column; gap: 12px; height: 100%; }
@@ -319,9 +325,10 @@
             font-weight: 400; font-family: 'Silkscreen', cursive; 
             transition: color 0.5s ease; 
         }
-        button { background: #111; border: 1px solid #444; color: var(--highlight-color); padding: 10px; font-family: 'Silkscreen', cursive; font-size: 11px; border-radius: 4px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; width: 100%; text-transform: uppercase; }
-        button:hover { background: #222; border-color: #666; }
-        #p1-reverse-btn svg { transition: transform 0.3s ease; }
+        button { background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--highlight-color); padding: 10px; font-family: 'Silkscreen', cursive; font-size: 11px; border-radius: 4px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; width: 100%; text-transform: uppercase; }
+        button:hover { background: rgba(255,255,255,0.15); }
+        #p1-reverse-btn svg { transition: transform 0.3s ease, fill 0.5s ease; }
+        #p1-play-btn svg { transition: fill 0.5s ease; }
         input[type="range"] { -webkit-appearance: none; width: 100%; background: transparent; height: 20px; padding: 0; margin: 0; border: none; }
         input[type="range"]::-webkit-slider-runnable-track { width: 100%; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; }
         input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; height: 14px; width: 14px; background: var(--highlight-color); border-radius: 50%; margin-top: -5px; box-shadow: 0 0 5px rgba(0,0,0,0.5); cursor: pointer; transition: background 0.5s ease; }
@@ -332,10 +339,10 @@
         /* --- ESTILOS EXP 2 (RECORDER) --- */
         #p2-canvas-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
         canvas#p2-output-canvas { display: block; width: 100%; height: 100%; }
-        #p2-controls-bar { position: absolute; bottom: 85px; left: 50%; transform: translateX(-50%); background: var(--control-bg); backdrop-filter: blur(10px); border: 1px solid var(--border-color); box-shadow: 0 0 30px rgba(255,255,255,0.15); width: 90vw; max-width: 800px; padding: 20px 25px; border-radius: 8px; z-index: 100; transition: opacity 0.4s; opacity: 0; pointer-events: none; }
+        #p2-controls-bar { position: absolute; bottom: 85px; left: 50%; transform: translateX(-50%); background: var(--control-bg); backdrop-filter: blur(10px); border: 1px solid var(--border-color); box-shadow: 0 0 30px rgba(255,255,255,0.15); width: 90vw; max-width: 800px; padding: 20px 25px; border-radius: 8px; z-index: 100; transition: opacity 0.4s, background-color 0.5s ease; opacity: 0; pointer-events: none; }
         #p2-controls-bar.expanded { opacity: 1; pointer-events: auto; }
-        #p2-toggle-button { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); width: 50px; height: 50px; border-radius: 50%; background: var(--control-bg); border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 101; }
-        #p2-toggle-button svg { fill: #fff; width: 24px; height: 24px; }
+        #p2-toggle-button { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); width: 50px; height: 50px; border-radius: 50%; background: var(--control-bg); border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 101; transition: background-color 0.5s ease; }
+        #p2-toggle-button svg { fill: var(--highlight-color); width: 24px; height: 24px; transition: fill 0.5s ease; }
         #p2-record-indicator { position: absolute; top: 85px; right: 20px; display: flex; align-items: center; gap: 10px; opacity: 0; pointer-events: none; transition: 0.3s; z-index: 150; }
         #p2-record-indicator.active { opacity: 1; }
         .rec-dot { width: 15px; height: 15px; background-color: var(--record-color); border-radius: 50%; box-shadow: 0 0 10px var(--record-color); animation: blink 1s infinite; }
@@ -343,13 +350,13 @@
         @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
         #p2-create-prompt { position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%); color: var(--text-color); font-size: 1.2rem; pointer-events: none; transition: opacity 0.4s; font-family: 'Silkscreen', cursive; }
         #p2-controls-bar.expanded ~ #p2-create-prompt { opacity: 0; }
-        input[type="color"] { width: 100%; height: 30px; border: 1px solid #444; background: transparent; padding: 0; border-radius: 4px; cursor: pointer; }
+        input[type="color"] { width: 100%; height: 30px; border: 1px solid rgba(255,255,255,0.2); background: transparent; padding: 0; border-radius: 4px; cursor: pointer; transition: border-color 0.5s ease; }
         input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--highlight-color); cursor: pointer; }
         #p2-record-btn.recording { background-color: rgba(255, 50, 50, 0.2); border-color: var(--record-color); color: var(--record-color); }
 
         /* --- PÁGINAS DE TEXTO (CODE EDITOR STYLE) --- */
         .text-page { 
-            background: #000; /* FUNDO PRETO PURO */
+            background: var(--bg-color); /* FUNDO DINÂMICO */
             overflow-y: auto; 
             padding: 80px 20px; 
             display: flex; flex-direction: column; align-items: flex-start; 
@@ -366,6 +373,7 @@
         .cursor {
             display: inline-block; width: 10px; height: 1.2em; background-color: var(--highlight-color);
             vertical-align: bottom; animation: blink-cursor 1s infinite;
+            transition: background-color 0.5s ease;
         }
         @keyframes blink-cursor { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
@@ -379,7 +387,7 @@
         .c-ln { color: #4b5263; display: inline-block; width: 30px; text-align: right; margin-right: 15px; user-select: none; font-size: 0.9rem; }
         
         .code-link { color: var(--code-string); text-decoration: underline; cursor: pointer; transition: all 0.3s ease; }
-        .code-link:hover { color: #fff; text-shadow: 0 0 8px rgba(255, 255, 255, 0.6); }
+        .code-link:hover { color: var(--highlight-color); text-shadow: 0 0 8px rgba(255, 255, 255, 0.6); }
 
         /* RENDERED CONTENT STYLES (LINKTREE & PHOTOS) */
         .linktree-container {
@@ -412,41 +420,11 @@
         }
 
         .linktree-btn:hover {
-            background: #fff; /* Branco no hover */
-            color: #000;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.6); /* Sombra branca */
-            border-color: #fff;
+            background: var(--highlight-color);
+            color: var(--bg-color);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
+            border-color: var(--highlight-color);
             transform: scale(1.02);
-        }
-
-        .gallery-grid-final {
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
-            gap: 20px; 
-            margin-top: 30px;
-            width: 100%;
-            opacity: 0;
-            animation: fadeIn 1s forwards;
-        }
-
-        .gallery-img-container {
-            height: 250px;
-            background: #111;
-            border: 1px solid #444;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #555;
-            transition: all 0.3s ease;
-            font-family: 'Silkscreen', cursive;
-            font-size: 1rem;
-            position: relative;
-        }
-
-        .gallery-img-container:hover {
-            border-color: #fff; /* Borda branca */
-            color: #fff; /* Texto branco */
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3); /* Sombra branca */
         }
         
         .ascii-block {
@@ -461,6 +439,7 @@
             letter-spacing: 0px;
             -webkit-text-size-adjust: none; /* Previne aumento automático em iOS */
             text-size-adjust: none;
+            transition: color 0.5s ease;
         }
 
         /* AJUSTE ESPECÍFICO PARA CRÉDITOS */
@@ -584,8 +563,8 @@
                     <div class="control-group">
                         <label>Reprodução</label>
                         <div style="display:flex; gap:10px; background:rgba(255,255,255,0.05); padding:10px; border-radius:6px; border:1px solid var(--border-color);">
-                            <button id="p1-play-btn" style="width:40px; height:40px; border-radius:50%; padding:0; flex-shrink:0;"><svg viewBox="0 0 24 24" width="24" fill="#fff"><path d="M8 5v14l11-7z"/></svg></button>
-                            <button id="p1-reverse-btn" style="width:40px; height:40px; border-radius:50%; padding:0; flex-shrink:0;"><svg viewBox="0 0 24 24" width="24" fill="#fff"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg></button>
+                            <button id="p1-play-btn" style="width:40px; height:40px; border-radius:50%; padding:0; flex-shrink:0;"><svg viewBox="0 0 24 24" width="24" fill="var(--highlight-color)"><path d="M8 5v14l11-7z"/></svg></button>
+                            <button id="p1-reverse-btn" style="width:40px; height:40px; border-radius:50%; padding:0; flex-shrink:0;"><svg viewBox="0 0 24 24" width="24" fill="var(--highlight-color)"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg></button>
                             <div style="flex-grow:1; display:flex; flex-direction:column; gap:4px;">
                                 <input type="range" id="p1-progress" min="0" step="0.1" value="0">
                                 <span id="p1-time-display" style="font-size:11px; color:var(--text-color); align-self:flex-end; font-family:'Silkscreen';">0:00</span>
@@ -613,9 +592,13 @@
                             <input type="range" id="p1-eq-mid" min="-20" max="20" value="0">
                             <input type="range" id="p1-eq-high" min="-20" max="20" value="0">
                         </div>
-                        <button id="p1-clear-effects" style="margin-top:auto;">Limpar Efeitos</button>
+                        <div style="display:flex; gap:10px; width:100%; margin-top:auto;">
+                            <div style="flex:1; display:flex; flex-direction:column; justify-content:flex-end;"><label>Cor Fundo</label><input type="color" id="p1-bg-color" value="#000000"></div>
+                            <div style="flex:1; display:flex; flex-direction:column; justify-content:flex-end;"><label>Cor Foco</label><input type="color" id="p1-fg-color" value="#ffffff"></div>
+                        </div>
                     </div>
                 </div>
+                <button id="p1-clear-effects" style="margin-top:20px; width:100%;">Limpar Efeitos</button>
             </div>
             <div id="p1-toggle-button">
                 <svg id="p1-toggle-arrow" viewBox="0 0 24 24"><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg>
@@ -1015,7 +998,7 @@
                 // Ajuste dinâmico de velocidade da arte ASCII para manter a estabilidade do scroll
                 // Valores reduzidos para fazer a geração demorar um pouco mais
                 const isMobile = window.innerWidth <= 768;
-                const speed = (key === 'credits') ? (isMobile ? 100 : 50) : 4; 
+                const speed = (key === 'credits') ? (isMobile ? 300 : 150) : 4; 
 
                 if (content) {
                     const container = document.getElementById(id);
@@ -1075,8 +1058,12 @@
             targetWaveY: -25, targetWaveScale: 1, colorChangedTriggered: false,
             hasStartedOnce: false, // CORREÇÃO: Variável de controlo para a primeira reprodução
 
+            bgColor: '#000000', fgColor: '#ffffff',
+            bgThree: new THREE.Color(0x000000), fgThree: new THREE.Color(0xffffff),
+            
             mustardYellowThree: new THREE.Color(0xE1AD01),
-            whiteThree: new THREE.Color(0xffffff),
+
+            hex2rgb: function(h) { const b=parseInt(h.slice(1),16); return {r:(b>>16)&255,g:(b>>8)&255,b:b&255}; },
 
             init: async function() {
                 try { this.audioContext = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) { return; }
@@ -1191,7 +1178,7 @@
                     this.sourceNode.disconnect(); 
                     this.sourceNode=null; 
                 }
-                document.getElementById('p1-play-btn').innerHTML='<svg viewBox="0 0 24 24" width="24" fill="#fff"><path d="M8 5v14l11-7z"/></svg>';
+                document.getElementById('p1-play-btn').innerHTML='<svg viewBox="0 0 24 24" width="24" fill="var(--highlight-color)"><path d="M8 5v14l11-7z"/></svg>';
             },
 
             restart: function() {
@@ -1247,15 +1234,15 @@
 
                 this.fadeScene = new THREE.Scene();
                 this.fadeCamera = new THREE.OrthographicCamera(-1,1,1,-1,0,1);
-                this.fadeMesh = new THREE.Mesh(new THREE.PlaneGeometry(2,2), new THREE.MeshBasicMaterial({color:0x000000, transparent:true, opacity:1.0}));
+                this.fadeMesh = new THREE.Mesh(new THREE.PlaneGeometry(2,2), new THREE.MeshBasicMaterial({color:this.bgThree, transparent:true, opacity:1.0}));
                 this.fadeScene.add(this.fadeMesh);
 
                 this.visualGroup = new THREE.Group(); this.visualGroup.position.y=12; this.scene.add(this.visualGroup);
-                this.centralShape = new THREE.Mesh(new THREE.IcosahedronGeometry(8,0), new THREE.MeshBasicMaterial({color:0xffffff, wireframe:true, transparent:true, opacity:0})); 
+                this.centralShape = new THREE.Mesh(new THREE.IcosahedronGeometry(8,0), new THREE.MeshBasicMaterial({color:this.fgThree, wireframe:true, transparent:true, opacity:0})); 
                 this.visualGroup.add(this.centralShape);
 
                 const gridGroup = new THREE.Group(); gridGroup.position.y=12; this.scene.add(gridGroup);
-                const lm = new THREE.LineBasicMaterial({color:0xffffff, transparent:true, opacity:0});
+                const lm = new THREE.LineBasicMaterial({color:this.fgThree, transparent:true, opacity:0});
                 for(let i=0;i<=30;i++) {
                     let pts=[]; for(let j=0;j<=30;j++) pts.push(new THREE.Vector3(j-15,i-15,0));
                     let g=new THREE.BufferGeometry().setFromPoints(pts); g.setAttribute('initialPosition',g.attributes.position.clone());
@@ -1384,7 +1371,7 @@
                     }
                 };
 
-                document.getElementById('p1-play-btn').innerHTML='<svg viewBox="0 0 24 24" width="24" fill="#fff"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
+                document.getElementById('p1-play-btn').innerHTML='<svg viewBox="0 0 24 24" width="24" fill="var(--highlight-color)"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
                 document.getElementById('p1-main-text').style.opacity=1;
                 document.getElementById('p1-main-text').classList.add('ganwalk-neon-glow');
                 document.getElementById('p1-toggle-button').classList.add('visible');
@@ -1467,15 +1454,49 @@
                     this.updateTimeDisplay(this.pausedTime);
                 });
                 get('p1-progress').addEventListener('mouseup', e => { this.startAudio(this.pausedTime); });
+                
+                // EVENTOS DE CORES (GLOBAL)
+                get('p1-bg-color').addEventListener('input', e => {
+                    this.bgColor = e.target.value;
+                    this.bgThree.set(this.bgColor);
+                    const rgb = this.hex2rgb(this.bgColor);
+                    document.documentElement.style.setProperty('--bg-color', this.bgColor);
+                    document.documentElement.style.setProperty('--control-bg', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.9)`);
+                    document.documentElement.style.setProperty('--bg-gradient-top', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.9)`);
+                    document.documentElement.style.setProperty('--bg-gradient-bottom', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0)`);
+                    this.fadeMesh.material.color.set(this.bgThree);
+                    
+                    // Sincronizar com a Experiência II se o input dela já existir
+                    const p2Bg = get('p2-bg-color');
+                    if(p2Bg && p2Bg.value !== this.bgColor) { p2Bg.value = this.bgColor; p2Bg.dispatchEvent(new Event('input')); }
+                });
+
+                get('p1-fg-color').addEventListener('input', e => {
+                    this.fgColor = e.target.value;
+                    this.fgThree.set(this.fgColor);
+                    document.documentElement.style.setProperty('--highlight-color', this.fgColor);
+                    if(!this.colorChangedTriggered) {
+                        this.centralShape.material.color.set(this.fgThree);
+                        this.gridLines.forEach(l => l.material.color.set(this.fgThree));
+                        this.waveLines.forEach(l => l.material.color.set(this.fgThree));
+                    }
+                    
+                    // Sincronizar com a Experiência II se o input dela já existir
+                    const p2Fg = get('p2-font-color1');
+                    if(p2Fg && p2Fg.value !== this.fgColor) { p2Fg.value = this.fgColor; p2Fg.dispatchEvent(new Event('input')); }
+                });
+
                 get('p1-clear-effects').onclick = () => {
                     ['p1-delay','p1-reverb','p1-chorus','p1-filter','p1-overdrive','p1-eq-low','p1-eq-mid','p1-eq-high'].forEach(id => { get(id).value = 0; get(id).dispatchEvent(new Event('input')); });
                     get('p1-pitch').value = 1; get('p1-pitch').dispatchEvent(new Event('input'));
+                    
+                    get('p1-bg-color').value = '#000000'; get('p1-bg-color').dispatchEvent(new Event('input'));
+                    get('p1-fg-color').value = '#ffffff'; get('p1-fg-color').dispatchEvent(new Event('input'));
+
                     document.body.classList.remove('mustard-theme');
                     this.colorChangedTriggered = false;
-                    this.centralShape.material.color.set(this.whiteThree);
-                    this.gridLines.forEach(l => l.material.color.set(this.whiteThree));
-                    this.waveLines.forEach(l => l.material.color.set(this.whiteThree));
                 };
+                
                 get('p1-toggle-button').onclick = () => {
                     if (this.menuTimeout) { clearTimeout(this.menuTimeout); this.menuTimeout = null; }
                     Nav.showMarquee(); // Mostra o letreiro se o usuário forçar a abertura do menu
@@ -1532,9 +1553,9 @@
                             this.waveLines.forEach(l=>l.material.color.set(this.mustardYellowThree));
                         } else if (!isYellowEventActive && this.colorChangedTriggered) {
                             this.colorChangedTriggered = false; document.body.classList.remove('mustard-theme');
-                            this.centralShape.material.color.set(this.whiteThree);
-                            this.gridLines.forEach(l=>l.material.color.set(this.whiteThree));
-                            this.waveLines.forEach(l=>l.material.color.set(this.whiteThree));
+                            this.centralShape.material.color.set(this.fgThree);
+                            this.gridLines.forEach(l=>l.material.color.set(this.fgThree));
+                            this.waveLines.forEach(l=>l.material.color.set(this.fgThree));
                         }
                     } else {
                         // Prevent theme logic from running if not in exp1 view
@@ -1552,7 +1573,7 @@
 
                 document.getElementById('p1-main-text').style.transform = `scale(${1+avg*0.05*dir})`;
                 this.fadeMesh.material.opacity = 0.02 + 0.98 * Math.pow(1.0 - rVal, 3);
-                this.renderer.setClearColor(0x000000, 1 - (dVal*0.9));
+                this.renderer.setClearColor(this.bgThree, 1 - (dVal*0.9));
                 this.visualGroup.rotation.y += (0.005 + avg*0.01)*dir;
                 if(!this.isScrubbing) this.visualGroup.scale.setScalar(1 + dVal*0.1 + Math.sin(t*2)*dVal*0.1);
                 this.centralShape.rotation.x += (0.005 + h*0.02)*dir;
@@ -1603,9 +1624,10 @@
                 if(!mc) return;
                 const ctx = mc.getContext('2d');
                 const w = mc.width, hC = mc.height;
-                ctx.fillStyle = `rgba(0,0,0,${0.02 + 0.98 * Math.pow(1.0 - reverb, 3)})`;
+                const bgRGB = this.hex2rgb(this.bgColor);
+                ctx.fillStyle = `rgba(${bgRGB.r},${bgRGB.g},${bgRGB.b},${0.02 + 0.98 * Math.pow(1.0 - reverb, 3)})`;
                 ctx.fillRect(0,0,w,hC);
-                const col = this.colorChangedTriggered ? '#E1AD01' : '#FFFFFF';
+                const col = this.colorChangedTriggered ? '#E1AD01' : this.fgColor;
                 const alpha = Math.max(0, ((100-filter)/100))*0.8;
                 ctx.lineWidth = 1 + od*2;
                 const vShift = Math.sin(time*2)*chorus*10;

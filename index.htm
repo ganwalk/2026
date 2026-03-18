@@ -220,8 +220,8 @@
         }
         #mobile-menu-overlay.open { opacity: 1; pointer-events: auto; }
         .mobile-overlay-link {
-            font-family: 'Amiko', sans-serif;
-            font-size: 2rem; color: var(--text-color);
+            font-family: 'Silkscreen', cursive;
+            font-size: 1.4rem; color: var(--text-color);
             text-decoration: none; cursor: pointer;
             transition: color 0.3s, transform 0.3s, text-shadow 0.3s;
             text-transform: uppercase;
@@ -500,6 +500,11 @@
                 width: 20px;
                 margin-right: 8px;
             }
+            .ascii-block {
+                font-size: 1.2vw;
+                line-height: 1.2vw;
+                text-align: center;
+            }
         }
     </style>
 </head>
@@ -543,6 +548,8 @@
     <!-- Mobile Menu Overlay -->
     <div id="mobile-menu-overlay">
         <button id="mobile-close-btn" onclick="Nav.toggleMobileMenu()">✕</button>
+        <div class="mobile-overlay-link" onclick="Nav.goToExperience1()">Exp I</div>
+        <div class="mobile-overlay-link" style="opacity:0.4; cursor:default;">Exp II</div>
         <div class="mobile-overlay-link" onclick="window.open('https://ditto.fm/calma-ganwalk', '_blank')">Pré-save</div>
         <div class="mobile-overlay-link" onclick="Nav.goToSection('links-screen', 'btn-links')">Links</div>
         <div class="mobile-overlay-link" onclick="Nav.goToSection('credits-screen', 'btn-creditos')">Créditos</div>

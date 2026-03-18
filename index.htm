@@ -1164,7 +1164,19 @@
                 this.delayNode.connect(this.masterFilter);
                 this.reverbGain.connect(this.masterFilter);
 
-                this.masterFilter.connect(ctx.destination);
+                // iOS mute switch workaround: route through a <video> element which bypasses the hardware mute switch
+                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+                if (isIOS && ctx.createMediaStreamDestination) {
+                    this.iosStreamDest = ctx.createMediaStreamDestination();
+                    this.masterFilter.connect(this.iosStreamDest);
+                    this.iosAudioEl = document.createElement('video');
+                    this.iosAudioEl.srcObject = this.iosStreamDest.stream;
+                    this.iosAudioEl.setAttribute('playsinline', '');
+                    this.iosAudioEl.volume = 1;
+                    document.body.appendChild(this.iosAudioEl);
+                } else {
+                    this.masterFilter.connect(ctx.destination);
+                }
             },
 
             setLowPass: function(active) {
@@ -1701,6 +1713,7 @@
             resume: function() {
                 if(this.transitionTimer) clearTimeout(this.transitionTimer);
                 if(this.audioContext.state==='suspended') this.audioContext.resume();
+                if(this.iosAudioEl) this.iosAudioEl.play().catch(()=>{});
                 this.isActive = true;
                 this.onResize();
                 if(this.animationId) cancelAnimationFrame(this.animationId);
@@ -1756,13 +1769,26 @@
                     // Routing:
                     // 1. Dry Path (Original Audio)
                     this.audioGain.connect(this.audioFilter);
-                    this.audioFilter.connect(this.audioCtx.destination);
 
                     // 2. Wet Path (Transition Delay)
                     this.audioGain.connect(this.audioDelay);
                     this.audioDelay.connect(this.delayWet);
-                    this.delayWet.connect(this.audioCtx.destination); // Bypass filter or through filter? Through filter ensures consistency if filter is used.
-                    // Connecting wet to destination directly for now to ensure it works simply.
+
+                    // iOS mute switch workaround: route through a <video> element which bypasses the hardware mute switch
+                    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+                    if (isIOS && this.audioCtx.createMediaStreamDestination) {
+                        this.iosStreamDest2 = this.audioCtx.createMediaStreamDestination();
+                        this.audioFilter.connect(this.iosStreamDest2);
+                        this.delayWet.connect(this.iosStreamDest2);
+                        this.iosAudioEl2 = document.createElement('video');
+                        this.iosAudioEl2.srcObject = this.iosStreamDest2.stream;
+                        this.iosAudioEl2.setAttribute('playsinline', '');
+                        this.iosAudioEl2.volume = 1;
+                        document.body.appendChild(this.iosAudioEl2);
+                    } else {
+                        this.audioFilter.connect(this.audioCtx.destination);
+                        this.delayWet.connect(this.audioCtx.destination);
+                    }
 
                     const s1 = this.audioCtx.createMediaElementSource(this.video);
                     const s2 = this.audioCtx.createMediaElementSource(this.audio);
@@ -1820,6 +1846,7 @@
                 if(this.transitionTimer) clearTimeout(this.transitionTimer);
                 this.initAudioContext();
                 if(this.audioCtx && this.audioCtx.state === 'suspended') this.audioCtx.resume();
+                if(this.iosAudioEl2) this.iosAudioEl2.play().catch(()=>{});
                 
                 this.video.currentTime = 0;
                 this.audio.currentTime = 0;
@@ -1854,6 +1881,7 @@
                 };
                 get('p2-play-music').onclick=()=>{
                     this.initAudioContext();
+                    if(this.iosAudioEl2) this.iosAudioEl2.play().catch(()=>{});
                     const i=get('p2-play-icon');
                     if(this.audio.paused){this.audio.play(); if(this.mode==='video')this.video.play(); i.innerHTML='<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';}
                     else{this.audio.pause(); if(this.mode==='video'&&this.video.currentSrc===this.ORIGINAL_CLIP)this.video.pause(); i.innerHTML='<path d="M8 5v14l11-7z"/>';}

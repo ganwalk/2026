@@ -462,6 +462,7 @@
             #p1-main-text { font-size: 15vw !important; }
             #p1-controls-bar, #p2-controls-bar { width: 95vw; bottom: 75px; padding: 15px; max-height: 60vh; overflow-y: auto; }
             .controls-grid { grid-template-columns: 1fr; }
+            #p1-pitch-group { order: -1; }
             
             /* Mobile Nav Layout Centralizado ABSOLUTO */
             #top-nav { justify-content: center; align-items: center; } 
@@ -595,9 +596,11 @@
                         <label>Oscilador de Realidades</label><input type="range" id="p1-chorus" min="0" max="1" step="0.01" value="0">
                         <label>Véu Sonoro</label><input type="range" id="p1-filter" min="0" max="100" step="1" value="0">
                     </div>
+                    <div class="control-group" id="p1-pitch-group">
+                        <label>Tom (Velocidade)</label><input type="range" id="p1-pitch" min="0.1" max="2" step="0.01" value="1">
+                    </div>
                     <div class="control-group">
                         <label>Distorção Cósmica</label><input type="range" id="p1-overdrive" min="0" max="1" step="0.01" value="0">
-                        <label>Tom (Velocidade)</label><input type="range" id="p1-pitch" min="0.1" max="2" step="0.01" value="1">
                         <label>EQ (L/M/H)</label>
                         <div style="display:flex; gap:10px;">
                             <input type="range" id="p1-eq-low" min="-20" max="20" value="0">
@@ -1108,7 +1111,7 @@
                 this.setupAudioGraph();
                 try {
                     // Link raw do GitHub para ler o arquivo mp3 direto
-                    const res = await fetch("https://raw.githubusercontent.com/ganwalk/2026/main/intro.mp3");
+                    const res = await fetch("https://raw.githubusercontent.com/ganwalk/2026/main/calma.mp3");
                     const ab = await res.arrayBuffer();
                     this.buffer = await this.audioContext.decodeAudioData(ab);
                     this.reversedBuffer = this.reverseBuffer(this.buffer);

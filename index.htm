@@ -319,7 +319,6 @@
             gap: 25px; 
         }
         .control-group { display: flex; flex-direction: column; gap: 12px; height: 100%; }
-        #p1-pitch-group { height: auto; align-self: start; }
         .control-group label { 
             font-size: 10px; 
             text-transform: uppercase; letter-spacing: 0.5px; 
@@ -463,7 +462,6 @@
             #p1-main-text { font-size: 15vw !important; }
             #p1-controls-bar, #p2-controls-bar { width: 95vw; bottom: 75px; padding: 15px; max-height: 60vh; overflow-y: auto; }
             .controls-grid { grid-template-columns: 1fr; }
-            #p1-pitch-group { order: -1; }
             
             /* Mobile Nav Layout Centralizado ABSOLUTO */
             #top-nav { justify-content: center; align-items: center; } 
@@ -515,10 +513,10 @@
     <!-- MARQUEE NO TOPO -->
     <a href="https://ditto.fm/calma-ganwalk" target="_blank" id="top-marquee">
         <div class="marquee-content">
-            <span>LANÇAMENTO DIA 05.04.2026 - FAÇA O PRÉ-SAVE AGORA ///&nbsp;&nbsp;&nbsp;&nbsp;</span>
-            <span>LANÇAMENTO DIA 05.04.2026 - FAÇA O PRÉ-SAVE AGORA ///&nbsp;&nbsp;&nbsp;&nbsp;</span>
-            <span>LANÇAMENTO DIA 05.04.2026 - FAÇA O PRÉ-SAVE AGORA ///&nbsp;&nbsp;&nbsp;&nbsp;</span>
-            <span>LANÇAMENTO DIA 05.04.2026 - FAÇA O PRÉ-SAVE AGORA ///&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <span>CALMA — OUÇA AGORA ///&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <span>CALMA — OUÇA AGORA ///&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <span>CALMA — OUÇA AGORA ///&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <span>CALMA — OUÇA AGORA ///&nbsp;&nbsp;&nbsp;&nbsp;</span>
         </div>
     </a>
 
@@ -597,10 +595,8 @@
                         <label>Oscilador de Realidades</label><input type="range" id="p1-chorus" min="0" max="1" step="0.01" value="0">
                         <label>Véu Sonoro</label><input type="range" id="p1-filter" min="0" max="100" step="1" value="0">
                     </div>
-                    <div class="control-group" id="p1-pitch-group">
-                        <label>Tom (Velocidade)</label><input type="range" id="p1-pitch" min="0.1" max="2" step="0.01" value="1">
-                    </div>
                     <div class="control-group">
+                        <div id="p1-pitch-wrapper"><label>Tom (Velocidade)</label><input type="range" id="p1-pitch" min="0.1" max="2" step="0.01" value="1"></div>
                         <label>Distorção Cósmica</label><input type="range" id="p1-overdrive" min="0" max="1" step="0.01" value="0">
                         <label>EQ (L/M/H)</label>
                         <div style="display:flex; gap:10px;">
@@ -1977,7 +1973,19 @@
             }
         };
 
-        window.onload = function() { document.fonts.ready.then(() => Nav.init()); };
+        window.onload = function() {
+            document.fonts.ready.then(() => Nav.init());
+            if (window.innerWidth <= 768) {
+                const grid = document.querySelector('#p1-controls-bar .controls-grid');
+                const pitchWrapper = document.getElementById('p1-pitch-wrapper');
+                if (grid && pitchWrapper) {
+                    const mobileGroup = document.createElement('div');
+                    mobileGroup.className = 'control-group';
+                    mobileGroup.appendChild(pitchWrapper);
+                    grid.insertBefore(mobileGroup, grid.firstChild);
+                }
+            }
+        };
     </script>
 </body>
 </html>

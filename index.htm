@@ -983,7 +983,7 @@
                 
                 this.nav('experience-1', 'btn-exp1');
                 this.updateMobileExpButtons('m-btn-exp1');
-                setTimeout(() => App1.resume(), 100);
+                setTimeout(() => App1.resume(), 200);
             },
             goToExperience2: function() {
                 const r = document.documentElement.style;
@@ -1011,7 +1011,7 @@
 
                 this.nav('experience-2', 'btn-exp2');
                 this.updateMobileExpButtons('m-btn-exp2');
-                setTimeout(() => App2.resume(), 100);
+                setTimeout(() => App2.resume(), 200);
             },
             goToSection: function(id, btnId) {
                 CodeTyper.stop(); 
@@ -1235,17 +1235,14 @@
 
             transitionOut: function() {
                 if(this.transitionTimer) clearTimeout(this.transitionTimer);
-
-                if(this.delayNode && this.feedbackNode) {
-                    this.delayNode.delayTime.setTargetAtTime(0.5, this.audioContext.currentTime, 0.1);
-                    this.feedbackNode.gain.setTargetAtTime(0.9, this.audioContext.currentTime, 0.1);
-                }
-                
+                // Zera feedback e delay imediatamente para evitar ring-out na troca
+                if(this.feedbackNode) this.feedbackNode.gain.setTargetAtTime(0, this.audioContext.currentTime, 0.05);
+                if(this.delayNode) this.delayNode.delayTime.setTargetAtTime(0, this.audioContext.currentTime, 0.05);
                 this.transitionTimer = setTimeout(() => {
-                    this.stopSourceOnly(); 
-                    this.isActive = false; 
+                    this.stopSourceOnly();
+                    this.isActive = false;
                     if(this.animationId) { cancelAnimationFrame(this.animationId); this.animationId = null; }
-                }, 100);
+                }, 150);
             },
 
             stopSourceOnly: function() {
@@ -1856,25 +1853,15 @@
 
             transitionOut: function() {
                 if(this.transitionTimer) clearTimeout(this.transitionTimer);
-                if(!this.audioCtx) return;
-                if(this.audioCtx.state === 'suspended') this.audioCtx.resume();
-                
-                // Activate delay for transition
-                this.audioDelay.delayTime.value = 0.5;
-                this.audioFeedback.gain.setTargetAtTime(0.8, this.audioCtx.currentTime, 0.1);
-                this.delayWet.gain.setTargetAtTime(1.0, this.audioCtx.currentTime, 0.1); // Fade in delay
-                
+                // Zera delay/feedback imediatamente para não sangrar na EXP de destino
+                if(this.audioFeedback) this.audioFeedback.gain.setTargetAtTime(0, this.audioCtx ? this.audioCtx.currentTime : 0, 0.05);
+                if(this.delayWet) this.delayWet.gain.setTargetAtTime(0, this.audioCtx ? this.audioCtx.currentTime : 0, 0.05);
                 this.transitionTimer = setTimeout(() => {
                     this.video.pause();
                     this.audio.pause();
                     this.isActive = false;
-                    
-                    // Reset for next time
-                    this.audioFeedback.gain.setTargetAtTime(0, this.audioCtx.currentTime + 1, 0.1);
-                    this.delayWet.gain.setTargetAtTime(0, this.audioCtx.currentTime + 1, 0.1); 
-                    
                     if(this.loopId) { cancelAnimationFrame(this.loopId); this.loopId = null; }
-                }, 400);
+                }, 150);
             },
 
             restart: function() {

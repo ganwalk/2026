@@ -36,8 +36,8 @@
             --border-color: rgba(255, 255, 255, 0.3);
             --shadow-color: rgba(255, 255, 255, 0.15);
             --text-color: #ffffff;
-            --highlight-color: #ffffff;
-            --highlight-rgb: 255, 255, 255;
+            --highlight-color: #ffc800;
+            --highlight-rgb: 255, 200, 0;
             --record-color: #ff3333;
             --mustard: #E1AD01;
             
@@ -606,7 +606,7 @@
                         </div>
                         <div style="display:flex; gap:10px; width:100%; margin-top:auto;">
                             <div style="flex:1; display:flex; flex-direction:column; justify-content:flex-end;"><label>Cor Fundo</label><input type="color" id="p1-bg-color" value="#000000"></div>
-                            <div style="flex:1; display:flex; flex-direction:column; justify-content:flex-end;"><label>Cor Foco</label><input type="color" id="p1-fg-color" value="#ffffff"></div>
+                            <div style="flex:1; display:flex; flex-direction:column; justify-content:flex-end;"><label>Cor Foco</label><input type="color" id="p1-fg-color" value="#ffc800"></div>
                         </div>
                     </div>
                 </div>
@@ -1070,8 +1070,8 @@
             targetWaveY: -25, targetWaveScale: 1, colorChangedTriggered: false,
             hasStartedOnce: false, // CORREÇÃO: Variável de controlo para a primeira reprodução
 
-            bgColor: '#000000', fgColor: '#ffffff',
-            bgThree: new THREE.Color(0x000000), fgThree: new THREE.Color(0xffffff),
+            bgColor: '#000000', fgColor: '#ffc800',
+            bgThree: new THREE.Color(0x000000), fgThree: new THREE.Color(0xffc800),
             
             mustardYellowThree: new THREE.Color(0xE1AD01),
 
@@ -1556,7 +1556,7 @@
                     get('p1-pitch').value = 1; get('p1-pitch').dispatchEvent(new Event('input'));
                     
                     get('p1-bg-color').value = '#000000'; get('p1-bg-color').dispatchEvent(new Event('input'));
-                    get('p1-fg-color').value = '#ffffff'; get('p1-fg-color').dispatchEvent(new Event('input'));
+                    get('p1-fg-color').value = '#ffc800'; get('p1-fg-color').dispatchEvent(new Event('input'));
 
                     document.body.classList.remove('mustard-theme');
                     this.colorChangedTriggered = false;
@@ -1733,7 +1733,7 @@
         };
 
         const App2 = {
-            settings:{bg:'#000000',font1:'#00ffff',font2:'#ff7100',size:10,res:35,thresh:0,invert:false,chaos:0,bgMix:false,bgOp:72},
+            settings:{bg:'#000000',font1:'#ffc800',font2:'#ff8800',size:10,res:35,thresh:0,invert:false,chaos:0,bgMix:false,bgOp:72},
             video:null,img:null,hiddenC:null,outC:null,ctxH:null,ctxO:null,audio:null,stream:null,mode:'video',loopId:null,rec:null,chunks:[],isActive:false,
             audioCtx: null, audioSource: null, audioGain: null, audioFilter: null, audioDelay: null, audioFeedback: null,
             delayWet: null,
@@ -1900,7 +1900,15 @@
                     get('p2-music-time').innerText=`${f(this.audio.currentTime)} / ${f(this.audio.duration)}`;
                 };
                 const v=(id,k)=>get(id).oninput=e=>this.settings[k]=e.target.value; const c=(id,k)=>get(id).onchange=e=>this.settings[k]=e.target.checked;
-                v('p2-bg-color','bg'); v('p2-font-color1','font1'); v('p2-font-color2','font2'); c('p2-bg-check','bgMix'); v('p2-bg-opacity','bgOp');
+                v('p2-bg-color','bg'); v('p2-font-color2','font2'); c('p2-bg-check','bgMix'); v('p2-bg-opacity','bgOp');
+                get('p2-font-color1').oninput = e => {
+                    this.settings.font1 = e.target.value;
+                    const rgb = this.hex2rgb(e.target.value);
+                    document.documentElement.style.setProperty('--highlight-color', e.target.value);
+                    document.documentElement.style.setProperty('--highlight-rgb', `${rgb.r}, ${rgb.g}, ${rgb.b}`);
+                    const p1Fg = get('p1-fg-color');
+                    if(p1Fg && p1Fg.value !== e.target.value) { p1Fg.value = e.target.value; p1Fg.dispatchEvent(new Event('input')); }
+                };
                 v('p2-font-size','size'); v('p2-res','res'); v('p2-thresh','thresh'); c('p2-invert','invert'); v('p2-random','chaos');
                 
                 // Initialize Color Inputs with defaults from settings

@@ -29,10 +29,10 @@
         }
 
         :root {
-            --bg-color: #030a00;
-            --bg-gradient-top: rgba(3, 10, 0, 0.9);
-            --bg-gradient-bottom: rgba(3, 10, 0, 0);
-            --control-bg: rgba(3, 10, 0, 0.9);
+            --bg-color: #000500;
+            --bg-gradient-top: rgba(0, 5, 0, 0.9);
+            --bg-gradient-bottom: rgba(0, 5, 0, 0);
+            --control-bg: rgba(0, 5, 0, 0.9);
             --border-color: rgba(255, 200, 0, 0.3);
             --shadow-color: rgba(255, 200, 0, 0.15);
             --text-color: #ffc800;
@@ -85,18 +85,22 @@
         #top-marquee:hover {
             background: var(--highlight-color); color: var(--bg-color); border-bottom-color: var(--highlight-color);
         }
-        #top-marquee:hover .marquee-content span {
-            text-shadow: none; animation: none;
+        .marquee-track {
+            display: flex;
+            width: max-content;
+            animation: scroll-marquee 30s linear infinite;
         }
         .marquee-content {
-            display: flex; white-space: nowrap;
-            animation: scroll-marquee 25s linear infinite;
+            display: flex; white-space: nowrap; flex-shrink: 0;
         }
         .marquee-content span {
-            padding-right: 50px;
+            padding-right: 60px;
             letter-spacing: 1px;
             text-shadow: 0 0 5px rgba(var(--highlight-rgb), 0.5);
             animation: marquee-glow 2s infinite alternate;
+        }
+        #top-marquee:hover .marquee-content span {
+            text-shadow: none; animation: none;
         }
         @keyframes scroll-marquee {
             0% { transform: translateX(0); }
@@ -512,11 +516,23 @@
 
     <!-- MARQUEE NO TOPO -->
     <a href="https://ditto.fm/calma-ganwalk" target="_blank" id="top-marquee">
-        <div class="marquee-content">
-            <span>NOVO SINGLE - EM BREVE - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
-            <span>NOVO SINGLE - EM BREVE - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
-            <span>NOVO SINGLE - EM BREVE - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
-            <span>NOVO SINGLE - EM BREVE - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
+        <div class="marquee-track">
+            <div class="marquee-content">
+                <span>NOVO SINGLE - EM BREVE - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span>NOVO SINGLE - EM BREVE - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span>NOVO SINGLE - EM BREVE - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span>NOVO SINGLE - EM BREVE - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span>NOVO SINGLE - EM BREVE - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span>NOVO SINGLE - EM BREVE - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
+            </div>
+            <div class="marquee-content" aria-hidden="true">
+                <span>NOVO SINGLE - EM BREVE - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span>NOVO SINGLE - EM BREVE - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span>NOVO SINGLE - EM BREVE - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span>NOVO SINGLE - EM BREVE - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span>NOVO SINGLE - EM BREVE - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span>NOVO SINGLE - EM BREVE - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
+            </div>
         </div>
     </a>
 
@@ -605,7 +621,7 @@
                             <input type="range" id="p1-eq-high" min="-20" max="20" value="0">
                         </div>
                         <div style="display:flex; gap:10px; width:100%; margin-top:auto;">
-                            <div style="flex:1; display:flex; flex-direction:column; justify-content:flex-end;"><label>Cor Fundo</label><input type="color" id="p1-bg-color" value="#030a00"></div>
+                            <div style="flex:1; display:flex; flex-direction:column; justify-content:flex-end;"><label>Cor Fundo</label><input type="color" id="p1-bg-color" value="#000500"></div>
                             <div style="flex:1; display:flex; flex-direction:column; justify-content:flex-end;"><label>Cor Foco</label><input type="color" id="p1-fg-color" value="#ffc800"></div>
                         </div>
                     </div>
@@ -1070,8 +1086,8 @@
             targetWaveY: -25, targetWaveScale: 1, colorChangedTriggered: false,
             hasStartedOnce: false, // CORREÇÃO: Variável de controlo para a primeira reprodução
 
-            bgColor: '#030a00', fgColor: '#ffc800',
-            bgThree: new THREE.Color(0x030a00), fgThree: new THREE.Color(0xffc800),
+            bgColor: '#000500', fgColor: '#ffc800',
+            bgThree: new THREE.Color(0x000500), fgThree: new THREE.Color(0xffc800),
             
             mustardYellowThree: new THREE.Color(0xE1AD01),
 
@@ -1555,7 +1571,7 @@
                     ['p1-delay','p1-reverb','p1-chorus','p1-filter','p1-overdrive','p1-eq-low','p1-eq-mid','p1-eq-high'].forEach(id => { get(id).value = 0; get(id).dispatchEvent(new Event('input')); });
                     get('p1-pitch').value = 1; get('p1-pitch').dispatchEvent(new Event('input'));
                     
-                    get('p1-bg-color').value = '#030a00'; get('p1-bg-color').dispatchEvent(new Event('input'));
+                    get('p1-bg-color').value = '#000500'; get('p1-bg-color').dispatchEvent(new Event('input'));
                     get('p1-fg-color').value = '#ffc800'; get('p1-fg-color').dispatchEvent(new Event('input'));
 
                     document.body.classList.remove('mustard-theme');
@@ -1733,7 +1749,7 @@
         };
 
         const App2 = {
-            settings:{bg:'#030a00',font1:'#ffc800',font2:'#ff8800',size:10,res:35,thresh:0,invert:false,chaos:0,bgMix:false,bgOp:72},
+            settings:{bg:'#000500',font1:'#ffc800',font2:'#ff8800',size:10,res:35,thresh:0,invert:false,chaos:0,bgMix:false,bgOp:72},
             video:null,img:null,hiddenC:null,outC:null,ctxH:null,ctxO:null,audio:null,stream:null,mode:'video',loopId:null,rec:null,chunks:[],isActive:false,
             audioCtx: null, audioSource: null, audioGain: null, audioFilter: null, audioDelay: null, audioFeedback: null,
             delayWet: null,

@@ -29,15 +29,17 @@
         }
 
         :root {
-            --bg-color: #030a00;
-            --bg-gradient-top: rgba(3, 10, 0, 0.9);
-            --bg-gradient-bottom: rgba(3, 10, 0, 0);
-            --control-bg: rgba(3, 10, 0, 0.9);
+            --bg-color: #000500;
+            --bg-gradient-top: rgba(0, 5, 0, 0.9);
+            --bg-gradient-bottom: rgba(0, 5, 0, 0);
+            --control-bg: rgba(0, 5, 0, 0.9);
             --border-color: rgba(255, 200, 0, 0.3);
             --shadow-color: rgba(255, 200, 0, 0.15);
             --text-color: #ffc800;
             --highlight-color: #ffc800;
             --highlight-rgb: 255, 200, 0;
+            --nav-inactive-color: #664d00;
+            --nav-active-color: #ffc800;
             --record-color: #ff3333;
             --mustard: #E1AD01;
 
@@ -85,18 +87,22 @@
         #top-marquee:hover {
             background: var(--highlight-color); color: var(--bg-color); border-bottom-color: var(--highlight-color);
         }
-        #top-marquee:hover .marquee-content span {
-            text-shadow: none; animation: none;
+        .marquee-track {
+            display: flex;
+            width: max-content;
+            animation: scroll-marquee 30s linear infinite;
         }
         .marquee-content {
-            display: flex; white-space: nowrap;
-            animation: scroll-marquee 25s linear infinite;
+            display: flex; white-space: nowrap; flex-shrink: 0;
         }
         .marquee-content span {
-            padding-right: 50px;
+            padding-right: 60px;
             letter-spacing: 1px;
             text-shadow: 0 0 5px rgba(var(--highlight-rgb), 0.5);
             animation: marquee-glow 2s infinite alternate;
+        }
+        #top-marquee:hover .marquee-content span {
+            text-shadow: none; animation: none;
         }
         @keyframes scroll-marquee {
             0% { transform: translateX(0); }
@@ -135,7 +141,7 @@
 
         .nav-item {
             background: transparent; border: none;
-            color: rgba(255, 200, 0, 0.4);
+            color: var(--nav-inactive-color);
             font-family: 'Amiko', sans-serif;
             font-size: 0.9rem;
             font-weight: 600;
@@ -146,7 +152,7 @@
         .nav-item:hover, .nav-item.active {
             background: transparent;
             border: none;
-            color: var(--highlight-color);
+            color: var(--nav-active-color);
             text-shadow: 0 0 8px var(--shadow-color);
         }
         .nav-item.active::after { 
@@ -198,7 +204,7 @@
         .mobile-exp-item {
             flex: 1; text-align: center;
             background: transparent; border: none;
-            color: rgba(255, 200, 0, 0.4);
+            color: var(--nav-inactive-color);
             font-family: 'Amiko', sans-serif;
             font-size: 0.9rem; 
             font-weight: 600;
@@ -207,7 +213,7 @@
             transition: color 0.3s ease;
             position: relative;
         }
-        .mobile-exp-item.active { color: var(--highlight-color); text-shadow: 0 0 8px var(--shadow-color); }
+        .mobile-exp-item.active { color: var(--nav-active-color); text-shadow: 0 0 8px var(--shadow-color); }
         .mobile-exp-item:hover { background: transparent; border: none; }
 
         #mobile-menu-overlay {
@@ -221,12 +227,12 @@
         #mobile-menu-overlay.open { opacity: 1; pointer-events: auto; }
         .mobile-overlay-link {
             font-family: 'Silkscreen', cursive;
-            font-size: 1.4rem; color: rgba(255, 200, 0, 0.4);
+            font-size: 1.4rem; color: var(--nav-inactive-color);
             text-decoration: none; cursor: pointer;
             transition: color 0.3s, transform 0.3s, text-shadow 0.3s;
             text-transform: uppercase;
         }
-        .mobile-overlay-link:hover { color: var(--highlight-color); text-shadow: 0 0 15px rgba(255, 200, 0, 0.8); transform: scale(1.1); }
+        .mobile-overlay-link:hover { color: var(--nav-active-color); text-shadow: 0 0 15px var(--shadow-color); transform: scale(1.1); }
         #mobile-close-btn {
             position: absolute; top: 20px; right: 20px;
             background: transparent; border: none; color: var(--highlight-color); font-size: 2rem; cursor: pointer;
@@ -512,11 +518,23 @@
 
     <!-- MARQUEE NO TOPO -->
     <a href="https://ditto.fm/calma-ganwalk" target="_blank" id="top-marquee">
-        <div class="marquee-content">
-            <span>NOVO SINGLE - EM BREVE - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
-            <span>NOVO SINGLE - EM BREVE - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
-            <span>NOVO SINGLE - EM BREVE - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
-            <span>NOVO SINGLE - EM BREVE - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
+        <div class="marquee-track">
+            <div class="marquee-content">
+                <span>NOVO SINGLE - EM BREVE - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span>NOVO SINGLE - EM BREVE - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span>NOVO SINGLE - EM BREVE - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span>NOVO SINGLE - EM BREVE - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span>NOVO SINGLE - EM BREVE - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span>NOVO SINGLE - EM BREVE - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
+            </div>
+            <div class="marquee-content" aria-hidden="true">
+                <span>NOVO SINGLE - EM BREVE - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span>NOVO SINGLE - EM BREVE - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span>NOVO SINGLE - EM BREVE - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span>NOVO SINGLE - EM BREVE - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span>NOVO SINGLE - EM BREVE - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span>NOVO SINGLE - EM BREVE - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
+            </div>
         </div>
     </a>
 
@@ -605,8 +623,8 @@
                             <input type="range" id="p1-eq-high" min="-20" max="20" value="0">
                         </div>
                         <div style="display:flex; gap:10px; width:100%; margin-top:auto;">
-                            <div style="flex:1; display:flex; flex-direction:column; justify-content:flex-end;"><label>Cor Fundo</label><input type="color" id="p1-bg-color" value="#030a00"></div>
-                            <div style="flex:1; display:flex; flex-direction:column; justify-content:flex-end;"><label>Cor Foco</label><input type="color" id="p1-fg-color" value="#ffc800"></div>
+                            <div style="flex:1; display:flex; flex-direction:column; justify-content:flex-end;"><label>Cor Fundo</label><input type="color" id="p1-bg-color" value="#000000"></div>
+                            <div style="flex:1; display:flex; flex-direction:column; justify-content:flex-end;"><label>Cor Foco</label><input type="color" id="p1-fg-color" value="#ffffff"></div>
                         </div>
                     </div>
                 </div>
@@ -928,7 +946,7 @@
                         setTimeout(() => l.style.display = 'none', 1500);
                         document.getElementById('top-nav').classList.add('visible');
                         document.getElementById('mobile-exp-bar').classList.add('visible');
-                        this.goToExperience1();
+                        this.goToExperience2();
                     };
                 });
                 App2.init();
@@ -944,6 +962,11 @@
                 overlay.classList.toggle('open');
             },
             goToExperience1: function() {
+                const r = document.documentElement.style;
+                r.setProperty('--bg-color','#000000'); r.setProperty('--bg-gradient-top','rgba(0,0,0,0.9)'); r.setProperty('--bg-gradient-bottom','rgba(0,0,0,0)'); r.setProperty('--control-bg','rgba(0,0,0,0.9)');
+                r.setProperty('--text-color','#ffffff'); r.setProperty('--highlight-color','#ffffff'); r.setProperty('--highlight-rgb','255, 255, 255');
+                r.setProperty('--border-color','rgba(255,255,255,0.3)'); r.setProperty('--shadow-color','rgba(255,255,255,0.15)');
+                r.setProperty('--nav-inactive-color','#555555'); r.setProperty('--nav-active-color','#ffffff');
                 CodeTyper.stop();
                 if (this.currentMode === 'exp2') {
                     App2.transitionOut();
@@ -963,6 +986,11 @@
                 setTimeout(() => App1.resume(), 100);
             },
             goToExperience2: function() {
+                const r = document.documentElement.style;
+                r.setProperty('--bg-color','#000500'); r.setProperty('--bg-gradient-top','rgba(0,5,0,0.9)'); r.setProperty('--bg-gradient-bottom','rgba(0,5,0,0)'); r.setProperty('--control-bg','rgba(0,5,0,0.9)');
+                r.setProperty('--text-color','#ffc800'); r.setProperty('--highlight-color','#ffc800'); r.setProperty('--highlight-rgb','255, 200, 0');
+                r.setProperty('--border-color','rgba(255,200,0,0.3)'); r.setProperty('--shadow-color','rgba(255,200,0,0.15)');
+                r.setProperty('--nav-inactive-color','#664d00'); r.setProperty('--nav-active-color','#ffc800');
                 CodeTyper.stop();
                 this.showMarquee(); // Mostra caso o usuário navegue antes dos 5s
                 
@@ -1070,8 +1098,8 @@
             targetWaveY: -25, targetWaveScale: 1, colorChangedTriggered: false,
             hasStartedOnce: false, // CORREÇÃO: Variável de controlo para a primeira reprodução
 
-            bgColor: '#030a00', fgColor: '#ffc800',
-            bgThree: new THREE.Color(0x030a00), fgThree: new THREE.Color(0xffc800),
+            bgColor: '#000000', fgColor: '#ffffff',
+            bgThree: new THREE.Color(0x000000), fgThree: new THREE.Color(0xffffff),
             
             mustardYellowThree: new THREE.Color(0xE1AD01),
 
@@ -1555,8 +1583,8 @@
                     ['p1-delay','p1-reverb','p1-chorus','p1-filter','p1-overdrive','p1-eq-low','p1-eq-mid','p1-eq-high'].forEach(id => { get(id).value = 0; get(id).dispatchEvent(new Event('input')); });
                     get('p1-pitch').value = 1; get('p1-pitch').dispatchEvent(new Event('input'));
                     
-                    get('p1-bg-color').value = '#030a00'; get('p1-bg-color').dispatchEvent(new Event('input'));
-                    get('p1-fg-color').value = '#ffc800'; get('p1-fg-color').dispatchEvent(new Event('input'));
+                    get('p1-bg-color').value = '#000000'; get('p1-bg-color').dispatchEvent(new Event('input'));
+                    get('p1-fg-color').value = '#ffffff'; get('p1-fg-color').dispatchEvent(new Event('input'));
 
                     document.body.classList.remove('mustard-theme');
                     this.colorChangedTriggered = false;
@@ -1733,7 +1761,7 @@
         };
 
         const App2 = {
-            settings:{bg:'#030a00',font1:'#ffc800',font2:'#ff8800',size:10,res:35,thresh:0,invert:false,chaos:0,bgMix:false,bgOp:72},
+            settings:{bg:'#000500',font1:'#ffc800',font2:'#ff8800',size:10,res:35,thresh:0,invert:false,chaos:0,bgMix:false,bgOp:72},
             video:null,img:null,hiddenC:null,outC:null,ctxH:null,ctxO:null,audio:null,stream:null,mode:'video',loopId:null,rec:null,chunks:[],isActive:false,
             audioCtx: null, audioSource: null, audioGain: null, audioFilter: null, audioDelay: null, audioFeedback: null,
             delayWet: null,

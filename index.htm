@@ -349,20 +349,43 @@
         /* --- ESTILOS EXP 2 (RECORDER) --- */
         #p2-canvas-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
         canvas#p2-output-canvas { display: block; width: 100%; height: 100%; }
-        #p2-controls-bar { position: absolute; bottom: 85px; left: 50%; transform: translateX(-50%); background: var(--control-bg); backdrop-filter: blur(10px); border: 1px solid var(--border-color); box-shadow: 0 0 30px rgba(255,200,0,0.15); width: 90vw; max-width: 800px; padding: 20px 25px; border-radius: 8px; z-index: 100; transition: opacity 0.4s, background-color 0.5s ease, border-color 0.5s ease; opacity: 0; pointer-events: none; }
+        #p2-controls-bar { position: absolute; bottom: 35px; left: 50%; transform: translateX(-50%); background: transparent; backdrop-filter: none; border: none; box-shadow: none; width: auto; max-width: none; padding: 0; border-radius: 0; z-index: 100; opacity: 1; pointer-events: auto; transition: none; }
         #p2-controls-bar.expanded { opacity: 1; pointer-events: auto; }
-        #p2-toggle-button { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); width: 50px; height: 50px; border-radius: 50%; background: var(--control-bg); border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 101; transition: background-color 0.5s ease, border-color 0.5s ease; }
-        #p2-toggle-button svg { fill: var(--highlight-color); width: 24px; height: 24px; transition: fill 0.5s ease; }
+        #p2-toggle-button { display: none; }
+        #p2-toggle-button svg { display: none; }
         #p2-record-indicator { position: absolute; top: 85px; right: 20px; display: flex; align-items: center; gap: 10px; opacity: 0; pointer-events: none; transition: 0.3s; z-index: 150; }
         #p2-record-indicator.active { opacity: 1; }
         .rec-dot { width: 15px; height: 15px; background-color: var(--record-color); border-radius: 50%; box-shadow: 0 0 10px var(--record-color); animation: blink 1s infinite; }
         .rec-text { color: var(--record-color); font-weight: bold; font-size: 14px; letter-spacing: 1px; font-family: 'Silkscreen', cursive; }
         @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
-        #p2-create-prompt { position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%); color: var(--text-color); font-size: 1.2rem; pointer-events: none; transition: opacity 0.4s, color 0.5s ease; font-family: 'Silkscreen', cursive; }
-        #p2-controls-bar.expanded ~ #p2-create-prompt { opacity: 0; }
+        #p2-create-prompt { display: none; }
         input[type="color"] { width: 100%; height: 30px; border: 1px solid var(--border-color); background: transparent; padding: 0; border-radius: 4px; cursor: pointer; transition: border-color 0.5s ease; }
         input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--highlight-color); cursor: pointer; }
         #p2-record-btn.recording { background-color: rgba(255, 50, 50, 0.2); border-color: var(--record-color); color: var(--record-color); }
+
+        /* --- UI SIMPLIFICADA EXP2 --- */
+        #p2-simple-ui { display: flex; align-items: center; gap: 18px; }
+        #p2-play-music { width: 52px; height: 52px; padding: 0; flex-shrink: 0; border-radius: 50%; background: rgba(255,200,0,0.06); border: 1px solid var(--border-color); transition: background 0.2s, border-color 0.5s ease; }
+        #p2-play-music:hover { background: rgba(255,200,0,0.18); }
+        #p2-ganwalk-label { font-family: 'Astloch', cursive; font-weight: 700; font-size: clamp(2rem, 5vw, 3.5rem); color: var(--highlight-color); text-shadow: 0 0 18px rgba(var(--highlight-rgb),0.45); letter-spacing: 0.08em; line-height: 1; pointer-events: none; }
+
+        /* --- POPUP FIM DE MÚSICA --- */
+        #p2-ending-popup { position: fixed; inset: 0; z-index: 9999; background: rgba(0,5,0,0.88); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.6s ease; }
+        #p2-ending-popup.visible { opacity: 1; pointer-events: auto; }
+        #p2-popup-inner { position: relative; border: 1px solid var(--highlight-color); padding: 50px 70px; max-width: 680px; width: 90vw; text-align: center; background: rgba(0,5,0,0.92); box-shadow: 0 0 50px rgba(var(--highlight-rgb),0.18), 0 0 120px rgba(var(--highlight-rgb),0.06), inset 0 0 80px rgba(0,0,0,0.7); overflow: hidden; }
+        #p2-popup-scanlines { position: absolute; inset: 0; background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.12) 2px, rgba(0,0,0,0.12) 4px); pointer-events: none; animation: scanroll 10s linear infinite; }
+        #p2-popup-vignette { position: absolute; inset: 0; background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.6) 100%); pointer-events: none; }
+        @keyframes scanroll { from { background-position: 0 0; } to { background-position: 0 4px; } }
+        #p2-popup-text { font-family: 'Silkscreen', monospace; font-size: clamp(0.75rem, 2.2vw, 1.1rem); color: var(--highlight-color); letter-spacing: 0.14em; line-height: 1.8; position: relative; z-index: 1; animation: p2flicker 4s infinite; }
+        .p2-glitch { position: relative; display: inline-block; animation: p2glitch 3s infinite; }
+        .p2-glitch::before, .p2-glitch::after { content: attr(data-text); position: absolute; left: 0; top: 0; width: 100%; }
+        .p2-glitch::before { color: #0ff; clip-path: polygon(0 25%, 100% 25%, 100% 45%, 0 45%); animation: p2gclip1 3s infinite; opacity: 0; }
+        .p2-glitch::after { color: rgba(255,200,0,0.8); clip-path: polygon(0 60%, 100% 60%, 100% 78%, 0 78%); animation: p2gclip2 3s infinite; opacity: 0; }
+        @keyframes p2glitch { 0%,87%,100%{transform:none;} 88%{transform:translateX(-3px) skewX(1deg);} 89%{transform:translateX(3px);} 90%{transform:none;} 93%{transform:skewX(-2deg) translateX(-2px);} 94%{transform:none;} }
+        @keyframes p2gclip1 { 0%,87%,100%{opacity:0;transform:none;} 88%{opacity:0.75;transform:translateX(-5px);} 89%{opacity:0.75;transform:translateX(5px);} 90%{opacity:0;} }
+        @keyframes p2gclip2 { 0%,91%,100%{opacity:0;transform:none;} 92%{opacity:0.7;transform:translateX(5px);} 93%{opacity:0.7;transform:translateX(-5px);} 94%{opacity:0;} }
+        @keyframes p2flicker { 0%,96%,100%{opacity:1;} 97%{opacity:0.82;} 98%{opacity:1;} 99%{opacity:0.88;} }
+        #p2-popup-cursor { font-family: 'Silkscreen', monospace; color: var(--highlight-color); font-size: 1.1rem; margin-top: 22px; position: relative; z-index: 1; animation: blink-cursor 1s infinite; }
 
         /* --- PÁGINAS DE TEXTO (CODE EDITOR STYLE) --- */
         .text-page { 
@@ -645,47 +668,90 @@
         <video id="p2-video" autoplay playsinline muted loop style="display:none;" crossOrigin="anonymous"></video>
         <canvas id="p2-hidden-canvas" style="display:none;"></canvas>
         <input type="file" id="p2-upload-input" accept="video/*, image/*" style="display:none;">
-        <audio id="p2-background-audio" src="https://raw.githubusercontent.com/ganwalk/2026/main/chasm-loop.mp3" loop style="display:none;" crossOrigin="anonymous"></audio>
+        <audio id="p2-background-audio" src="https://raw.githubusercontent.com/ganwalk/2026/main/chasm-loop.mp3" style="display:none;" crossOrigin="anonymous"></audio>
 
-        <div id="p2-controls-bar">
+        <!-- MENU COMPLETO EXP2 PRESERVADO (INATIVO) -->
+        <template id="p2-original-menu">
             <div class="controls-grid">
                 <div class="control-group">
                     <div style="display:flex; gap:10px;">
-                        <button id="p2-clip-btn">Clipe</button><button id="p2-upload-btn">Carregar</button><button id="p2-webcam-btn">Webcam</button>
+                        <button id="p2-clip-btn-arch">Clipe</button><button id="p2-upload-btn-arch">Carregar</button><button id="p2-webcam-btn-arch">Webcam</button>
                     </div>
                     <!-- REPRODUTOR EXP 2 AJUSTADO -->
                     <div style="display:flex; align-items:center; gap:10px; background:#111; padding:10px; border-radius:6px; border:1px solid #444;">
-                        <button id="p2-play-music" style="width:40px; height:40px; padding:0; flex-shrink:0; border-radius:50%;"><svg id="p2-play-icon" viewBox="0 0 24 24" width="20"><path d="M8 5v14l11-7z"/></svg></button>
+                        <button id="p2-play-music-arch" style="width:40px; height:40px; padding:0; flex-shrink:0; border-radius:50%;"><svg viewBox="0 0 24 24" width="20"><path d="M8 5v14l11-7z"/></svg></button>
                         <div style="flex-grow:1; display:flex; flex-direction:column; gap:4px;">
-                            <input type="range" id="p2-music-slider" min="0" value="0" step="1">
-                            <span id="p2-music-time" style="font-size:11px; color:#ccc; align-self:flex-end; font-family:'Silkscreen';">0:00</span>
+                            <input type="range" id="p2-music-slider-arch" min="0" value="0" step="1">
+                            <span id="p2-music-time-arch" style="font-size:11px; color:#ccc; align-self:flex-end; font-family:'Silkscreen';">0:00</span>
                         </div>
                     </div>
                     <!-- FIM REPRODUTOR -->
                     <div style="display:flex; gap:10px;">
-                        <button id="p2-export-img">Foto</button><button id="p2-record-btn">Gravar</button>
+                        <button id="p2-export-img-arch">Foto</button><button id="p2-record-btn-arch">Gravar</button>
                     </div>
                     <div style="font-family:'Astloch'; font-weight:700; font-size:2.5rem; color:#fff; margin-top:auto;">GANWALK</div>
                 </div>
                 <div class="control-group">
-                    <label>Fundo</label><input type="color" id="p2-bg-color">
-                    <label>Fonte 1</label><input type="color" id="p2-font-color1">
-                    <label>Fonte 2</label><input type="color" id="p2-font-color2">
-                    <div style="display:flex; justify-content:space-between;"><label>Fundo Mídia</label><input type="checkbox" id="p2-bg-check"></div>
-                    <label>Opacidade</label><input type="range" id="p2-bg-opacity" min="0" max="100">
+                    <label>Fundo</label><input type="color" id="p2-bg-color-arch">
+                    <label>Fonte 1</label><input type="color" id="p2-font-color1-arch">
+                    <label>Fonte 2</label><input type="color" id="p2-font-color2-arch">
+                    <div style="display:flex; justify-content:space-between;"><label>Fundo Mídia</label><input type="checkbox" id="p2-bg-check-arch"></div>
+                    <label>Opacidade</label><input type="range" id="p2-bg-opacity-arch" min="0" max="100">
                 </div>
                 <div class="control-group">
-                    <label>Tamanho</label><input type="range" id="p2-font-size" min="1" max="20" value="10">
-                    <label>Resolução</label><input type="range" id="p2-res" min="10" max="150" value="35">
-                    <label>Limiar</label><input type="range" id="p2-thresh" min="0" max="255" value="0">
-                    <div style="display:flex; justify-content:space-between;"><label>Inverter</label><input type="checkbox" id="p2-invert"></div>
-                    <label>Caos</label><input type="range" id="p2-random" min="0" max="20" value="0">
+                    <label>Tamanho</label><input type="range" id="p2-font-size-arch" min="1" max="20" value="10">
+                    <label>Resolução</label><input type="range" id="p2-res-arch" min="10" max="150" value="35">
+                    <label>Limiar</label><input type="range" id="p2-thresh-arch" min="0" max="255" value="0">
+                    <div style="display:flex; justify-content:space-between;"><label>Inverter</label><input type="checkbox" id="p2-invert-arch"></div>
+                    <label>Caos</label><input type="range" id="p2-random-arch" min="0" max="20" value="0">
                 </div>
+            </div>
+        </template>
+
+        <div id="p2-controls-bar">
+            <!-- Elementos necessários para bindings JS (ocultos) -->
+            <div style="display:none;">
+                <button id="p2-clip-btn"></button>
+                <button id="p2-upload-btn"></button>
+                <button id="p2-webcam-btn"></button>
+                <input type="range" id="p2-music-slider" min="0" value="0" step="1">
+                <span id="p2-music-time">0:00</span>
+                <button id="p2-export-img"></button>
+                <button id="p2-record-btn"></button>
+                <input type="color" id="p2-bg-color">
+                <input type="color" id="p2-font-color1">
+                <input type="color" id="p2-font-color2">
+                <input type="checkbox" id="p2-bg-check">
+                <input type="range" id="p2-bg-opacity" min="0" max="100">
+                <input type="range" id="p2-font-size" min="1" max="20" value="10">
+                <input type="range" id="p2-res" min="10" max="150" value="35">
+                <input type="range" id="p2-thresh" min="0" max="255" value="0">
+                <input type="checkbox" id="p2-invert">
+                <input type="range" id="p2-random" min="0" max="20" value="0">
+            </div>
+            <!-- UI Simplificada -->
+            <div id="p2-simple-ui">
+                <button id="p2-play-music" aria-label="Reproduzir">
+                    <svg id="p2-play-icon" viewBox="0 0 24 24" width="22"><path d="M8 5v14l11-7z"/></svg>
+                </button>
+                <span id="p2-ganwalk-label">GANWALK</span>
             </div>
         </div>
         <div id="p2-create-prompt">Clique para <span class="faça-glow">criar</span>.</div>
         <div id="p2-toggle-button"><svg viewBox="0 0 24 24" width="24"><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg></div>
     </section>
+
+    <!-- POPUP: EXPERIÊNCIA COMPLETA EM BREVE -->
+    <div id="p2-ending-popup">
+        <div id="p2-popup-inner">
+            <div id="p2-popup-scanlines"></div>
+            <div id="p2-popup-vignette"></div>
+            <div id="p2-popup-text">
+                <span class="p2-glitch" data-text="EXPERIÊNCIA COMPLETA EM BREVE">EXPERIÊNCIA COMPLETA EM BREVE</span>
+            </div>
+            <div id="p2-popup-cursor">█</div>
+        </div>
+    </div>
 
     <!-- TEXT PAGES (EMPTY CONTAINERS FOR DYNAMIC CODE) -->
     <section id="links-screen" class="screen-section text-page"></section>
@@ -1759,7 +1825,7 @@
 
         const App2 = {
             settings:{bg:'#000500',font1:'#ffc800',font2:'#ff8800',size:10,res:35,thresh:0,invert:false,chaos:0,bgMix:false,bgOp:72},
-            video:null,img:null,hiddenC:null,outC:null,ctxH:null,ctxO:null,audio:null,stream:null,mode:'video',loopId:null,rec:null,chunks:[],isActive:false,
+            video:null,img:null,hiddenC:null,outC:null,ctxH:null,ctxO:null,audio:null,stream:null,mode:'video',loopId:null,rec:null,chunks:[],isActive:false,useEmBreve:false,
             audioCtx: null, audioSource: null, audioGain: null, audioFilter: null, audioDelay: null, audioFeedback: null,
             delayWet: null,
             transitionTimer: null,
@@ -1866,13 +1932,16 @@
 
             restart: function() {
                 if(this.transitionTimer) clearTimeout(this.transitionTimer);
+                this.useEmBreve=false;
+                const popup=document.getElementById('p2-ending-popup');
+                if(popup) popup.classList.remove('visible');
                 this.initAudioContext();
                 if(this.audioCtx && this.audioCtx.state === 'suspended') this.audioCtx.resume();
                 if(this.iosAudioEl2) this.iosAudioEl2.play().catch(()=>{});
-                
+
                 this.video.currentTime = 0;
                 this.audio.currentTime = 0;
-                
+
                 // Ensure pure audio on restart
                 if(this.audioFeedback) this.audioFeedback.gain.value = 0;
                 if(this.delayWet) this.delayWet.gain.value = 0;
@@ -1886,7 +1955,6 @@
                     this.restart(); // Reset time
                     this.video.play(); this.audio.play();
                     this.video.onloadedmetadata = () => { const s=()=>{if(!this.audio.paused)this.video.currentTime=this.audio.currentTime%this.video.duration;}; s(); setInterval(s,1000); };
-                    get('p2-controls-bar').classList.add('expanded'); get('p2-create-prompt').style.opacity=0;
                     this.initAudioContext();
                 };
                 get('p2-clip-btn').onclick=this.loadOriginalClip;
@@ -1913,6 +1981,21 @@
                     get('p2-music-slider').value=this.audio.currentTime; get('p2-music-slider').max=this.audio.duration||100;
                     const f=s=>`${Math.floor(s/60)}:${Math.floor(s%60).toString().padStart(2,'0')}`;
                     get('p2-music-time').innerText=`${f(this.audio.currentTime)} / ${f(this.audio.duration)}`;
+                };
+                this.audio.onended=()=>{
+                    this.useEmBreve=true;
+                    const popup=document.getElementById('p2-ending-popup');
+                    popup.classList.add('visible');
+                    setTimeout(()=>{
+                        popup.classList.remove('visible');
+                        setTimeout(()=>{
+                            this.useEmBreve=false;
+                            this.audio.currentTime=0;
+                            this.audio.play().catch(()=>{});
+                            const icon=get('p2-play-icon');
+                            if(icon) icon.innerHTML='<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+                        },650);
+                    },5000);
                 };
                 const v=(id,k)=>get(id).oninput=e=>this.settings[k]=e.target.value; const c=(id,k)=>get(id).onchange=e=>this.settings[k]=e.target.checked;
                 v('p2-bg-color','bg'); v('p2-font-color2','font2'); c('p2-bg-check','bgMix'); v('p2-bg-opacity','bgOp');
@@ -1960,7 +2043,7 @@
                 const data=this.ctxH.getImageData(0,0,gw,gh).data;
                 this.ctxO.fillStyle=this.settings.bg; this.ctxO.fillRect(0,0,w,h);
                 if(this.settings.bgMix){this.ctxO.globalAlpha=this.settings.bgOp/100; this.ctxO.imageSmoothingEnabled=false; this.ctxO.drawImage(this.hiddenC,0,0,w,h); this.ctxO.imageSmoothingEnabled=true; this.ctxO.globalAlpha=1;}
-                const cw=w/gw, ch=h/gh; const chars="ganwalk"; const c1=this.hex2rgb(this.settings.font1); const c2=this.hex2rgb(this.settings.font2);
+                const cw=w/gw, ch=h/gh; const chars=this.useEmBreve?"embreve":"ganwalk"; const c1=this.hex2rgb(this.settings.font1); const c2=this.hex2rgb(this.settings.font2);
                 const th=parseInt(this.settings.thresh); let ci=0;
                 this.ctxO.textAlign='center'; this.ctxO.textBaseline='middle';
                 for(let y=0;y<gh;y++){

@@ -932,15 +932,22 @@
 ==============+++++++++++++++++==========+++++++++++++*+==+++++++++++++++++++=++=======++++++++++=+++++++==+++++++==========+++++++++++++++++++++++++++*++++++++===+=-:-+++++++++++++++++==============
 </div>
 <span class="c-ln">1</span><span class="c-comm">/**</span><br>
-<span class="c-ln">2</span><span class="c-comm">música e experiências por: @ganwalk</span><br>
-<span class="c-ln">3</span><span class="c-comm">violões e percussões adicionais: @kiiiiiiiron e @jeanuaifi</span><br>
-<span class="c-ln">4</span><span class="c-comm">mixagem e masterização por: @bodimm_</span><br>
-<span class="c-ln">5</span><span class="c-comm">_</span><br>
-<span class="c-ln">6</span><span class="c-comm">_</span><br>
-<span class="c-ln">7</span><span class="c-comm">(c) 2026 </span><br>
+<span class="c-ln">2</span><span class="c-comm">_</span><br>
+<span class="c-ln">3</span><span class="c-kw">Calma -</span><br>
+<span class="c-ln">4</span><span class="c-comm">música e experiências por: @ganwalk</span><br>
+<span class="c-ln">5</span><span class="c-comm">violões e percussões adicionais: @kiiiiiiiron e @jeanuaifi</span><br>
+<span class="c-ln">6</span><span class="c-comm">mixagem e masterização por: @bodimm_</span><br>
+<span class="c-ln">7</span><span class="c-comm">_</span><br>
 <span class="c-ln">8</span><span class="c-comm">_</span><br>
-<span class="c-ln">9</span><span class="c-comm">_</span><br>
-<span class="c-ln">10</span><span class="c-comm">Estamos aí! ᕕ(⌐□_□)ᕗ ♪♬</span>`,
+<span class="c-ln">9</span><span class="c-kw">Satisfaz/Acredito -</span><br>
+<span class="c-ln">10</span><span class="c-comm">música e experiências por: @ganwalk</span><br>
+<span class="c-ln">11</span><span class="c-comm">mixagem e masterização por: @bodimm_</span><br>
+<span class="c-ln">12</span><span class="c-comm">_</span><br>
+<span class="c-ln">13</span><span class="c-comm">_</span><br>
+<span class="c-ln">14</span><span class="c-comm">(c) 2026</span><br>
+<span class="c-ln">15</span><span class="c-comm">_</span><br>
+<span class="c-ln">16</span><span class="c-comm">_</span><br>
+<span class="c-ln">17</span><span class="c-comm">Estamos aí! ᕕ(⌐□_□)ᕗ ♪♬</span>`,
                 render: null 
             }
         };
@@ -1084,7 +1091,7 @@
                 this.showMarquee(); // Mostra caso o usuário navegue antes dos 5s
                 
                 if (this.currentMode === 'exp1') App1.setLowPass(true);
-                if (this.currentMode === 'exp2') App2.setLowPass(true); 
+                if (this.currentMode === 'exp2') App2.setBackground(true);
                 
                 if (this.currentMode === 'exp1' && document.body.classList.contains('mustard-theme')) {
                     document.body.classList.remove('mustard-theme');
@@ -1836,7 +1843,12 @@
                 this.hiddenC=document.getElementById('p2-hidden-canvas'); this.outC=document.getElementById('p2-output-canvas');
                 this.ctxH=this.hiddenC.getContext('2d',{willReadFrequently:true}); this.ctxO=this.outC.getContext('2d');
                 this.audio=document.getElementById('p2-background-audio');
-                window.addEventListener('resize', ()=>{this.outC.width=window.innerWidth; this.outC.height=window.innerHeight;});
+                this.isMobile = window.innerWidth <= 768;
+                if(this.isMobile){ this.settings.res=20; this.settings.size=8; }
+                window.addEventListener('resize', ()=>{
+                    this.outC.width=window.innerWidth; this.outC.height=window.innerHeight;
+                    this.isMobile = window.innerWidth <= 768;
+                });
                 this.outC.width=window.innerWidth; this.outC.height=window.innerHeight;
                 this.bindUI();
             },
@@ -1986,16 +1998,9 @@
                     this.useEmBreve=true;
                     const popup=document.getElementById('p2-ending-popup');
                     popup.classList.add('visible');
-                    setTimeout(()=>{
-                        popup.classList.remove('visible');
-                        setTimeout(()=>{
-                            this.useEmBreve=false;
-                            this.audio.currentTime=0;
-                            this.audio.play().catch(()=>{});
-                            const icon=get('p2-play-icon');
-                            if(icon) icon.innerHTML='<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
-                        },650);
-                    },5000);
+                    setTimeout(()=>{ popup.classList.remove('visible'); }, 5000);
+                    const icon=get('p2-play-icon');
+                    if(icon) icon.innerHTML='<path d="M8 5v14l11-7z"/>';
                 };
                 const v=(id,k)=>get(id).oninput=e=>this.settings[k]=e.target.value; const c=(id,k)=>get(id).onchange=e=>this.settings[k]=e.target.checked;
                 v('p2-bg-color','bg'); v('p2-font-color2','font2'); c('p2-bg-check','bgMix'); v('p2-bg-opacity','bgOp');
@@ -2030,12 +2035,16 @@
             hex2rgb: function(h) { const b=parseInt(h.slice(1),16); return {r:(b>>16)&255,g:(b>>8)&255,b:b&255}; },
             draw: function() {
                 if(!this.isActive) return;
+                const now=performance.now();
+                const minDelta=this.isMobile?42:16; // ~24fps mobile, ~60fps desktop
                 this.loopId=requestAnimationFrame(()=>this.draw());
+                if(now-(this._lastDraw||0)<minDelta) return;
+                this._lastDraw=now;
                 let src=this.mode==='video'?this.video:this.img;
                 if(this.mode==='video' && (!src.videoWidth || src.paused && !src.ended)) return;
                 const w=this.outC.width, h=this.outC.height; const res=parseInt(this.settings.res); const asp=w/h;
                 let gw=asp>=1?Math.floor(res*2*asp):Math.floor(res*2); let gh=asp>=1?Math.floor(res*2):Math.floor(res*2/asp);
-                this.hiddenC.width=gw; this.hiddenC.height=gh;
+                if(this.hiddenC.width!==gw||this.hiddenC.height!==gh){this.hiddenC.width=gw; this.hiddenC.height=gh;}
                 let sW=(this.mode==='video')?src.videoWidth:src.naturalWidth; let sH=(this.mode==='video')?src.videoHeight:src.naturalHeight;
                 let sx=0,sy=0,sw=sW,sh=sH; const sa=sW/sH; const ga=gw/gh;
                 if(sa>ga){sw=sH*ga; sx=(sW-sw)/2;} else {sh=sW/ga; sy=(sH-sh)/2;}
@@ -2046,16 +2055,20 @@
                 const cw=w/gw, ch=h/gh; const chars=this.useEmBreve?"embreve":"ganwalk"; const c1=this.hex2rgb(this.settings.font1); const c2=this.hex2rgb(this.settings.font2);
                 const th=parseInt(this.settings.thresh); let ci=0;
                 this.ctxO.textAlign='center'; this.ctxO.textBaseline='middle';
+                let lastFill='', lastFont='';
                 for(let y=0;y<gh;y++){
                     for(let x=0;x<gw;x++){
                         const i=(y*gw+x)*4; let v=0.299*data[i]+0.587*data[i+1]+0.114*data[i+2];
                         if(this.settings.invert)v=255-v; if(v<th)continue;
                         let idx=ci; if(this.settings.chaos>0)idx+=Math.floor((Math.random()-0.5)*this.settings.chaos);
                         const chReq=chars[Math.abs(idx)%chars.length]; ci++;
-                        const t=v/255; const r=Math.floor(c1.r+(c2.r-c1.r)*t); const g=Math.floor(c1.g+(c2.g-c1.g)*t); const b=Math.floor(c1.b+(c2.b-c1.b)*t);
-                        this.ctxO.fillStyle=`rgb(${r},${g},${b})`;
-                        const sz=t*ch*(this.settings.size/5); if(sz<1)continue;
-                        this.ctxO.font=`${sz}px monospace`; this.ctxO.fillText(chReq,x*cw+cw/2,y*ch+ch/2);
+                        const t=v/255; const r=Math.floor(c1.r+(c2.r-c1.r)*t)|0; const g=Math.floor(c1.g+(c2.g-c1.g)*t)|0; const b=Math.floor(c1.b+(c2.b-c1.b)*t)|0;
+                        const fill=`rgb(${r},${g},${b})`;
+                        if(fill!==lastFill){this.ctxO.fillStyle=fill; lastFill=fill;}
+                        const sz=(t*ch*(this.settings.size/5))|0; if(sz<1)continue;
+                        const font=sz+'px monospace';
+                        if(font!==lastFont){this.ctxO.font=font; lastFont=font;}
+                        this.ctxO.fillText(chReq,x*cw+cw/2,y*ch+ch/2);
                     }
                 }
             },

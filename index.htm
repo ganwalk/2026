@@ -347,7 +347,7 @@
         #p1-mini-canvas { width: 100%; height: 100%; display: block; }
 
         /* --- TOOLTIP CÂMERA --- */
-        .camera-tooltip { position: absolute; bottom: calc(100% + 10px); left: 50%; transform: translateX(-50%); background: var(--highlight-color); color: var(--bg-color); font-family: 'Silkscreen', monospace; font-size: 0.6rem; padding: 6px 10px; border-radius: 4px; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.35s ease; z-index: 300; letter-spacing: 0.05em; }
+        .camera-tooltip { position: fixed; transform: translateX(-50%); background: var(--highlight-color); color: var(--bg-color); font-family: 'Silkscreen', monospace; font-size: 0.6rem; padding: 6px 10px; border-radius: 4px; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.35s ease; z-index: 9500; letter-spacing: 0.05em; }
         .camera-tooltip::after { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border: 6px solid transparent; border-top-color: var(--highlight-color); }
         .camera-tooltip.visible { opacity: 1; }
 
@@ -475,6 +475,7 @@
             #p1-main-text { font-size: 15vw !important; }
             #p1-controls-bar, #p2-controls-bar { width: 95vw; bottom: 75px; padding: 15px; max-height: 60vh; overflow-y: auto; }
             .controls-grid { grid-template-columns: 1fr; }
+            #p2-ganwalk-label-menu { display: none; }
             
             /* Mobile Nav Layout Centralizado ABSOLUTO */
             #top-nav { justify-content: center; align-items: center; } 
@@ -658,7 +659,7 @@
             <div class="controls-grid">
                 <div class="control-group">
                     <div style="display:flex; gap:10px;">
-                        <button id="p2-clip-btn">Clipe</button><button id="p2-upload-btn">Carregar</button><button id="p2-webcam-btn" style="position:relative;">Camera<span id="p2-camera-tooltip" class="camera-tooltip">Experimente com sua câmera!</span></button>
+                        <button id="p2-clip-btn">Clipe</button><button id="p2-upload-btn">Carregar</button><button id="p2-webcam-btn">Camera</button>
                     </div>
                     <!-- REPRODUTOR EXP 2 AJUSTADO -->
                     <div style="display:flex; align-items:center; gap:10px; background:#111; padding:10px; border-radius:6px; border:1px solid #444;">
@@ -672,7 +673,7 @@
                     <div style="display:flex; gap:10px;">
                         <button id="p2-export-img">Foto</button><button id="p2-record-btn">Gravar</button>
                     </div>
-                    <div style="font-family:'Astloch'; font-weight:700; font-size:2.5rem; color:#fff; margin-top:auto;">GANWALK</div>
+                    <div id="p2-ganwalk-label-menu" style="font-family:'Astloch'; font-weight:700; font-size:2.5rem; color:#fff; margin-top:auto;">GANWALK</div>
                 </div>
                 <div class="control-group">
                     <label>Fundo</label><input type="color" id="p2-bg-color">
@@ -692,6 +693,7 @@
         </div>
         <div id="p2-create-prompt">Clique para <span class="faça-glow">criar</span>.</div>
         <div id="p2-toggle-button"><svg viewBox="0 0 24 24" width="24"><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg></div>
+        <div id="p2-camera-tooltip" class="camera-tooltip">Experimente com sua câmera!</div>
     </section>
 
     <!-- TEXT PAGES (EMPTY CONTAINERS FOR DYNAMIC CODE) -->
@@ -1939,6 +1941,10 @@
                 const showCamTip = () => {
                     if(!camTip || this._camTipShown) return;
                     this._camTipShown = true;
+                    const btn = get('p2-webcam-btn');
+                    const r = btn.getBoundingClientRect();
+                    camTip.style.left = (r.left + r.width / 2) + 'px';
+                    camTip.style.bottom = (window.innerHeight - r.top + 10) + 'px';
                     camTip.classList.add('visible');
                     setTimeout(()=>camTip.classList.remove('visible'), 4000);
                 };

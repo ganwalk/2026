@@ -346,6 +346,10 @@
         #p1-mini-container { flex-grow: 0; height: 30px; margin-top: auto; background: rgba(255,200,0,0.05); border: 1px solid var(--border-color); border-radius: 6px; overflow: hidden; width: 100%; position: relative; transition: border-color 0.5s ease; }
         #p1-mini-canvas { width: 100%; height: 100%; display: block; }
 
+        /* --- FUNDO MÍDIA GRUPO --- */
+        #p2-bgmix-group { display: flex; flex-direction: column; gap: 12px; transition: opacity 0.3s; }
+        #p2-bgmix-group.disabled { opacity: 0.3; pointer-events: none; }
+
         /* --- TOOLTIP CÂMERA --- */
         .camera-tooltip { position: fixed; transform: translateX(-50%); background: var(--highlight-color); color: var(--bg-color); font-family: 'Silkscreen', monospace; font-size: 0.6rem; padding: 6px 10px; border-radius: 4px; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.35s ease; z-index: 9500; letter-spacing: 0.05em; }
         .camera-tooltip::after { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border: 6px solid transparent; border-top-color: var(--highlight-color); }
@@ -679,8 +683,10 @@
                     <label>Fundo</label><input type="color" id="p2-bg-color">
                     <label>Fonte 1</label><input type="color" id="p2-font-color1">
                     <label>Fonte 2</label><input type="color" id="p2-font-color2">
-                    <div style="display:flex; justify-content:space-between;"><label>Fundo Mídia</label><input type="checkbox" id="p2-bg-check"></div>
-                    <label>Opacidade</label><input type="range" id="p2-bg-opacity" min="0" max="100">
+                    <div id="p2-bgmix-group" class="disabled">
+                        <div style="display:flex; justify-content:space-between;"><label>Fundo Mídia</label><input type="checkbox" id="p2-bg-check"></div>
+                        <label>Opacidade</label><input type="range" id="p2-bg-opacity" min="0" max="100">
+                    </div>
                 </div>
                 <div class="control-group">
                     <label>Tamanho</label><input type="range" id="p2-font-size" min="1" max="20" value="10">
@@ -1901,25 +1907,31 @@
 
             bindUI: function() {
                 const get=id=>document.getElementById(id);
+                const setBgMixEnabled = (enabled) => {
+                    const grp = get('p2-bgmix-group');
+                    if(enabled){ grp.classList.remove('disabled'); }
+                    else { grp.classList.add('disabled'); get('p2-bg-check').checked=false; this.settings.bgMix=false; }
+                };
                 this.loadOriginalClip = () => {
                     this.mode='video'; if(this.stream) { this.stream.getTracks().forEach(t=>t.stop()); this.stream=null; }
                     this.video.srcObject=null; this.video.src=this.ORIGINAL_CLIP; this.video.loop=true;
                     this.restart(); // Reset time
                     this.video.play(); this.audio.play();
                     this.video.onloadedmetadata = () => { const s=()=>{if(!this.audio.paused)this.video.currentTime=this.audio.currentTime%this.video.duration;}; s(); setInterval(s,1000); };
+                    setBgMixEnabled(false);
                     get('p2-controls-bar').classList.add('expanded'); get('p2-create-prompt').style.opacity=0;
                     this.initAudioContext();
                 };
                 get('p2-clip-btn').onclick=this.loadOriginalClip;
                 get('p2-webcam-btn').onclick=async()=>{
-                    try { if(this.stream)this.stream.getTracks().forEach(t=>t.stop()); this.stream=await navigator.mediaDevices.getUserMedia({video:true}); this.video.srcObject=this.stream; this.video.src=""; this.mode='video'; this.video.play(); get('p2-bg-check').checked=true; this.settings.bgMix=true; } catch(e){alert("Webcam error");}
+                    try { if(this.stream)this.stream.getTracks().forEach(t=>t.stop()); this.stream=await navigator.mediaDevices.getUserMedia({video:true}); this.video.srcObject=this.stream; this.video.src=""; this.mode='video'; this.video.play(); setBgMixEnabled(true); get('p2-bg-check').checked=true; this.settings.bgMix=true; } catch(e){alert("Webcam error");}
                 };
                 get('p2-upload-btn').onclick=()=>get('p2-upload-input').click();
                 get('p2-upload-input').onchange=e=>{
                     const f=e.target.files[0]; if(!f)return; const u=URL.createObjectURL(f);
                     this.restart();
                     if(f.type.startsWith('image')){this.mode='image';this.img.src=u;} else {this.mode='video';this.video.src=u;this.video.loop=true;this.video.play();}
-                    get('p2-bg-check').checked=true; this.settings.bgMix=true;
+                    setBgMixEnabled(true); get('p2-bg-check').checked=true; this.settings.bgMix=true;
                     this.initAudioContext();
                 };
                 // Sync play icon with actual audio state via events

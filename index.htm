@@ -349,25 +349,20 @@
         /* --- ESTILOS EXP 2 (RECORDER) --- */
         #p2-canvas-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
         canvas#p2-output-canvas { display: block; width: 100%; height: 100%; }
-        #p2-controls-bar { position: absolute; bottom: 35px; left: 50%; transform: translateX(-50%); background: transparent; backdrop-filter: none; border: none; box-shadow: none; width: auto; max-width: none; padding: 0; border-radius: 0; z-index: 100; opacity: 1; pointer-events: auto; transition: none; }
+        #p2-controls-bar { position: absolute; bottom: 85px; left: 50%; transform: translateX(-50%); background: var(--control-bg); backdrop-filter: blur(10px); border: 1px solid var(--border-color); box-shadow: 0 0 30px rgba(255,200,0,0.15); width: 90vw; max-width: 800px; padding: 20px 25px; border-radius: 8px; z-index: 100; transition: opacity 0.4s, background-color 0.5s ease, border-color 0.5s ease; opacity: 0; pointer-events: none; }
         #p2-controls-bar.expanded { opacity: 1; pointer-events: auto; }
-        #p2-toggle-button { display: none; }
-        #p2-toggle-button svg { display: none; }
+        #p2-toggle-button { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); width: 50px; height: 50px; border-radius: 50%; background: var(--control-bg); border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 101; transition: background-color 0.5s ease, border-color 0.5s ease; }
+        #p2-toggle-button svg { fill: var(--highlight-color); width: 24px; height: 24px; transition: fill 0.5s ease; }
         #p2-record-indicator { position: absolute; top: 85px; right: 20px; display: flex; align-items: center; gap: 10px; opacity: 0; pointer-events: none; transition: 0.3s; z-index: 150; }
         #p2-record-indicator.active { opacity: 1; }
         .rec-dot { width: 15px; height: 15px; background-color: var(--record-color); border-radius: 50%; box-shadow: 0 0 10px var(--record-color); animation: blink 1s infinite; }
         .rec-text { color: var(--record-color); font-weight: bold; font-size: 14px; letter-spacing: 1px; font-family: 'Silkscreen', cursive; }
         @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
-        #p2-create-prompt { display: none; }
+        #p2-create-prompt { position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%); color: var(--text-color); font-size: 1.2rem; pointer-events: none; transition: opacity 0.4s, color 0.5s ease; font-family: 'Silkscreen', cursive; }
+        #p2-controls-bar.expanded ~ #p2-create-prompt { opacity: 0; }
         input[type="color"] { width: 100%; height: 30px; border: 1px solid var(--border-color); background: transparent; padding: 0; border-radius: 4px; cursor: pointer; transition: border-color 0.5s ease; }
         input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--highlight-color); cursor: pointer; }
         #p2-record-btn.recording { background-color: rgba(255, 50, 50, 0.2); border-color: var(--record-color); color: var(--record-color); }
-
-        /* --- UI SIMPLIFICADA EXP2 --- */
-        #p2-simple-ui { display: flex; align-items: center; gap: 18px; }
-        #p2-play-music { width: 52px; height: 52px; padding: 0; flex-shrink: 0; border-radius: 50%; background: rgba(255,200,0,0.06); border: 1px solid var(--border-color); transition: background 0.2s, border-color 0.5s ease; }
-        #p2-play-music:hover { background: rgba(255,200,0,0.18); }
-        #p2-ganwalk-label { font-family: 'Astloch', cursive; font-weight: 700; font-size: clamp(2rem, 5vw, 3.5rem); color: var(--highlight-color); text-shadow: 0 0 18px rgba(var(--highlight-rgb),0.45); letter-spacing: 0.08em; line-height: 1; pointer-events: none; }
 
         /* --- POPUP FIM DE MÚSICA --- */
         #p2-ending-popup { position: fixed; inset: 0; z-index: 9999; background: rgba(0,5,0,0.88); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.6s ease; }
@@ -540,23 +535,23 @@
 <body>
 
     <!-- MARQUEE NO TOPO -->
-    <a href="https://ditto.fm/calma-ganwalk" target="_blank" id="top-marquee">
+    <a href="https://ditto.fm/satisfaz-acredito" target="_blank" id="top-marquee">
         <div class="marquee-track">
             <div class="marquee-content">
-                <span>NOVO SINGLE - EM BREVE - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
-                <span>NOVO SINGLE - EM BREVE - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
-                <span>NOVO SINGLE - EM BREVE - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
-                <span>NOVO SINGLE - EM BREVE - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
-                <span>NOVO SINGLE - EM BREVE - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
-                <span>NOVO SINGLE - EM BREVE - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span>FAÇA O PRE-SAVE AGORA - SATISFAZ/ACREDITO - 01.05.2026 &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span>FAÇA O PRE-SAVE AGORA - SATISFAZ/ACREDITO - 01.05.2026 &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span>FAÇA O PRE-SAVE AGORA - SATISFAZ/ACREDITO - 01.05.2026 &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span>FAÇA O PRE-SAVE AGORA - SATISFAZ/ACREDITO - 01.05.2026 &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span>FAÇA O PRE-SAVE AGORA - SATISFAZ/ACREDITO - 01.05.2026 &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span>FAÇA O PRE-SAVE AGORA - SATISFAZ/ACREDITO - 01.05.2026 &nbsp;&nbsp;&nbsp;&nbsp;</span>
             </div>
             <div class="marquee-content" aria-hidden="true">
-                <span>NOVO SINGLE - EM BREVE - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
-                <span>NOVO SINGLE - EM BREVE - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
-                <span>NOVO SINGLE - EM BREVE - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
-                <span>NOVO SINGLE - EM BREVE - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
-                <span>NOVO SINGLE - EM BREVE - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
-                <span>NOVO SINGLE - EM BREVE - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span>FAÇA O PRE-SAVE AGORA - SATISFAZ/ACREDITO - 01.05.2026 &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span>FAÇA O PRE-SAVE AGORA - SATISFAZ/ACREDITO - 01.05.2026 &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span>FAÇA O PRE-SAVE AGORA - SATISFAZ/ACREDITO - 01.05.2026 &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span>FAÇA O PRE-SAVE AGORA - SATISFAZ/ACREDITO - 01.05.2026 &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span>FAÇA O PRE-SAVE AGORA - SATISFAZ/ACREDITO - 01.05.2026 &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span>FAÇA O PRE-SAVE AGORA - SATISFAZ/ACREDITO - 01.05.2026 &nbsp;&nbsp;&nbsp;&nbsp;</span>
             </div>
         </div>
     </a>
@@ -574,7 +569,7 @@
         <div class="nav-menu">
             <button class="nav-item active" id="btn-exp1" onclick="Nav.goToExperience1()">Exp I</button>
             <button class="nav-item" id="btn-exp2" onclick="Nav.goToExperience2()">Exp II</button>
-            <button class="nav-item" id="btn-presave" onclick="window.open('https://ditto.fm/calma-ganwalk', '_blank')">Ouça agora</button>
+            <button class="nav-item" id="btn-presave" onclick="window.open('https://ditto.fm/satisfaz-acredito', '_blank')">Pre-save</button>
             <button class="nav-item" id="btn-links" onclick="Nav.goToSection('links-screen', 'btn-links')">Links</button>
             <button class="nav-item" id="btn-creditos" onclick="Nav.goToSection('credits-screen', 'btn-creditos')">Créditos</button>
         </div>
@@ -591,7 +586,7 @@
         <button id="mobile-close-btn" onclick="Nav.toggleMobileMenu()">✕</button>
         <div class="mobile-overlay-link" onclick="Nav.goToExperience1()">Exp I</div>
         <div class="mobile-overlay-link" onclick="Nav.goToExperience2(); Nav.toggleMobileMenu()">Exp II</div>
-        <div class="mobile-overlay-link" onclick="window.open('https://ditto.fm/calma-ganwalk', '_blank')">Ouça agora</div>
+        <div class="mobile-overlay-link" onclick="window.open('https://ditto.fm/satisfaz-acredito', '_blank')">Pre-save</div>
         <div class="mobile-overlay-link" onclick="Nav.goToSection('links-screen', 'btn-links')">Links</div>
         <div class="mobile-overlay-link" onclick="Nav.goToSection('credits-screen', 'btn-creditos')">Créditos</div>
     </div>
@@ -668,73 +663,42 @@
         <video id="p2-video" autoplay playsinline muted loop style="display:none;" crossOrigin="anonymous"></video>
         <canvas id="p2-hidden-canvas" style="display:none;"></canvas>
         <input type="file" id="p2-upload-input" accept="video/*, image/*" style="display:none;">
-        <audio id="p2-background-audio" src="https://raw.githubusercontent.com/ganwalk/2026/main/chasm-loop.mp3" style="display:none;" crossOrigin="anonymous"></audio>
+        <audio id="p2-background-audio" src="https://raw.githubusercontent.com/ganwalk/2026/main/satisfazacredito.mp3" style="display:none;" crossOrigin="anonymous"></audio>
 
-        <!-- MENU COMPLETO EXP2 PRESERVADO (INATIVO) -->
-        <template id="p2-original-menu">
+        <div id="p2-controls-bar">
             <div class="controls-grid">
                 <div class="control-group">
                     <div style="display:flex; gap:10px;">
-                        <button id="p2-clip-btn-arch">Clipe</button><button id="p2-upload-btn-arch">Carregar</button><button id="p2-webcam-btn-arch">Webcam</button>
+                        <button id="p2-clip-btn">Clipe</button><button id="p2-upload-btn">Carregar</button><button id="p2-webcam-btn">Webcam</button>
                     </div>
                     <!-- REPRODUTOR EXP 2 AJUSTADO -->
                     <div style="display:flex; align-items:center; gap:10px; background:#111; padding:10px; border-radius:6px; border:1px solid #444;">
-                        <button id="p2-play-music-arch" style="width:40px; height:40px; padding:0; flex-shrink:0; border-radius:50%;"><svg viewBox="0 0 24 24" width="20"><path d="M8 5v14l11-7z"/></svg></button>
+                        <button id="p2-play-music" style="width:40px; height:40px; padding:0; flex-shrink:0; border-radius:50%;"><svg id="p2-play-icon" viewBox="0 0 24 24" width="20"><path d="M8 5v14l11-7z"/></svg></button>
                         <div style="flex-grow:1; display:flex; flex-direction:column; gap:4px;">
-                            <input type="range" id="p2-music-slider-arch" min="0" value="0" step="1">
-                            <span id="p2-music-time-arch" style="font-size:11px; color:#ccc; align-self:flex-end; font-family:'Silkscreen';">0:00</span>
+                            <input type="range" id="p2-music-slider" min="0" value="0" step="1">
+                            <span id="p2-music-time" style="font-size:11px; color:#ccc; align-self:flex-end; font-family:'Silkscreen';">0:00</span>
                         </div>
                     </div>
                     <!-- FIM REPRODUTOR -->
                     <div style="display:flex; gap:10px;">
-                        <button id="p2-export-img-arch">Foto</button><button id="p2-record-btn-arch">Gravar</button>
+                        <button id="p2-export-img">Foto</button><button id="p2-record-btn">Gravar</button>
                     </div>
                     <div style="font-family:'Astloch'; font-weight:700; font-size:2.5rem; color:#fff; margin-top:auto;">GANWALK</div>
                 </div>
                 <div class="control-group">
-                    <label>Fundo</label><input type="color" id="p2-bg-color-arch">
-                    <label>Fonte 1</label><input type="color" id="p2-font-color1-arch">
-                    <label>Fonte 2</label><input type="color" id="p2-font-color2-arch">
-                    <div style="display:flex; justify-content:space-between;"><label>Fundo Mídia</label><input type="checkbox" id="p2-bg-check-arch"></div>
-                    <label>Opacidade</label><input type="range" id="p2-bg-opacity-arch" min="0" max="100">
+                    <label>Fundo</label><input type="color" id="p2-bg-color">
+                    <label>Fonte 1</label><input type="color" id="p2-font-color1">
+                    <label>Fonte 2</label><input type="color" id="p2-font-color2">
+                    <div style="display:flex; justify-content:space-between;"><label>Fundo Mídia</label><input type="checkbox" id="p2-bg-check"></div>
+                    <label>Opacidade</label><input type="range" id="p2-bg-opacity" min="0" max="100">
                 </div>
                 <div class="control-group">
-                    <label>Tamanho</label><input type="range" id="p2-font-size-arch" min="1" max="20" value="10">
-                    <label>Resolução</label><input type="range" id="p2-res-arch" min="10" max="150" value="35">
-                    <label>Limiar</label><input type="range" id="p2-thresh-arch" min="0" max="255" value="0">
-                    <div style="display:flex; justify-content:space-between;"><label>Inverter</label><input type="checkbox" id="p2-invert-arch"></div>
-                    <label>Caos</label><input type="range" id="p2-random-arch" min="0" max="20" value="0">
+                    <label>Tamanho</label><input type="range" id="p2-font-size" min="1" max="20" value="10">
+                    <label>Resolução</label><input type="range" id="p2-res" min="10" max="150" value="35">
+                    <label>Limiar</label><input type="range" id="p2-thresh" min="0" max="255" value="0">
+                    <div style="display:flex; justify-content:space-between;"><label>Inverter</label><input type="checkbox" id="p2-invert"></div>
+                    <label>Caos</label><input type="range" id="p2-random" min="0" max="20" value="0">
                 </div>
-            </div>
-        </template>
-
-        <div id="p2-controls-bar">
-            <!-- Elementos necessários para bindings JS (ocultos) -->
-            <div style="display:none;">
-                <button id="p2-clip-btn"></button>
-                <button id="p2-upload-btn"></button>
-                <button id="p2-webcam-btn"></button>
-                <input type="range" id="p2-music-slider" min="0" value="0" step="1">
-                <span id="p2-music-time">0:00</span>
-                <button id="p2-export-img"></button>
-                <button id="p2-record-btn"></button>
-                <input type="color" id="p2-bg-color">
-                <input type="color" id="p2-font-color1">
-                <input type="color" id="p2-font-color2">
-                <input type="checkbox" id="p2-bg-check">
-                <input type="range" id="p2-bg-opacity" min="0" max="100">
-                <input type="range" id="p2-font-size" min="1" max="20" value="10">
-                <input type="range" id="p2-res" min="10" max="150" value="35">
-                <input type="range" id="p2-thresh" min="0" max="255" value="0">
-                <input type="checkbox" id="p2-invert">
-                <input type="range" id="p2-random" min="0" max="20" value="0">
-            </div>
-            <!-- UI Simplificada -->
-            <div id="p2-simple-ui">
-                <button id="p2-play-music" aria-label="Reproduzir">
-                    <svg id="p2-play-icon" viewBox="0 0 24 24" width="22"><path d="M8 5v14l11-7z"/></svg>
-                </button>
-                <span id="p2-ganwalk-label">GANWALK</span>
             </div>
         </div>
         <div id="p2-create-prompt">Clique para <span class="faça-glow">criar</span>.</div>
@@ -764,7 +728,7 @@
                 staticTop: '',
                 code: `
 <span class="c-ln">1</span><span class="c-kw">const</span> <span class="c-var">socialLinks</span> <span class="c-op">=</span> [<br>
-<span class="c-ln">2</span>&nbsp;&nbsp;{ <span class="c-var">platform</span>: <span class="c-str">"Ouça Agora"</span>, <span class="c-var">link</span>: <span class="c-str">"ditto.fm"</span> },<br>
+<span class="c-ln">2</span>&nbsp;&nbsp;{ <span class="c-var">platform</span>: <span class="c-str">"Pre-save"</span>, <span class="c-var">link</span>: <span class="c-str">"ditto.fm"</span> },<br>
 <span class="c-ln">3</span>&nbsp;&nbsp;{ <span class="c-var">platform</span>: <span class="c-str">"Instagram"</span>, <span class="c-var">handle</span>: <span class="c-str">"@ganwalk"</span> },<br>
 <span class="c-ln">4</span>&nbsp;&nbsp;{ <span class="c-var">platform</span>: <span class="c-str">"TikTok"</span>, <span class="c-var">handle</span>: <span class="c-str">"@ganwalk"</span> },<br>
 <span class="c-ln">5</span>&nbsp;&nbsp;{ <span class="c-var">platform</span>: <span class="c-str">"YouTube"</span>, <span class="c-var">handle</span>: <span class="c-str">"@ganwalk"</span> },<br>
@@ -774,7 +738,7 @@
 <span class="c-ln">9</span><span class="c-func">render</span>(<span class="c-var">socialLinks</span>);`,
                 render: `
                 <div class="linktree-container">
-                    <a href="https://ditto.fm/calma-ganwalk" target="_blank" class="linktree-btn">Ouça Agora</a>
+                    <a href="https://ditto.fm/satisfaz-acredito" target="_blank" class="linktree-btn">Pre-save</a>
                     <a href="https://instagram.com/ganwalk" target="_blank" class="linktree-btn">Instagram</a>
                     <a href="https://tiktok.com/@ganwalk" target="_blank" class="linktree-btn">TikTok</a>
                     <a href="https://youtube.com/@ganwalk" target="_blank" class="linktree-btn">YouTube</a>
@@ -1967,6 +1931,7 @@
                     this.restart(); // Reset time
                     this.video.play(); this.audio.play();
                     this.video.onloadedmetadata = () => { const s=()=>{if(!this.audio.paused)this.video.currentTime=this.audio.currentTime%this.video.duration;}; s(); setInterval(s,1000); };
+                    get('p2-controls-bar').classList.add('expanded'); get('p2-create-prompt').style.opacity=0;
                     this.initAudioContext();
                 };
                 get('p2-clip-btn').onclick=this.loadOriginalClip;

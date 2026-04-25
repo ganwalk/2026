@@ -365,22 +365,6 @@
         #p2-record-btn.recording { background-color: rgba(255, 50, 50, 0.2); border-color: var(--record-color); color: var(--record-color); }
 
         /* --- POPUP FIM DE MÚSICA --- */
-        #p2-ending-popup { position: fixed; inset: 0; z-index: 9999; background: rgba(0,5,0,0.88); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.6s ease; }
-        #p2-ending-popup.visible { opacity: 1; pointer-events: auto; }
-        #p2-popup-inner { position: relative; border: 1px solid var(--highlight-color); padding: 50px 70px; max-width: 680px; width: 90vw; text-align: center; background: rgba(0,5,0,0.92); box-shadow: 0 0 50px rgba(var(--highlight-rgb),0.18), 0 0 120px rgba(var(--highlight-rgb),0.06), inset 0 0 80px rgba(0,0,0,0.7); overflow: hidden; }
-        #p2-popup-scanlines { position: absolute; inset: 0; background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.12) 2px, rgba(0,0,0,0.12) 4px); pointer-events: none; animation: scanroll 10s linear infinite; }
-        #p2-popup-vignette { position: absolute; inset: 0; background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.6) 100%); pointer-events: none; }
-        @keyframes scanroll { from { background-position: 0 0; } to { background-position: 0 4px; } }
-        #p2-popup-text { font-family: 'Silkscreen', monospace; font-size: clamp(0.75rem, 2.2vw, 1.1rem); color: var(--highlight-color); letter-spacing: 0.14em; line-height: 1.8; position: relative; z-index: 1; animation: p2flicker 4s infinite; }
-        .p2-glitch { position: relative; display: inline-block; animation: p2glitch 3s infinite; }
-        .p2-glitch::before, .p2-glitch::after { content: attr(data-text); position: absolute; left: 0; top: 0; width: 100%; }
-        .p2-glitch::before { color: #0ff; clip-path: polygon(0 25%, 100% 25%, 100% 45%, 0 45%); animation: p2gclip1 3s infinite; opacity: 0; }
-        .p2-glitch::after { color: rgba(255,200,0,0.8); clip-path: polygon(0 60%, 100% 60%, 100% 78%, 0 78%); animation: p2gclip2 3s infinite; opacity: 0; }
-        @keyframes p2glitch { 0%,87%,100%{transform:none;} 88%{transform:translateX(-3px) skewX(1deg);} 89%{transform:translateX(3px);} 90%{transform:none;} 93%{transform:skewX(-2deg) translateX(-2px);} 94%{transform:none;} }
-        @keyframes p2gclip1 { 0%,87%,100%{opacity:0;transform:none;} 88%{opacity:0.75;transform:translateX(-5px);} 89%{opacity:0.75;transform:translateX(5px);} 90%{opacity:0;} }
-        @keyframes p2gclip2 { 0%,91%,100%{opacity:0;transform:none;} 92%{opacity:0.7;transform:translateX(5px);} 93%{opacity:0.7;transform:translateX(-5px);} 94%{opacity:0;} }
-        @keyframes p2flicker { 0%,96%,100%{opacity:1;} 97%{opacity:0.82;} 98%{opacity:1;} 99%{opacity:0.88;} }
-        #p2-popup-cursor { font-family: 'Silkscreen', monospace; color: var(--highlight-color); font-size: 1.1rem; margin-top: 22px; position: relative; z-index: 1; animation: blink-cursor 1s infinite; }
 
         /* --- PÁGINAS DE TEXTO (CODE EDITOR STYLE) --- */
         .text-page { 
@@ -663,7 +647,7 @@
         <video id="p2-video" autoplay playsinline muted loop style="display:none;" crossOrigin="anonymous"></video>
         <canvas id="p2-hidden-canvas" style="display:none;"></canvas>
         <input type="file" id="p2-upload-input" accept="video/*, image/*" style="display:none;">
-        <audio id="p2-background-audio" src="https://raw.githubusercontent.com/ganwalk/2026/main/satisfazacredito.mp3" style="display:none;" crossOrigin="anonymous"></audio>
+        <audio id="p2-background-audio" src="https://raw.githubusercontent.com/ganwalk/2026/main/satisfazacredito.mp3" loop style="display:none;" crossOrigin="anonymous"></audio>
 
         <div id="p2-controls-bar">
             <div class="controls-grid">
@@ -704,18 +688,6 @@
         <div id="p2-create-prompt">Clique para <span class="faça-glow">criar</span>.</div>
         <div id="p2-toggle-button"><svg viewBox="0 0 24 24" width="24"><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg></div>
     </section>
-
-    <!-- POPUP: EXPERIÊNCIA COMPLETA EM BREVE -->
-    <div id="p2-ending-popup">
-        <div id="p2-popup-inner">
-            <div id="p2-popup-scanlines"></div>
-            <div id="p2-popup-vignette"></div>
-            <div id="p2-popup-text">
-                <span class="p2-glitch" data-text="EXPERIÊNCIA COMPLETA EM BREVE">EXPERIÊNCIA COMPLETA EM BREVE</span>
-            </div>
-            <div id="p2-popup-cursor">█</div>
-        </div>
-    </div>
 
     <!-- TEXT PAGES (EMPTY CONTAINERS FOR DYNAMIC CODE) -->
     <section id="links-screen" class="screen-section text-page"></section>
@@ -1796,7 +1768,7 @@
 
         const App2 = {
             settings:{bg:'#000500',font1:'#ffc800',font2:'#ff8800',size:10,res:35,thresh:0,invert:false,chaos:0,bgMix:false,bgOp:72},
-            video:null,img:null,hiddenC:null,outC:null,ctxH:null,ctxO:null,audio:null,stream:null,mode:'video',loopId:null,rec:null,chunks:[],isActive:false,useEmBreve:false,
+            video:null,img:null,hiddenC:null,outC:null,ctxH:null,ctxO:null,audio:null,stream:null,mode:'video',loopId:null,rec:null,chunks:[],isActive:false,
             audioCtx: null, audioSource: null, audioGain: null, audioFilter: null, audioDelay: null, audioFeedback: null,
             delayWet: null,
             transitionTimer: null,
@@ -1908,9 +1880,6 @@
 
             restart: function() {
                 if(this.transitionTimer) clearTimeout(this.transitionTimer);
-                this.useEmBreve=false;
-                const popup=document.getElementById('p2-ending-popup');
-                if(popup) popup.classList.remove('visible');
                 this.initAudioContext();
                 if(this.audioCtx && this.audioCtx.state === 'suspended') this.audioCtx.resume();
                 if(this.iosAudioEl2) this.iosAudioEl2.play().catch(()=>{});
@@ -1958,14 +1927,6 @@
                     get('p2-music-slider').value=this.audio.currentTime; get('p2-music-slider').max=this.audio.duration||100;
                     const f=s=>`${Math.floor(s/60)}:${Math.floor(s%60).toString().padStart(2,'0')}`;
                     get('p2-music-time').innerText=`${f(this.audio.currentTime)} / ${f(this.audio.duration)}`;
-                };
-                this.audio.onended=()=>{
-                    this.useEmBreve=true;
-                    const popup=document.getElementById('p2-ending-popup');
-                    popup.classList.add('visible');
-                    setTimeout(()=>{ popup.classList.remove('visible'); }, 5000);
-                    const icon=get('p2-play-icon');
-                    if(icon) icon.innerHTML='<path d="M8 5v14l11-7z"/>';
                 };
                 const v=(id,k)=>get(id).oninput=e=>this.settings[k]=e.target.value; const c=(id,k)=>get(id).onchange=e=>this.settings[k]=e.target.checked;
                 v('p2-bg-color','bg'); v('p2-font-color2','font2'); c('p2-bg-check','bgMix'); v('p2-bg-opacity','bgOp');
@@ -2017,7 +1978,7 @@
                 const data=this.ctxH.getImageData(0,0,gw,gh).data;
                 this.ctxO.fillStyle=this.settings.bg; this.ctxO.fillRect(0,0,w,h);
                 if(this.settings.bgMix){this.ctxO.globalAlpha=this.settings.bgOp/100; this.ctxO.imageSmoothingEnabled=false; this.ctxO.drawImage(this.hiddenC,0,0,w,h); this.ctxO.imageSmoothingEnabled=true; this.ctxO.globalAlpha=1;}
-                const cw=w/gw, ch=h/gh; const chars=this.useEmBreve?"embreve":"ganwalk"; const c1=this.hex2rgb(this.settings.font1); const c2=this.hex2rgb(this.settings.font2);
+                const cw=w/gw, ch=h/gh; const chars="ganwalk"; const c1=this.hex2rgb(this.settings.font1); const c2=this.hex2rgb(this.settings.font2);
                 const th=parseInt(this.settings.thresh); let ci=0;
                 this.ctxO.textAlign='center'; this.ctxO.textBaseline='middle';
                 let lastFill='', lastFont='';

@@ -38,7 +38,7 @@
             --text-color: #ffc800;
             --highlight-color: #ffc800;
             --highlight-rgb: 255, 200, 0;
-            --nav-inactive-color: #664d00;
+            --nav-inactive-color: #997300;
             --nav-active-color: #ffc800;
             --record-color: #ff3333;
             --mustard: #E1AD01;
@@ -345,6 +345,11 @@
         
         #p1-mini-container { flex-grow: 0; height: 30px; margin-top: auto; background: rgba(255,200,0,0.05); border: 1px solid var(--border-color); border-radius: 6px; overflow: hidden; width: 100%; position: relative; transition: border-color 0.5s ease; }
         #p1-mini-canvas { width: 100%; height: 100%; display: block; }
+
+        /* --- TOOLTIP CÂMERA --- */
+        .camera-tooltip { position: absolute; bottom: calc(100% + 10px); left: 50%; transform: translateX(-50%); background: var(--highlight-color); color: var(--bg-color); font-family: 'Silkscreen', monospace; font-size: 0.6rem; padding: 6px 10px; border-radius: 4px; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.35s ease; z-index: 300; letter-spacing: 0.05em; }
+        .camera-tooltip::after { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border: 6px solid transparent; border-top-color: var(--highlight-color); }
+        .camera-tooltip.visible { opacity: 1; }
 
         /* --- ESTILOS EXP 2 (RECORDER) --- */
         #p2-canvas-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
@@ -653,7 +658,7 @@
             <div class="controls-grid">
                 <div class="control-group">
                     <div style="display:flex; gap:10px;">
-                        <button id="p2-clip-btn">Clipe</button><button id="p2-upload-btn">Carregar</button><button id="p2-webcam-btn">Webcam</button>
+                        <button id="p2-clip-btn">Clipe</button><button id="p2-upload-btn">Carregar</button><button id="p2-webcam-btn" style="position:relative;">Camera<span id="p2-camera-tooltip" class="camera-tooltip">Experimente com sua câmera!</span></button>
                     </div>
                     <!-- REPRODUTOR EXP 2 AJUSTADO -->
                     <div style="display:flex; align-items:center; gap:10px; background:#111; padding:10px; border-radius:6px; border:1px solid #444;">
@@ -975,7 +980,7 @@
                 r.setProperty('--bg-color','#000000'); r.setProperty('--bg-gradient-top','rgba(0,0,0,0.9)'); r.setProperty('--bg-gradient-bottom','rgba(0,0,0,0)'); r.setProperty('--control-bg','rgba(0,0,0,0.9)');
                 r.setProperty('--text-color','#ffffff'); r.setProperty('--highlight-color','#ffffff'); r.setProperty('--highlight-rgb','255, 255, 255');
                 r.setProperty('--border-color','rgba(255,255,255,0.3)'); r.setProperty('--shadow-color','rgba(255,255,255,0.15)');
-                r.setProperty('--nav-inactive-color','#555555'); r.setProperty('--nav-active-color','#ffffff');
+                r.setProperty('--nav-inactive-color','#888888'); r.setProperty('--nav-active-color','#ffffff');
                 CodeTyper.stop();
                 if (this.currentMode === 'exp2') {
                     App2.transitionOut();
@@ -999,7 +1004,7 @@
                 r.setProperty('--bg-color','#000500'); r.setProperty('--bg-gradient-top','rgba(0,5,0,0.9)'); r.setProperty('--bg-gradient-bottom','rgba(0,5,0,0)'); r.setProperty('--control-bg','rgba(0,5,0,0.9)');
                 r.setProperty('--text-color','#ffc800'); r.setProperty('--highlight-color','#ffc800'); r.setProperty('--highlight-rgb','255, 200, 0');
                 r.setProperty('--border-color','rgba(255,200,0,0.3)'); r.setProperty('--shadow-color','rgba(255,200,0,0.15)');
-                r.setProperty('--nav-inactive-color','#664d00'); r.setProperty('--nav-active-color','#ffc800');
+                r.setProperty('--nav-inactive-color','#997300'); r.setProperty('--nav-active-color','#ffc800');
                 CodeTyper.stop();
                 this.showMarquee(); // Mostra caso o usuário navegue antes dos 5s
                 
@@ -1915,13 +1920,44 @@
                     get('p2-bg-check').checked=true; this.settings.bgMix=true;
                     this.initAudioContext();
                 };
+                // Sync play icon with actual audio state via events
+                const syncIcon = () => {
+                    const i = get('p2-play-icon');
+                    if(i) i.innerHTML = this.audio.paused ? '<path d="M8 5v14l11-7z"/>' : '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+                };
+                this.audio.addEventListener('play', syncIcon);
+                this.audio.addEventListener('pause', syncIcon);
                 get('p2-play-music').onclick=()=>{
                     this.initAudioContext();
                     if(this.iosAudioEl2) this.iosAudioEl2.play().catch(()=>{});
-                    const i=get('p2-play-icon');
-                    if(this.audio.paused){this.audio.play(); if(this.mode==='video')this.video.play(); i.innerHTML='<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';}
-                    else{this.audio.pause(); if(this.mode==='video'&&this.video.currentSrc===this.ORIGINAL_CLIP)this.video.pause(); i.innerHTML='<path d="M8 5v14l11-7z"/>';}
+                    if(this.audio.paused){this.audio.play(); if(this.mode==='video')this.video.play();}
+                    else{this.audio.pause(); if(this.mode==='video'&&this.video.currentSrc===this.ORIGINAL_CLIP)this.video.pause();}
                 };
+
+                // Camera tooltip
+                const camTip = get('p2-camera-tooltip');
+                const showCamTip = () => {
+                    if(!camTip || this._camTipShown) return;
+                    this._camTipShown = true;
+                    camTip.classList.add('visible');
+                    setTimeout(()=>camTip.classList.remove('visible'), 4000);
+                };
+                if(!this.isMobile) {
+                    // Desktop: show 5s after controls first open
+                    const bar = get('p2-controls-bar');
+                    const observer = new MutationObserver(()=>{
+                        if(bar.classList.contains('expanded')){ observer.disconnect(); setTimeout(showCamTip, 5000); }
+                    });
+                    observer.observe(bar, {attributes:true, attributeFilter:['class']});
+                } else {
+                    // Mobile: show when controls open if user hasn't scrolled
+                    const bar = get('p2-controls-bar');
+                    bar.addEventListener('scroll', ()=>{ if(bar.scrollTop > 10) camTip.classList.remove('visible'); }, {passive:true});
+                    const mObs = new MutationObserver(()=>{
+                        if(bar.classList.contains('expanded')){ mObs.disconnect(); setTimeout(()=>{ if(bar.scrollTop===0) showCamTip(); }, 1500); }
+                    });
+                    mObs.observe(bar, {attributes:true, attributeFilter:['class']});
+                }
                 get('p2-music-slider').oninput=e=>{this.audio.currentTime=e.target.value; if(this.video.duration)this.video.currentTime=e.target.value%this.video.duration;};
                 this.audio.ontimeupdate=()=>{
                     get('p2-music-slider').value=this.audio.currentTime; get('p2-music-slider').max=this.audio.duration||100;

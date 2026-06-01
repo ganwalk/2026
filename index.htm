@@ -91,6 +91,7 @@
             display: flex;
             width: max-content;
             animation: scroll-marquee 30s linear infinite;
+            will-change: transform;
         }
         .marquee-content {
             display: flex; white-space: nowrap; flex-shrink: 0;
@@ -146,7 +147,7 @@
             font-size: 0.9rem;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 1px; cursor: pointer; transition: all 0.3s;
+            letter-spacing: 1px; cursor: pointer; transition: color 0.3s ease, text-shadow 0.3s ease;
             padding: 5px 0; position: relative; white-space: nowrap;
         }
         .nav-item:hover, .nav-item.active {
@@ -278,7 +279,10 @@
             font-family: 'Astloch', serif; font-weight: 700; font-size: 10vw;
             color: var(--highlight-color); position: relative; z-index: 1;
             pointer-events: none; text-align: center; line-height: 1; opacity: 0;
-            transition: opacity 0.5s ease, text-shadow 0.1s ease-out, transform 0.1s ease, color 0.5s ease;
+            /* 'transform' é atualizado a cada frame pelo áudio; deixá-lo fora da transition
+               evita que o navegador interpole eternamente (lag/rubber-band) e mantém o pulso responsivo */
+            transition: opacity 0.5s ease, text-shadow 0.1s ease-out, color 0.5s ease;
+            will-change: transform;
         }
         .ganwalk-neon-glow { text-shadow: 0 0 10px rgba(var(--highlight-rgb), 0.8), 0 0 20px rgba(var(--highlight-rgb), 0.6); }
         .ganwalk-glitch { animation: glitch-effect 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
@@ -332,7 +336,7 @@
             font-weight: 400; font-family: 'Silkscreen', cursive; 
             transition: color 0.5s ease; 
         }
-        button { background: rgba(255,200,0,0.05); border: 1px solid var(--border-color); color: var(--text-color); padding: 10px; font-family: 'Silkscreen', cursive; font-size: 11px; border-radius: 4px; cursor: pointer; transition: 0.2s, border-color 0.5s ease, color 0.5s ease; display: flex; align-items: center; justify-content: center; width: 100%; text-transform: uppercase; }
+        button { background: rgba(255,200,0,0.05); border: 1px solid var(--border-color); color: var(--text-color); padding: 10px; font-family: 'Silkscreen', cursive; font-size: 11px; border-radius: 4px; cursor: pointer; transition: background-color 0.2s ease, border-color 0.5s ease, color 0.5s ease; display: flex; align-items: center; justify-content: center; width: 100%; text-transform: uppercase; }
         button:hover { background: rgba(255,200,0,0.15); }
         
         /* Icones SVG herdam a cor de destaque (Cor Foco) */
@@ -902,49 +906,108 @@
         };
 
         const CodeTyper = {
-            activeInterval: null,
+            rafId: null,
+            _decoder: null,
             stop: function() {
-                if (this.activeInterval) {
-                    clearInterval(this.activeInterval);
-                    this.activeInterval = null;
-                }
+                if (this.rafId) { cancelAnimationFrame(this.rafId); this.rafId = null; }
             },
+            // Constrói o DOM de forma incremental (sem re-parsear todo o innerHTML a cada tick).
+            // Antes: setInterval(5ms) + container.innerHTML = stringCrescente => custo O(n²) e
+            // "saltos" no texto, sobretudo na arte ASCII enorme dos créditos. Agora é O(n) via rAF.
             type: function(containerId, htmlContent, onComplete, charsPerTick = 4) {
-                this.stop(); 
-                
+                this.stop();
                 const container = document.getElementById(containerId);
-                container.innerHTML = '<span class="cursor">|</span>'; 
-                
+                container.innerHTML = '';
+
+                // Tokeniza em: tags HTML, entidades (&nbsp; etc) e caracteres individuais
+                const tokens = [];
+                const len = htmlContent.length;
                 let i = 0;
-                const chunks = [];
-                let tagBuffer = '';
-                let isTag = false;
-                
-                for (let char of htmlContent) {
-                    if (char === '<') { isTag = true; tagBuffer += char; continue; }
-                    if (char === '>') { isTag = false; tagBuffer += char; chunks.push(tagBuffer); tagBuffer = ''; continue; }
-                    if (isTag) { tagBuffer += char; }
-                    else { chunks.push(char); }
-                }
-                
-                let buildHTML = '';
-                this.activeInterval = setInterval(() => {
-                    for(let k=0; k<charsPerTick; k++) {
-                        if (i >= chunks.length) {
-                            clearInterval(this.activeInterval);
-                            container.innerHTML = buildHTML;
-                            if(onComplete) onComplete();
-                            return;
-                        }
-                        buildHTML += chunks[i];
+                while (i < len) {
+                    const ch = htmlContent[i];
+                    if (ch === '<') {
+                        let j = htmlContent.indexOf('>', i);
+                        if (j === -1) j = len - 1;
+                        tokens.push({ tag: true, v: htmlContent.slice(i, j + 1) });
+                        i = j + 1;
+                    } else if (ch === '&') {
+                        const j = htmlContent.indexOf(';', i);
+                        if (j !== -1 && j - i <= 10) { tokens.push({ tag: false, v: htmlContent.slice(i, j + 1), ent: true }); i = j + 1; }
+                        else { tokens.push({ tag: false, v: ch }); i++; }
+                    } else {
+                        tokens.push({ tag: false, v: ch });
                         i++;
                     }
-                    container.innerHTML = buildHTML + '<span class="cursor">|</span>';
-                    
-                    // Restaura o scroll automático para todo o conteúdo do site
+                }
+
+                const cursor = document.createElement('span');
+                cursor.className = 'cursor';
+                cursor.textContent = '|';
+                container.appendChild(cursor);
+
+                const decoder = this._decoder || (this._decoder = document.createElement('textarea'));
+                const decode = s => { decoder.innerHTML = s; return decoder.value; };
+
+                // rAF roda ~3x mais lento que o setInterval(5ms) original; escalamos o ritmo
+                // para preservar a mesma sensação de velocidade de digitação de antes.
+                const perFrame = Math.max(1, Math.round(charsPerTick * 3));
+
+                let parent = container;
+                const stack = [];
+                let textNode = null;
+                let buf = '';
+                let idx = 0;
+
+                // Agrupa caracteres num buffer e escreve no text node uma vez por flush,
+                // em vez de "data += char" por caractere (que seria O(n²) na arte ASCII).
+                const flush = () => {
+                    if (!buf) return;
+                    if (!textNode || textNode.parentNode !== parent) {
+                        textNode = document.createTextNode('');
+                        parent.appendChild(textNode);
+                    }
+                    textNode.data += buf;
+                    buf = '';
+                };
+
+                const step = () => {
+                    for (let k = 0; k < perFrame && idx < tokens.length; k++) {
+                        const tok = tokens[idx++];
+                        if (tok.tag) {
+                            flush();
+                            textNode = null;
+                            const tag = tok.v;
+                            if (tag.charAt(1) === '/') {
+                                if (stack.length) parent = stack.pop();
+                            } else if (/^<br/i.test(tag)) {
+                                parent.appendChild(document.createElement('br'));
+                            } else {
+                                const m = tag.match(/^<\s*([a-zA-Z0-9]+)/);
+                                if (!m) continue;
+                                const tmp = document.createElement('div');
+                                tmp.innerHTML = tag + '</' + m[1] + '>';
+                                const el = tmp.firstChild;
+                                parent.appendChild(el);
+                                stack.push(parent);
+                                parent = el;
+                            }
+                        } else {
+                            buf += tok.ent ? decode(tok.v) : tok.v;
+                        }
+                    }
+                    flush();
+                    container.appendChild(cursor); // mantém o cursor sempre no fim
                     container.scrollTop = container.scrollHeight;
-                    
-                }, 5); 
+
+                    if (idx < tokens.length) {
+                        this.rafId = requestAnimationFrame(step);
+                    } else {
+                        cursor.remove();
+                        this.rafId = null;
+                        if (onComplete) onComplete();
+                    }
+                };
+                this.rafId = requestAnimationFrame(step);
             }
         };
 
@@ -1320,7 +1383,9 @@
 
                 this.renderer = new THREE.WebGLRenderer({canvas:cvs, antialias:true, alpha:true, preserveDrawingBuffer:true});
                 this.renderer.setSize(window.innerWidth, window.innerHeight);
-                this.renderer.setPixelRatio(window.devicePixelRatio);
+                // Limita o pixel ratio a 2: em ecrãs retina/telemóvel (dpr 3) o bloom + grelha
+                // renderizavam a 3x a resolução, derrubando o FPS sem ganho visual percetível.
+                this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
                 this.renderer.autoClear = false;
 
                 const rp = new THREE.RenderPass(this.scene, this.camera);
@@ -1637,9 +1702,22 @@
             animate: function() {
                 if(!this.isActive) return;
                 this.animationId = requestAnimationFrame(() => this.animate());
+                // Cache de elementos DOM e do buffer de frequências: evita getElementById e
+                // alocação de Uint8Array a cada frame (principal fonte de GC/stutter no loop).
+                const D = this._el || (this._el = {
+                    progress: document.getElementById('p1-progress'),
+                    delay: document.getElementById('p1-delay'),
+                    reverb: document.getElementById('p1-reverb'),
+                    overdrive: document.getElementById('p1-overdrive'),
+                    chorus: document.getElementById('p1-chorus'),
+                    filter: document.getElementById('p1-filter'),
+                    mainText: document.getElementById('p1-main-text'),
+                    controlsBar: document.getElementById('p1-controls-bar'),
+                });
                 const t = this.audioContext.currentTime;
                 const dir = this.isReversed ? -1 : 1;
-                const freq = new Uint8Array(this.analyser.frequencyBinCount);
+                if(!this.freqData) this.freqData = new Uint8Array(this.analyser.frequencyBinCount);
+                const freq = this.freqData;
                 this.analyser.getByteFrequencyData(freq);
                 let b=0, m=0, h=0;
                 for(let i=0;i<freq.length;i++) { const v=freq[i]/255; if(i<freq.length*0.1)b+=v; else if(i<freq.length*0.4)m+=v; else h+=v; }
@@ -1649,7 +1727,7 @@
                 if(this.isPlaying) {
                     const elap = t - this.startTime;
                     const cur = this.isReversed ? (this.buffer.duration - elap) : elap;
-                    document.getElementById('p1-progress').value = cur;
+                    D.progress.value = cur;
                     this.updateTimeDisplay(cur);
 
                     // Only manage theme if in exp1
@@ -1678,12 +1756,12 @@
                     }
                 }
 
-                const dVal = parseFloat(document.getElementById('p1-delay').value);
-                const rVal = parseFloat(document.getElementById('p1-reverb').value);
-                const odVal = parseFloat(document.getElementById('p1-overdrive').value);
-                const cVal = parseFloat(document.getElementById('p1-chorus').value);
+                const dVal = parseFloat(D.delay.value);
+                const rVal = parseFloat(D.reverb.value);
+                const odVal = parseFloat(D.overdrive.value);
+                const cVal = parseFloat(D.chorus.value);
 
-                document.getElementById('p1-main-text').style.transform = `scale(${1+avg*0.05*dir})`;
+                D.mainText.style.transform = `scale(${1+avg*0.05*dir})`;
                 this.fadeMesh.material.opacity = 0.02 + 0.98 * Math.pow(1.0 - rVal, 3);
                 this.renderer.setClearColor(this.bgThree, 1 - (dVal*0.9));
                 this.visualGroup.rotation.y += (0.005 + avg*0.01)*dir;
@@ -1726,8 +1804,8 @@
                 this.renderer.clearDepth();
                 this.composer.render();
 
-                if(document.getElementById('p1-controls-bar').classList.contains('expanded')) {
-                    this.drawMiniCanvas(b, m, h, t, dir, rVal, parseFloat(document.getElementById('p1-filter').value), odVal, cVal);
+                if(D.controlsBar.classList.contains('expanded')) {
+                    this.drawMiniCanvas(b, m, h, t, dir, rVal, parseFloat(D.filter.value), odVal, cVal);
                 }
             },
 

@@ -4,7 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GANWALK | OFICIAL (C) 2026</title>
-    
+
+    <!-- SEO / Compartilhamento -->
+    <meta name="description" content="GANWALK — experiências interativas. Ouça 'Calma' e 'Satisfaz/Acredito', remixe o som em tempo real e crie visuais em ASCII com sua câmera.">
+    <meta property="og:title" content="GANWALK | OFICIAL (C) 2026">
+    <meta property="og:description" content="Ouça, remixe e crie. Experiências sonoras e visuais interativas de GANWALK.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://ganwalk.github.io/2026/">
+    <meta name="twitter:card" content="summary">
+    <meta name="theme-color" content="#ffc800">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23000500'/%3E%3Ctext x='32' y='47' font-family='monospace' font-size='44' font-weight='bold' fill='%23ffc800' text-anchor='middle'%3EG%3C/text%3E%3C/svg%3E">
+
     <!-- Three.js e Post-Processing -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
@@ -159,24 +169,6 @@
             content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 1px; 
             background: var(--highlight-color);
             transition: background 0.5s ease;
-        }
-
-        /* --- CLASSE EM BREVE (EXP II) --- */
-        .coming-soon {
-            cursor: default !important;
-        }
-        .coming-soon span {
-            pointer-events: none;
-        }
-        .coming-soon:hover span, .coming-soon:active span {
-            display: none;
-        }
-        .coming-soon::before {
-            content: attr(data-hover);
-            display: none;
-        }
-        .coming-soon:hover::before, .coming-soon:active::before {
-            display: inline-block;
         }
 
         /* --- MOBILE ELEMENTS --- */
@@ -370,6 +362,8 @@
         #p2-create-prompt { position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%); color: var(--text-color); font-size: 1.2rem; pointer-events: none; transition: opacity 0.4s, color 0.5s ease; font-family: 'Silkscreen', cursive; }
         #p2-controls-bar.expanded ~ #p2-create-prompt { opacity: 0; }
         input[type="color"] { width: 100%; height: 30px; border: 1px solid var(--border-color); background: transparent; padding: 0; border-radius: 4px; cursor: pointer; transition: border-color 0.5s ease; }
+        input[type="text"] { width: 100%; background: rgba(255,200,0,0.05); border: 1px solid var(--border-color); color: var(--text-color); padding: 8px 10px; font-family: 'Silkscreen', cursive; font-size: 11px; border-radius: 4px; outline: none; text-transform: lowercase; transition: border-color 0.5s ease, color 0.5s ease; }
+        input[type="text"]:focus { border-color: var(--highlight-color); }
         input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--highlight-color); cursor: pointer; }
         #p2-record-btn.recording { background-color: rgba(255, 50, 50, 0.2); border-color: var(--record-color); color: var(--record-color); }
 
@@ -529,7 +523,7 @@
 <body>
 
     <!-- MARQUEE NO TOPO -->
-    <a href="https://ditto.fm/satisfaz-acredito" target="_blank" id="top-marquee">
+    <a href="https://ditto.fm/satisfaz-acredito" target="_blank" rel="noopener" id="top-marquee">
         <div class="marquee-track">
             <div class="marquee-content">
                 <span>OUÇA AGORA - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
@@ -640,7 +634,10 @@
                         </div>
                     </div>
                 </div>
-                <button id="p1-clear-effects" style="margin-top:20px; width:100%;">Limpar Efeitos</button>
+                <div style="display:flex; gap:10px; margin-top:20px;">
+                    <button id="p1-clear-effects">Limpar Efeitos</button>
+                    <button id="p1-share-remix">Compartilhar Remix</button>
+                </div>
             </div>
             <div id="p1-toggle-button">
                 <svg id="p1-toggle-arrow" viewBox="0 0 24 24"><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg>
@@ -657,7 +654,7 @@
         <video id="p2-video" autoplay playsinline muted loop style="display:none;" crossOrigin="anonymous"></video>
         <canvas id="p2-hidden-canvas" style="display:none;"></canvas>
         <input type="file" id="p2-upload-input" accept="video/*, image/*" style="display:none;">
-        <audio id="p2-background-audio" src="https://raw.githubusercontent.com/ganwalk/2026/main/satisfazacredito.mp3" loop style="display:none;" crossOrigin="anonymous"></audio>
+        <audio id="p2-background-audio" src="satisfazacredito.mp3" loop style="display:none;"></audio>
 
         <div id="p2-controls-bar">
             <div class="controls-grid">
@@ -689,10 +686,12 @@
                     </div>
                 </div>
                 <div class="control-group">
+                    <label>Texto</label><input type="text" id="p2-chars" value="ganwalk" maxlength="24" spellcheck="false" autocomplete="off">
                     <label>Tamanho</label><input type="range" id="p2-font-size" min="1" max="20" value="10">
                     <label>Resolução</label><input type="range" id="p2-res" min="10" max="150" value="35">
                     <label>Limiar</label><input type="range" id="p2-thresh" min="0" max="255" value="0">
                     <div style="display:flex; justify-content:space-between;"><label>Inverter</label><input type="checkbox" id="p2-invert"></div>
+                    <div style="display:flex; justify-content:space-between;"><label>Pulso (Áudio)</label><input type="checkbox" id="p2-pulse" checked></div>
                     <label>Caos</label><input type="range" id="p2-random" min="0" max="20" value="0">
                 </div>
             </div>
@@ -723,11 +722,11 @@
 <span class="c-ln">9</span><span class="c-func">render</span>(<span class="c-var">socialLinks</span>);`,
                 render: `
                 <div class="linktree-container">
-                    <a href="https://ditto.fm/satisfaz-acredito" target="_blank" class="linktree-btn">Pre-save</a>
-                    <a href="https://instagram.com/ganwalk" target="_blank" class="linktree-btn">Instagram</a>
-                    <a href="https://tiktok.com/@ganwalk" target="_blank" class="linktree-btn">TikTok</a>
-                    <a href="https://youtube.com/@ganwalk" target="_blank" class="linktree-btn">YouTube</a>
-                    <a href="https://soundcloud.com/ganwalk" target="_blank" class="linktree-btn">SoundCloud</a>
+                    <a href="https://ditto.fm/satisfaz-acredito" target="_blank" rel="noopener" class="linktree-btn">Pre-save</a>
+                    <a href="https://instagram.com/ganwalk" target="_blank" rel="noopener" class="linktree-btn">Instagram</a>
+                    <a href="https://tiktok.com/@ganwalk" target="_blank" rel="noopener" class="linktree-btn">TikTok</a>
+                    <a href="https://youtube.com/@ganwalk" target="_blank" rel="noopener" class="linktree-btn">YouTube</a>
+                    <a href="https://soundcloud.com/ganwalk" target="_blank" rel="noopener" class="linktree-btn">SoundCloud</a>
                 </div>`
             },
             
@@ -956,13 +955,26 @@
                 const t = document.getElementById('click-to-start-text');
                 const msgs = ["Sintonizando o éter", "Tecendo a realidade", "Escutando o vazio", "Decifrando ecos"];
                 let i = 0;
-                const iv = setInterval(() => { if(!t.classList.contains('ready')) t.innerText=msgs[i++%msgs.length]; }, 2000);
+                let pct = '';
+                const setLoadingText = () => { if(!t.classList.contains('ready')) t.innerText = msgs[i%msgs.length] + pct; };
+                const iv = setInterval(() => { i++; setLoadingText(); }, 2000);
+
+                // Progresso real do download da música
+                App1.onLoadProgress = p => { pct = ' ' + Math.min(100, Math.round(p*100)) + '%'; setLoadingText(); };
 
                 App1.init().then(() => {
                     clearInterval(iv);
                     t.classList.remove('loading'); t.classList.add('ready');
+
+                    if (!App1.buffer) {
+                        // Falha no download/decodificação do áudio: oferece retry em vez de falhar em silêncio
+                        t.innerHTML = 'Falha ao carregar o áudio.<br>Toque para <span class="faça-glow">tentar novamente</span>.';
+                        t.onclick = () => location.reload();
+                        return;
+                    }
+
                     t.innerHTML = 'Clique, ouça e <span class="faça-glow">faça</span>.';
-                    
+
                     t.onclick = () => {
                         l.style.opacity = 0;
                         setTimeout(() => l.style.display = 'none', 1500);
@@ -1153,20 +1165,42 @@
                 return { hex: `rgb(${invR}, ${invG}, ${invB})`, r: invR, g: invG, b: invB };
             },
 
+            // Baixa o mp3 reportando progresso (quando o servidor informa o tamanho)
+            fetchAudio: async function(url) {
+                const res = await fetch(url);
+                if(!res.ok) throw new Error('HTTP ' + res.status);
+                const total = parseInt(res.headers.get('Content-Length') || '0', 10);
+                if (!res.body || !total) return res.arrayBuffer();
+                const reader = res.body.getReader();
+                const parts = []; let received = 0;
+                while(true) {
+                    const {done, value} = await reader.read();
+                    if(done) break;
+                    parts.push(value); received += value.length;
+                    if(this.onLoadProgress) this.onLoadProgress(received/total);
+                }
+                const all = new Uint8Array(received); let off = 0;
+                for(const p of parts) { all.set(p, off); off += p.length; }
+                return all.buffer;
+            },
+
             init: async function() {
                 try { this.audioContext = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) { return; }
                 this.setupAudioGraph();
                 try {
-                    // Link raw do GitHub para ler o arquivo mp3 direto
-                    const res = await fetch("https://raw.githubusercontent.com/ganwalk/2026/main/calma.mp3");
-                    const ab = await res.arrayBuffer();
+                    // Arquivo local (mesmo repositório) — muito mais rápido que o raw do GitHub
+                    let ab;
+                    try { ab = await this.fetchAudio("calma.mp3"); }
+                    catch(e) { ab = await this.fetchAudio("https://raw.githubusercontent.com/ganwalk/2026/main/calma.mp3"); }
                     this.buffer = await this.audioContext.decodeAudioData(ab);
                     this.reversedBuffer = this.reverseBuffer(this.buffer);
                     document.getElementById('p1-progress').max = this.buffer.duration;
-                } catch(e) {}
+                } catch(e) { console.error("Falha ao carregar o áudio", e); }
                 this.initThree();
                 this.setupUI();
                 this.setupInteraction();
+                this.setupKeyboard();
+                this.applyPresetFromURL();
             },
 
             setupAudioGraph: function() {
@@ -1320,7 +1354,7 @@
 
                 this.renderer = new THREE.WebGLRenderer({canvas:cvs, antialias:true, alpha:true, preserveDrawingBuffer:true});
                 this.renderer.setSize(window.innerWidth, window.innerHeight);
-                this.renderer.setPixelRatio(window.devicePixelRatio);
+                this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
                 this.renderer.autoClear = false;
 
                 const rp = new THREE.RenderPass(this.scene, this.camera);
@@ -1601,12 +1635,34 @@
                 get('p1-clear-effects').onclick = () => {
                     ['p1-delay','p1-reverb','p1-chorus','p1-filter','p1-overdrive','p1-eq-low','p1-eq-mid','p1-eq-high'].forEach(id => { get(id).value = 0; get(id).dispatchEvent(new Event('input')); });
                     get('p1-pitch').value = 1; get('p1-pitch').dispatchEvent(new Event('input'));
-                    
+
                     get('p1-bg-color').value = '#000000'; get('p1-bg-color').dispatchEvent(new Event('input'));
                     get('p1-fg-color').value = '#ffffff'; get('p1-fg-color').dispatchEvent(new Event('input'));
 
                     document.body.classList.remove('mustard-theme');
                     this.colorChangedTriggered = false;
+                    history.replaceState(null, '', location.pathname + location.search);
+                };
+
+                get('p1-share-remix').onclick = async () => {
+                    const btn = get('p1-share-remix');
+                    const url = this.buildPresetURL();
+                    history.replaceState(null, '', url);
+                    let shared = false;
+                    if(navigator.share) {
+                        try { await navigator.share({ title: 'GANWALK — meu remix', url }); shared = true; }
+                        catch(e) { if(e.name === 'AbortError') return; }
+                    }
+                    if(!shared) {
+                        try { await navigator.clipboard.writeText(url); }
+                        catch(e) {
+                            const ta = document.createElement('textarea'); ta.value = url;
+                            document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove();
+                        }
+                    }
+                    const old = btn.innerText;
+                    btn.innerText = shared ? 'Compartilhado!' : 'Link copiado!';
+                    setTimeout(() => { btn.innerText = old; }, 2000);
                 };
                 
                 get('p1-toggle-button').onclick = () => {
@@ -1627,6 +1683,79 @@
                         if(!this.userHasInteracted) get('p1-interaction-tooltip').classList.add('visible');
                     }
                 };
+            },
+
+            // --- PRESETS COMPARTILHÁVEIS (URL HASH) ---
+            PRESET_PARAMS: { d:'p1-delay', r:'p1-reverb', c:'p1-chorus', f:'p1-filter', p:'p1-pitch', o:'p1-overdrive', a:'p1-eq-low', b:'p1-eq-mid', t:'p1-eq-high', v:'p1-volume' },
+
+            buildPresetURL: function() {
+                const parts = [];
+                for(const [k, id] of Object.entries(this.PRESET_PARAMS)) {
+                    const el = document.getElementById(id);
+                    if(el.value !== el.defaultValue) parts.push(k + ':' + el.value);
+                }
+                if(this.bgColor !== '#000000') parts.push('bg:' + this.bgColor.slice(1));
+                if(this.fgColor !== '#ffffff') parts.push('fg:' + this.fgColor.slice(1));
+                const base = location.origin + location.pathname + location.search;
+                return parts.length ? base + '#fx=' + parts.join(',') : base;
+            },
+
+            applyPresetFromURL: function() {
+                const m = location.hash.match(/^#fx=(.+)$/);
+                if(!m) return;
+                m[1].split(',').forEach(tok => {
+                    const [k, val] = tok.split(':');
+                    if(!k || val === undefined) return;
+                    if(k === 'bg' || k === 'fg') {
+                        if(/^[0-9a-fA-F]{6}$/.test(val)) {
+                            const el = document.getElementById(k === 'bg' ? 'p1-bg-color' : 'p1-fg-color');
+                            el.value = '#' + val.toLowerCase();
+                            el.dispatchEvent(new Event('input'));
+                        }
+                        return;
+                    }
+                    const id = this.PRESET_PARAMS[k];
+                    if(id && isFinite(parseFloat(val))) {
+                        const el = document.getElementById(id);
+                        el.value = val; // o input range limita automaticamente a min/max
+                        el.dispatchEvent(new Event('input'));
+                    }
+                });
+            },
+
+            // --- ATALHOS DE TECLADO ---
+            setupKeyboard: function() {
+                window.addEventListener('keydown', e => {
+                    if(e.target && e.target.matches && e.target.matches('input, textarea, select')) return;
+                    const exp1Active = document.getElementById('experience-1').classList.contains('active');
+                    const exp2Active = document.getElementById('experience-2').classList.contains('active');
+                    if(e.code === 'Space') {
+                        if(exp1Active) { e.preventDefault(); document.getElementById('p1-play-btn').click(); }
+                        else if(exp2Active) { e.preventDefault(); document.getElementById('p2-play-music').click(); }
+                        return;
+                    }
+                    if(!exp1Active || !this.buffer) return;
+                    if(e.key === 'r' || e.key === 'R') {
+                        document.getElementById('p1-reverse-btn').click();
+                    } else if(e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+                        e.preventDefault();
+                        const p = document.getElementById('p1-pitch');
+                        p.value = (parseFloat(p.value) + (e.key === 'ArrowUp' ? 0.05 : -0.05)).toFixed(2);
+                        p.dispatchEvent(new Event('input'));
+                    } else if(e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+                        e.preventDefault();
+                        this.seekBy(e.key === 'ArrowRight' ? 5 : -5);
+                    }
+                });
+            },
+
+            seekBy: function(delta) {
+                const was = this.isPlaying;
+                if(was) this.stopAudio();
+                this.pausedTime = Math.max(0, Math.min(this.buffer.duration, this.pausedTime + delta));
+                document.getElementById('p1-progress').value = this.pausedTime;
+                this.updateTimeDisplay(this.pausedTime);
+                if(was) this.startAudio(this.pausedTime);
             },
 
             updateTimeDisplay: function(t) {
@@ -1780,10 +1909,10 @@
         };
 
         const App2 = {
-            settings:{bg:'#000500',font1:'#ffc800',font2:'#ff8800',size:10,res:35,thresh:0,invert:false,chaos:0,bgMix:false,bgOp:72},
+            settings:{bg:'#000500',font1:'#ffc800',font2:'#ff8800',size:10,res:35,thresh:0,invert:false,chaos:0,bgMix:false,bgOp:72,chars:'ganwalk',pulse:true},
             video:null,img:null,hiddenC:null,outC:null,ctxH:null,ctxO:null,audio:null,stream:null,mode:'video',loopId:null,rec:null,chunks:[],isActive:false,
             audioCtx: null, audioSource: null, audioGain: null, audioFilter: null, audioDelay: null, audioFeedback: null,
-            delayWet: null,
+            delayWet: null, audioAnalyser: null, recDest: null, isOriginalClip: false,
             transitionTimer: null,
             ORIGINAL_CLIP:'https://raw.githubusercontent.com/ganwalk/ganwalkascii/main/1002%20(1)%20(1).mp4',
             
@@ -1824,6 +1953,11 @@
                     // Delay Output Control (To silence delay normally)
                     this.delayWet = this.audioCtx.createGain();
                     this.delayWet.gain.value = 0; // Silent by default (Original Audio only)
+
+                    // Analyser para o ASCII pulsar com a música
+                    this.audioAnalyser = this.audioCtx.createAnalyser();
+                    this.audioAnalyser.fftSize = 256;
+                    this.audioGain.connect(this.audioAnalyser);
 
                     // Routing:
                     // 1. Dry Path (Original Audio)
@@ -1913,23 +2047,30 @@
                     else { grp.classList.add('disabled'); get('p2-bg-check').checked=false; this.settings.bgMix=false; }
                 };
                 this.loadOriginalClip = () => {
-                    this.mode='video'; if(this.stream) { this.stream.getTracks().forEach(t=>t.stop()); this.stream=null; }
+                    this.mode='video'; this.isOriginalClip=true;
+                    if(this.stream) { this.stream.getTracks().forEach(t=>t.stop()); this.stream=null; }
                     this.video.srcObject=null; this.video.src=this.ORIGINAL_CLIP; this.video.loop=true;
                     this.restart(); // Reset time
                     this.video.play(); this.audio.play();
-                    this.video.onloadedmetadata = () => { const s=()=>{if(!this.audio.paused)this.video.currentTime=this.audio.currentTime%this.video.duration;}; s(); setInterval(s,1000); };
+                    this.video.onloadedmetadata = () => {
+                        const s=()=>{if(this.isOriginalClip && !this.audio.paused)this.video.currentTime=this.audio.currentTime%this.video.duration;};
+                        s();
+                        if(this._syncInterval) clearInterval(this._syncInterval);
+                        this._syncInterval = setInterval(s,1000);
+                    };
                     setBgMixEnabled(false);
                     get('p2-controls-bar').classList.add('expanded'); get('p2-create-prompt').style.opacity=0;
                     this.initAudioContext();
                 };
                 get('p2-clip-btn').onclick=this.loadOriginalClip;
                 get('p2-webcam-btn').onclick=async()=>{
-                    try { if(this.stream)this.stream.getTracks().forEach(t=>t.stop()); this.stream=await navigator.mediaDevices.getUserMedia({video:true}); this.video.srcObject=this.stream; this.video.src=""; this.mode='video'; this.video.play(); setBgMixEnabled(true); get('p2-bg-check').checked=true; this.settings.bgMix=true; } catch(e){alert("Webcam error");}
+                    try { if(this.stream)this.stream.getTracks().forEach(t=>t.stop()); this.stream=await navigator.mediaDevices.getUserMedia({video:true}); this.isOriginalClip=false; this.video.srcObject=this.stream; this.video.src=""; this.mode='video'; this.video.play(); setBgMixEnabled(true); get('p2-bg-check').checked=true; this.settings.bgMix=true; } catch(e){alert("Webcam error");}
                 };
                 get('p2-upload-btn').onclick=()=>get('p2-upload-input').click();
                 get('p2-upload-input').onchange=e=>{
                     const f=e.target.files[0]; if(!f)return; const u=URL.createObjectURL(f);
                     this.restart();
+                    this.isOriginalClip=false;
                     if(f.type.startsWith('image')){this.mode='image';this.img.src=u;} else {this.mode='video';this.video.src=u;this.video.loop=true;this.video.play();}
                     setBgMixEnabled(true); get('p2-bg-check').checked=true; this.settings.bgMix=true;
                     this.initAudioContext();
@@ -1945,7 +2086,7 @@
                     this.initAudioContext();
                     if(this.iosAudioEl2) this.iosAudioEl2.play().catch(()=>{});
                     if(this.audio.paused){this.audio.play(); if(this.mode==='video')this.video.play();}
-                    else{this.audio.pause(); if(this.mode==='video'&&this.video.currentSrc===this.ORIGINAL_CLIP)this.video.pause();}
+                    else{this.audio.pause(); if(this.mode==='video'&&this.isOriginalClip)this.video.pause();}
                 };
 
                 // Camera tooltip
@@ -1992,7 +2133,8 @@
                     const p1Fg = get('p1-fg-color');
                     if(p1Fg && p1Fg.value !== e.target.value) { p1Fg.value = e.target.value; p1Fg.dispatchEvent(new Event('input')); }
                 };
-                v('p2-font-size','size'); v('p2-res','res'); v('p2-thresh','thresh'); c('p2-invert','invert'); v('p2-random','chaos');
+                v('p2-font-size','size'); v('p2-res','res'); v('p2-thresh','thresh'); c('p2-invert','invert'); v('p2-random','chaos'); c('p2-pulse','pulse');
+                get('p2-chars').oninput = e => { this.settings.chars = e.target.value.trim() || 'ganwalk'; };
                 
                 // Initialize Color Inputs with defaults from settings
                 get('p2-bg-color').value = this.settings.bg;
@@ -2000,17 +2142,46 @@
                 get('p2-font-color2').value = this.settings.font2;
 
                 get('p2-toggle-button').onclick=()=>get('p2-controls-bar').classList.toggle('expanded');
-                get('p2-export-img').onclick=()=>{const a=document.createElement('a'); a.download='ganwalk.png'; a.href=this.outC.toDataURL(); a.click();};
+                get('p2-export-img').onclick=()=>{
+                    this.outC.toBlob(b=>{ if(b) this.shareOrDownload(b,'ganwalk.png'); },'image/png');
+                };
                 get('p2-record-btn').onclick=()=>{
                     const btn=get('p2-record-btn'); const ind=get('p2-record-indicator');
                     if(this.rec&&this.rec.state==='recording'){this.rec.stop(); btn.innerText="Gravar"; ind.classList.remove('active');}
                     else {
-                        this.chunks=[]; const s=this.outC.captureStream(30); try{this.rec=new MediaRecorder(s,{mimeType:'video/webm;codecs=vp9'});}catch(e){this.rec=new MediaRecorder(s);}
+                        this.chunks=[]; const s=this.outC.captureStream(30);
+                        // Inclui a trilha sonora (música + vídeo) no arquivo gravado
+                        this.initAudioContext();
+                        if(this.audioCtx && !this.recDest){
+                            this.recDest=this.audioCtx.createMediaStreamDestination();
+                            this.audioFilter.connect(this.recDest);
+                            this.delayWet.connect(this.recDest);
+                        }
+                        if(this.recDest) this.recDest.stream.getAudioTracks().forEach(t=>s.addTrack(t));
+                        const mimes=['video/webm;codecs=vp9','video/webm','video/mp4'];
+                        const mime=(window.MediaRecorder&&MediaRecorder.isTypeSupported)?mimes.find(m=>MediaRecorder.isTypeSupported(m)):null;
+                        try{this.rec=mime?new MediaRecorder(s,{mimeType:mime}):new MediaRecorder(s);}catch(e){this.rec=new MediaRecorder(s);}
                         this.rec.ondataavailable=e=>{if(e.data.size>0)this.chunks.push(e.data);};
-                        this.rec.onstop=()=>{const b=new Blob(this.chunks,{type:'video/webm'}); const u=URL.createObjectURL(b); const a=document.createElement('a'); a.href=u; a.download='ganwalk.webm'; a.click();};
+                        this.rec.onstop=()=>{
+                            const type=(this.rec.mimeType||'video/webm').split(';')[0];
+                            const ext=type.includes('mp4')?'mp4':'webm';
+                            this.shareOrDownload(new Blob(this.chunks,{type}),'ganwalk.'+ext);
+                        };
                         this.rec.start(); btn.innerText="Parar"; ind.classList.add('active');
                     }
                 };
+            },
+
+            // Compartilha via Web Share API (mobile) ou baixa o arquivo (fallback)
+            shareOrDownload: async function(blob, filename) {
+                const file = new File([blob], filename, {type: blob.type});
+                if(navigator.canShare && navigator.canShare({files:[file]})) {
+                    try { await navigator.share({files:[file], title:'GANWALK'}); return; }
+                    catch(e) { if(e.name === 'AbortError') return; }
+                }
+                const u = URL.createObjectURL(blob);
+                const a = document.createElement('a'); a.href = u; a.download = filename; a.click();
+                setTimeout(()=>URL.revokeObjectURL(u), 10000);
             },
             hex2rgb: function(h) { const b=parseInt(h.slice(1),16); return {r:(b>>16)&255,g:(b>>8)&255,b:b&255}; },
             draw: function() {
@@ -2032,7 +2203,17 @@
                 const data=this.ctxH.getImageData(0,0,gw,gh).data;
                 this.ctxO.fillStyle=this.settings.bg; this.ctxO.fillRect(0,0,w,h);
                 if(this.settings.bgMix){this.ctxO.globalAlpha=this.settings.bgOp/100; this.ctxO.imageSmoothingEnabled=false; this.ctxO.drawImage(this.hiddenC,0,0,w,h); this.ctxO.imageSmoothingEnabled=true; this.ctxO.globalAlpha=1;}
-                const cw=w/gw, ch=h/gh; const chars="ganwalk"; const c1=this.hex2rgb(this.settings.font1); const c2=this.hex2rgb(this.settings.font2);
+                const cw=w/gw, ch=h/gh; const chars=this.settings.chars||"ganwalk"; const c1=this.hex2rgb(this.settings.font1); const c2=this.hex2rgb(this.settings.font2);
+                // Pulso: o grave da música modula o tamanho dos caracteres
+                let pulse=0;
+                if(this.settings.pulse && this.audioAnalyser && (!this.audio.paused || (this.mode==='video' && !this.video.paused))){
+                    const fr=this._freqArr||(this._freqArr=new Uint8Array(this.audioAnalyser.frequencyBinCount));
+                    this.audioAnalyser.getByteFrequencyData(fr);
+                    let sum=0; const n=Math.max(1,fr.length>>3);
+                    for(let i=0;i<n;i++) sum+=fr[i];
+                    pulse=(sum/n)/255;
+                }
+                const sizeBoost=1+pulse*0.6;
                 const th=parseInt(this.settings.thresh); let ci=0;
                 this.ctxO.textAlign='center'; this.ctxO.textBaseline='middle';
                 let lastFill='', lastFont='';
@@ -2045,7 +2226,7 @@
                         const t=v/255; const r=Math.floor(c1.r+(c2.r-c1.r)*t)|0; const g=Math.floor(c1.g+(c2.g-c1.g)*t)|0; const b=Math.floor(c1.b+(c2.b-c1.b)*t)|0;
                         const fill=`rgb(${r},${g},${b})`;
                         if(fill!==lastFill){this.ctxO.fillStyle=fill; lastFill=fill;}
-                        const sz=(t*ch*(this.settings.size/5))|0; if(sz<1)continue;
+                        const sz=(t*ch*(this.settings.size/5)*sizeBoost)|0; if(sz<1)continue;
                         const font=sz+'px monospace';
                         if(font!==lastFont){this.ctxO.font=font; lastFont=font;}
                         this.ctxO.fillText(chReq,x*cw+cw/2,y*ch+ch/2);

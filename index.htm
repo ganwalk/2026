@@ -399,10 +399,17 @@
             text-shadow: 0 0 10px rgba(var(--highlight-rgb), 0.5);
             font-size: 1.5rem;
         }
+        /* Modo Sync: letra toda exposta e legível para bater os timestamps de ouvido */
+        #p3-lines.sync-reveal .p3-line { opacity: 0.55; font-size: 1.1rem; }
+        #p3-lines.sync-reveal .p3-line.p3-sync-current {
+            opacity: 1; color: var(--record-color);
+            text-shadow: 0 0 10px rgba(var(--record-rgb, 168, 52, 31), 0.5);
+        }
         @media (max-width: 768px) {
             #p3-terminal { padding: 100px 20px 200px; }
             .p3-line { font-size: 1.05rem; }
             .p3-line.active { font-size: 1.25rem; }
+            #p3-lines.sync-reveal .p3-line { font-size: 0.95rem; }
         }
 
         #p3-start-prompt {
@@ -427,14 +434,18 @@
         #p3-play-btn svg { fill: var(--highlight-color); transition: fill 0.5s ease; }
 
         #p3-sync-overlay {
-            display: none; position: absolute; top: 40px; left: 50%; transform: translateX(-50%);
+            display: none; position: fixed; top: 100px; right: 20px; left: auto; transform: none;
             background: var(--control-bg); border: 1px solid var(--record-color); border-radius: 8px;
-            padding: 12px 20px; z-index: 200; text-align: center; font-family: 'Silkscreen', cursive;
-            font-size: 11px; color: var(--record-color); max-width: 90vw;
+            padding: 14px 16px; z-index: 200; text-align: center; font-family: 'Silkscreen', cursive;
+            font-size: 10px; color: var(--record-color); width: 190px;
         }
         #p3-sync-overlay.active { display: block; }
         #p3-sync-count { font-size: 1.1rem; margin: 8px 0; }
-        #p3-sync-copy { background: transparent; border: 1px solid var(--record-color); color: var(--record-color); }
+        #p3-sync-next { font-size: 10px; opacity: 0.8; margin-bottom: 8px; line-height: 1.4; min-height: 2.4em; }
+        #p3-sync-copy { background: transparent; border: 1px solid var(--record-color); color: var(--record-color); width: 100%; }
+        @media (max-width: 768px) {
+            #p3-sync-overlay { top: auto; bottom: 100px; right: 10px; width: 160px; padding: 10px 12px; }
+        }
 
         /* --- POPUP FIM DE MÚSICA --- */
 
@@ -774,8 +785,9 @@
             <div id="p3-terminal"><div id="p3-lines"></div></div>
             <div id="p3-start-prompt">Clique para <span class="faça-glow">ouvir</span>.</div>
             <div id="p3-sync-overlay">
-                <div id="p3-sync-status">MODO SYNC — barra de espaço para marcar cada linha. Backspace desfaz.</div>
+                <div id="p3-sync-status">MODO SYNC — espaço marca a linha, backspace desfaz.</div>
                 <div id="p3-sync-count">0 / 0</div>
+                <div id="p3-sync-next"></div>
                 <button id="p3-sync-copy">Copiar Timestamps</button>
             </div>
         </div>
@@ -2189,6 +2201,7 @@
 
         const App3 = {
             audio: null, lineEls: [], isActive: false, hasStarted: false, currentIdx: -1, loopId: null,
+            songEnd: 165, // duração real da música (2:45) — o resto do arquivo é silêncio
             syncMode: false, syncTaps: [],
 
             // NOTA: timestamps (t, em segundos) sao uma estimativa estrutural inicial,
@@ -2273,8 +2286,14 @@
                     this.audio.currentTime = parseFloat(e.target.value);
                     this.syncTo(this.audio.currentTime, true);
                 });
-                this.audio.addEventListener('loadedmetadata', () => { get('p3-progress').max = this.audio.duration; });
+                // O arquivo tem ~30s de silêncio depois do fim real da música (2:45) — trava a UI nesse ponto.
+                this.audio.addEventListener('loadedmetadata', () => { get('p3-progress').max = Math.min(this.audio.duration, this.songEnd); });
                 this.audio.addEventListener('timeupdate', () => {
+                    if (this.audio.currentTime >= this.songEnd) {
+                        this.audio.pause();
+                        this.audio.currentTime = this.songEnd;
+                        return;
+                    }
                     get('p3-progress').value = this.audio.currentTime;
                     this.updateTimeDisplay(this.audio.currentTime);
                 });
@@ -2294,6 +2313,18 @@
                 this.syncMode = !this.syncMode;
                 this.syncTaps = [];
                 document.getElementById('p3-sync-overlay').classList.toggle('active', this.syncMode);
+                document.getElementById('p3-lines').classList.toggle('sync-reveal', this.syncMode);
+                if (this.syncMode) {
+                    // Expoe a letra inteira, sem mascara, para acompanhar de ouvido
+                    this.lineEls.forEach((el, i) => {
+                        el.classList.remove('past', 'active', 'future');
+                        el.querySelector('.p3-text').textContent = this.lines[i].text;
+                    });
+                } else {
+                    this.lineEls.forEach(el => el.classList.remove('p3-sync-current'));
+                    this.currentIdx = -1;
+                    this.syncTo(this.audio.currentTime, true);
+                }
                 this.updateSyncCount();
             },
 
@@ -2307,6 +2338,17 @@
 
             updateSyncCount: function() {
                 document.getElementById('p3-sync-count').innerText = `${this.syncTaps.length} / ${this.lines.length}`;
+                this.lineEls.forEach(el => el.classList.remove('p3-sync-current'));
+                const nextIdx = this.syncTaps.length;
+                const nextEl = document.getElementById('p3-sync-next');
+                if (!this.syncMode || !nextEl) return;
+                if (nextIdx < this.lines.length) {
+                    const el = this.lineEls[nextIdx];
+                    if (el) { el.classList.add('p3-sync-current'); el.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+                    nextEl.innerText = `Próxima linha:\n"${this.lines[nextIdx].text}"`;
+                } else {
+                    nextEl.innerText = 'Todas as linhas marcadas!';
+                }
             },
 
             copySyncData: function() {
@@ -2335,7 +2377,7 @@
 
             updateTimeDisplay: function(t) {
                 const fmt = s => `${Math.floor(s/60)}:${Math.floor(s%60).toString().padStart(2,'0')}`;
-                document.getElementById('p3-time-display').innerText = `${fmt(t)} / ${fmt(this.audio.duration||0)}`;
+                document.getElementById('p3-time-display').innerText = `${fmt(Math.min(t, this.songEnd))} / ${fmt(this.songEnd)}`;
             },
 
             syncTo: function(time, force) {

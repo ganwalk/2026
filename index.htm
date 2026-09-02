@@ -447,6 +447,47 @@
             #p3-sync-overlay { top: auto; bottom: 100px; right: 10px; width: 160px; padding: 10px 12px; }
         }
 
+        /* --- EXP 3: DEGRADAÇÃO PROGRESSIVA (SIMULACRO "QUEBRANDO") --- */
+        #p3-container::after {
+            content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 41;
+            background: repeating-linear-gradient(0deg, rgba(0,0,0,0.08) 0px, rgba(0,0,0,0.08) 1px, transparent 1px, transparent 3px);
+            opacity: calc(var(--glitch-intensity, 0) * 0.5);
+        }
+        #p3-noise-canvas {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 40; opacity: 0; mix-blend-mode: overlay;
+            image-rendering: pixelated; image-rendering: crisp-edges;
+        }
+        #p3-glitch-text {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+            z-index: 46; pointer-events: none; opacity: 0;
+            font-family: 'Silkscreen', cursive; font-size: 1.6rem; letter-spacing: 2px;
+            color: var(--record-color); text-shadow: 3px 0 rgba(255,0,60,0.6), -3px 0 rgba(0,255,255,0.6);
+            text-align: center; text-transform: uppercase; max-width: 80vw;
+        }
+        #p3-glitch-text.visible { opacity: 1; }
+
+        #p3-presave-overlay {
+            position: absolute; inset: 0; z-index: 300;
+            display: flex; align-items: center; justify-content: center;
+            background: var(--bg-color); opacity: 0; pointer-events: none;
+            transition: opacity 1.2s ease, background-color 0.5s ease;
+        }
+        #p3-presave-overlay.visible { opacity: 1; pointer-events: auto; }
+        #p3-presave-box { text-align: center; max-width: 420px; padding: 20px; display: flex; flex-direction: column; gap: 18px; align-items: center; }
+        #p3-presave-title {
+            font-family: 'Astloch', serif; font-weight: 700; font-size: 2.2rem;
+            color: var(--highlight-color); text-shadow: 0 0 10px rgba(var(--highlight-rgb), 0.5);
+        }
+        #p3-presave-sub { font-family: 'Silkscreen', cursive; font-size: 0.9rem; color: var(--text-color); opacity: 0.8; }
+        #p3-presave-btn { max-width: 280px; }
+        #p3-presave-replay {
+            background: transparent; border: none; color: var(--text-color); opacity: 0.6;
+            font-family: 'Silkscreen', cursive; font-size: 0.75rem; text-decoration: underline;
+            width: auto; padding: 4px;
+        }
+        #p3-presave-replay:hover { opacity: 1; background: transparent; }
+
         /* --- POPUP FIM DE MÚSICA --- */
 
         /* --- PÁGINAS DE TEXTO (CODE EDITOR STYLE) --- */
@@ -783,12 +824,22 @@
     <section id="experience-3" class="screen-section">
         <div id="p3-container">
             <div id="p3-terminal"><div id="p3-lines"></div></div>
+            <canvas id="p3-noise-canvas"></canvas>
+            <div id="p3-glitch-text"></div>
             <div id="p3-start-prompt">Clique para <span class="faça-glow">ouvir</span>.</div>
             <div id="p3-sync-overlay">
                 <div id="p3-sync-status">MODO SYNC — espaço marca a linha, backspace desfaz.</div>
                 <div id="p3-sync-count">0 / 0</div>
                 <div id="p3-sync-next"></div>
                 <button id="p3-sync-copy">Copiar Timestamps</button>
+            </div>
+            <div id="p3-presave-overlay">
+                <div id="p3-presave-box">
+                    <div id="p3-presave-title">isso não é um erro.</div>
+                    <div id="p3-presave-sub">simulacro já está disponível para pre-save.</div>
+                    <a id="p3-presave-btn" class="linktree-btn" href="https://ditto.fm/simulacro-ganwalk" target="_blank" rel="noopener">Pre-save Simulacro</a>
+                    <button id="p3-presave-replay">Reiniciar</button>
+                </div>
             </div>
         </div>
 
@@ -2202,6 +2253,9 @@
         const App3 = {
             audio: null, lineEls: [], isActive: false, hasStarted: false, currentIdx: -1, loopId: null,
             songEnd: 165, // duração real da música (2:45) — o resto do arquivo é silêncio
+            FREEZE_AT: 60, // ponto em que o site "trava" e revela o pre-save
+            freezeTriggered: false, isFreezing: false, _freezeToken: 0,
+            glitchTokens: ['ERRO_0x7F', 'SINAL INSTÁVEL', 'CONEXÃO PERDIDA', 'SIMULAÇÃO INSTÁVEL', 'REALIDADE.EXE NÃO RESPONDE', 'PACOTE CORROMPIDO', '▓▓▓ FALHA ▓▓▓', 'RECALIBRANDO...'],
             syncMode: false, syncTaps: [],
 
             // NOTA: timestamps (t, em segundos) sao uma estimativa estrutural inicial,
@@ -2285,10 +2339,12 @@
                 get('p3-progress').addEventListener('input', e => {
                     this.audio.currentTime = parseFloat(e.target.value);
                     this.syncTo(this.audio.currentTime, true);
+                    this.checkFreeze(this.audio.currentTime);
                 });
                 // O arquivo tem ~30s de silêncio depois do fim real da música (2:45) — trava a UI nesse ponto.
                 this.audio.addEventListener('loadedmetadata', () => { get('p3-progress').max = Math.min(this.audio.duration, this.songEnd); });
                 this.audio.addEventListener('timeupdate', () => {
+                    if (this.isFreezing) return; // a sequência de travamento controla o áudio sozinha
                     if (this.audio.currentTime >= this.songEnd) {
                         this.audio.pause();
                         this.audio.currentTime = this.songEnd;
@@ -2297,6 +2353,8 @@
                     get('p3-progress').value = this.audio.currentTime;
                     this.updateTimeDisplay(this.audio.currentTime);
                 });
+
+                get('p3-presave-replay').onclick = () => this.replay();
 
                 // Modo Sync (uso interno): SHIFT+S liga/desliga, ESPACO marca a linha atual, BACKSPACE desfaz.
                 window.addEventListener('keydown', e => {
@@ -2398,7 +2456,142 @@
             animate: function() {
                 if (!this.isActive) return;
                 this.loopId = requestAnimationFrame(() => this.animate());
-                if (!this.audio.paused) this.syncTo(this.audio.currentTime);
+                if (this.isFreezing) return; // a sequência de travamento cuida dos próprios visuais
+                if (!this.audio.paused) {
+                    this.syncTo(this.audio.currentTime);
+                    if (!this.freezeTriggered) {
+                        const intensity = Math.min(1, this.audio.currentTime / this.FREEZE_AT);
+                        this.applyGlitch(intensity);
+                        this.checkFreeze(this.audio.currentTime);
+                    }
+                } else if (!this.freezeTriggered) {
+                    this.applyGlitch(0);
+                }
+            },
+
+            // --- Degradação progressiva (0 a FREEZE_AT) ---
+            applyGlitch: function(intensity) {
+                const container = document.getElementById('p3-container');
+                const terminal = document.getElementById('p3-terminal');
+                container.style.setProperty('--glitch-intensity', intensity.toFixed(3));
+                if (intensity <= 0) {
+                    terminal.style.transform = '';
+                    this.drawNoise(0);
+                    return;
+                }
+                const mag = intensity * 6;
+                const dx = (Math.random() - 0.5) * mag;
+                const dy = (Math.random() - 0.5) * mag;
+                const skew = (Math.random() - 0.5) * intensity * 1.5;
+                terminal.style.transform = `translate(${dx.toFixed(1)}px, ${dy.toFixed(1)}px) skewX(${skew.toFixed(2)}deg)`;
+
+                const now = performance.now();
+                if (!this._lastNoise || now - this._lastNoise > 90) {
+                    this._lastNoise = now;
+                    this.drawNoise(intensity);
+                }
+                if (Math.random() < intensity * 0.05) this.corruptRandomLine();
+                if (Math.random() < intensity * 0.012) this.flashGlitchText();
+            },
+
+            drawNoise: function(intensity) {
+                const canvas = document.getElementById('p3-noise-canvas');
+                if (!this._noiseCtx) {
+                    canvas.width = 64; canvas.height = 64;
+                    this._noiseCtx = canvas.getContext('2d');
+                }
+                canvas.style.opacity = intensity * 0.35;
+                if (intensity <= 0) return;
+                const ctx = this._noiseCtx;
+                const img = ctx.createImageData(64, 64);
+                for (let i = 0; i < img.data.length; i += 4) {
+                    const v = Math.random() * 255;
+                    img.data[i] = v; img.data[i+1] = v; img.data[i+2] = v; img.data[i+3] = 255;
+                }
+                ctx.putImageData(img, 0, 0);
+            },
+
+            corruptRandomLine: function() {
+                if (this.currentIdx < 0) return;
+                const idx = Math.floor(Math.random() * (this.currentIdx + 1));
+                const el = this.lineEls[idx];
+                if (!el) return;
+                const textEl = el.querySelector('.p3-text');
+                const original = this.lines[idx].text;
+                textEl.textContent = this.mask(original);
+                el.classList.add('ganwalk-glitch');
+                clearTimeout(el._glitchTimer);
+                el._glitchTimer = setTimeout(() => {
+                    textEl.textContent = original;
+                    el.classList.remove('ganwalk-glitch');
+                }, 120 + Math.random() * 150);
+            },
+
+            flashGlitchText: function() {
+                const el = document.getElementById('p3-glitch-text');
+                el.textContent = this.glitchTokens[Math.floor(Math.random() * this.glitchTokens.length)];
+                el.classList.add('visible');
+                clearTimeout(this._glitchTextTimer);
+                this._glitchTextTimer = setTimeout(() => el.classList.remove('visible'), 220 + Math.random() * 180);
+            },
+
+            // --- Travamento em FREEZE_AT e revelação do pre-save ---
+            checkFreeze: function(time) {
+                if (this.freezeTriggered || this.isFreezing) return;
+                if (time >= this.FREEZE_AT) this.triggerFreeze();
+            },
+
+            triggerFreeze: function() {
+                this.freezeTriggered = true;
+                this.isFreezing = true;
+                this.audio.currentTime = this.FREEZE_AT;
+                document.getElementById('p3-progress').value = this.FREEZE_AT;
+                this.updateTimeDisplay(this.FREEZE_AT);
+
+                const token = ++this._freezeToken;
+                let ticks = 0;
+                const maxTicks = 22;
+                const stutter = () => {
+                    if (token !== this._freezeToken) return; // cancelado (ex: saiu da Exp III)
+                    ticks++;
+                    this.applyGlitch(1);
+                    const back = Math.random() * 0.15;
+                    this.audio.currentTime = Math.max(0, this.FREEZE_AT - back);
+                    this.audio.play().catch(() => {});
+                    if (Math.random() < 0.4) this.flashGlitchText();
+                    if (ticks < maxTicks) {
+                        const delay = Math.max(35, 90 - ticks * 2); // acelera até travar de vez
+                        setTimeout(stutter, delay);
+                    } else {
+                        this.finishFreeze(token);
+                    }
+                };
+                stutter();
+            },
+
+            finishFreeze: function(token) {
+                if (token !== this._freezeToken) return;
+                this.audio.pause();
+                this.isFreezing = false;
+                this.applyGlitch(0);
+                document.getElementById('p3-glitch-text').classList.remove('visible');
+                document.getElementById('p3-controls-bar').classList.remove('visible');
+                setTimeout(() => {
+                    if (token === this._freezeToken) document.getElementById('p3-presave-overlay').classList.add('visible');
+                }, 300);
+            },
+
+            replay: function() {
+                this._freezeToken++;
+                document.getElementById('p3-presave-overlay').classList.remove('visible');
+                this.freezeTriggered = false;
+                this.isFreezing = false;
+                this.currentIdx = -1;
+                this.audio.currentTime = 0;
+                this.renderLines();
+                this.applyGlitch(0);
+                document.getElementById('p3-controls-bar').classList.add('visible');
+                this.audio.play().catch(() => {});
             },
 
             resume: function() {
@@ -2414,6 +2607,8 @@
             },
 
             transitionOut: function() {
+                this._freezeToken++; // cancela qualquer sequência de travamento em andamento
+                this.isFreezing = false;
                 this.audio.pause();
                 this.pause();
             }

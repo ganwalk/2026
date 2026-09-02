@@ -2201,6 +2201,7 @@
 
         const App3 = {
             audio: null, lineEls: [], isActive: false, hasStarted: false, currentIdx: -1, loopId: null,
+            songEnd: 165, // duração real da música (2:45) — o resto do arquivo é silêncio
             syncMode: false, syncTaps: [],
 
             // NOTA: timestamps (t, em segundos) sao uma estimativa estrutural inicial,
@@ -2285,8 +2286,14 @@
                     this.audio.currentTime = parseFloat(e.target.value);
                     this.syncTo(this.audio.currentTime, true);
                 });
-                this.audio.addEventListener('loadedmetadata', () => { get('p3-progress').max = this.audio.duration; });
+                // O arquivo tem ~30s de silêncio depois do fim real da música (2:45) — trava a UI nesse ponto.
+                this.audio.addEventListener('loadedmetadata', () => { get('p3-progress').max = Math.min(this.audio.duration, this.songEnd); });
                 this.audio.addEventListener('timeupdate', () => {
+                    if (this.audio.currentTime >= this.songEnd) {
+                        this.audio.pause();
+                        this.audio.currentTime = this.songEnd;
+                        return;
+                    }
                     get('p3-progress').value = this.audio.currentTime;
                     this.updateTimeDisplay(this.audio.currentTime);
                 });
@@ -2370,7 +2377,7 @@
 
             updateTimeDisplay: function(t) {
                 const fmt = s => `${Math.floor(s/60)}:${Math.floor(s%60).toString().padStart(2,'0')}`;
-                document.getElementById('p3-time-display').innerText = `${fmt(t)} / ${fmt(this.audio.duration||0)}`;
+                document.getElementById('p3-time-display').innerText = `${fmt(Math.min(t, this.songEnd))} / ${fmt(this.songEnd)}`;
             },
 
             syncTo: function(time, force) {

@@ -29,38 +29,38 @@
         }
 
         :root {
-            --bg-color: #000500;
-            --bg-gradient-top: rgba(0, 5, 0, 0.9);
-            --bg-gradient-bottom: rgba(0, 5, 0, 0);
-            --control-bg: rgba(0, 5, 0, 0.9);
-            --border-color: rgba(255, 200, 0, 0.3);
-            --shadow-color: rgba(255, 200, 0, 0.15);
-            --text-color: #ffc800;
-            --highlight-color: #ffc800;
-            --highlight-rgb: 255, 200, 0;
-            --nav-inactive-color: #997300;
-            --nav-active-color: #ffc800;
-            --record-color: #ff3333;
-            --mustard: #E1AD01;
+            --bg-color: #ece0c6;
+            --bg-gradient-top: rgba(236, 224, 198, 0.9);
+            --bg-gradient-bottom: rgba(236, 224, 198, 0);
+            --control-bg: rgba(236, 224, 198, 0.9);
+            --border-color: rgba(42, 28, 16, 0.3);
+            --shadow-color: rgba(42, 28, 16, 0.15);
+            --text-color: #2a1c10;
+            --highlight-color: #2a1c10;
+            --highlight-rgb: 42, 28, 16;
+            --nav-inactive-color: #a3875f;
+            --nav-active-color: #2a1c10;
+            --record-color: #a8341f;
+            --mustard: #a8531f;
 
             /* Syntax Highlighting Colors */
-            --code-keyword: #ffc800;
-            --code-string: #d4a800;
-            --code-var: #e8b800;
-            --code-func: #ddb000;
-            --code-comment: #5a6e00;
-            --code-operator: #a08000;
+            --code-keyword: #2a1c10;
+            --code-string: #6b4a2a;
+            --code-var: #7a5330;
+            --code-func: #8a5f2e;
+            --code-comment: #8a7a63;
+            --code-operator: #6b5a42;
         }
 
         body.mustard-theme {
-            --highlight-color: #E1AD01;
-            --highlight-rgb: 225, 173, 1;
-            --border-color: #E1AD01;
-            --shadow-color: rgba(225, 173, 1, 0.5);
-            --text-color: #E1AD01;
-            --code-keyword: #E1AD01; 
-            --code-string: #fff;
-            --code-var: #E1AD01;
+            --highlight-color: #a8531f;
+            --highlight-rgb: 168, 83, 31;
+            --border-color: #a8531f;
+            --shadow-color: rgba(168, 83, 31, 0.5);
+            --text-color: #a8531f;
+            --code-keyword: #a8531f;
+            --code-string: #2a1c10;
+            --code-var: #a8531f;
         }
 
         html, body {
@@ -332,8 +332,8 @@
             font-weight: 400; font-family: 'Silkscreen', cursive; 
             transition: color 0.5s ease; 
         }
-        button { background: rgba(255,200,0,0.05); border: 1px solid var(--border-color); color: var(--text-color); padding: 10px; font-family: 'Silkscreen', cursive; font-size: 11px; border-radius: 4px; cursor: pointer; transition: 0.2s, border-color 0.5s ease, color 0.5s ease; display: flex; align-items: center; justify-content: center; width: 100%; text-transform: uppercase; }
-        button:hover { background: rgba(255,200,0,0.15); }
+        button { background: rgba(var(--highlight-rgb), 0.05); border: 1px solid var(--border-color); color: var(--text-color); padding: 10px; font-family: 'Silkscreen', cursive; font-size: 11px; border-radius: 4px; cursor: pointer; transition: 0.2s, border-color 0.5s ease, color 0.5s ease; display: flex; align-items: center; justify-content: center; width: 100%; text-transform: uppercase; }
+        button:hover { background: rgba(var(--highlight-rgb), 0.15); }
         
         /* Icones SVG herdam a cor de destaque (Cor Foco) */
         #p1-play-btn svg, #p1-reverse-btn svg, #p2-play-icon { fill: var(--highlight-color); transition: transform 0.3s ease, fill 0.5s ease; }
@@ -343,7 +343,7 @@
         input[type="range"]::-webkit-slider-runnable-track { width: 100%; height: 4px; background: var(--border-color); border-radius: 2px; transition: background-color 0.5s ease; }
         input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; height: 14px; width: 14px; background: var(--highlight-color); border-radius: 50%; margin-top: -5px; box-shadow: 0 0 5px rgba(0,0,0,0.5); cursor: pointer; transition: background 0.5s ease; }
         
-        #p1-mini-container { flex-grow: 0; height: 30px; margin-top: auto; background: rgba(255,200,0,0.05); border: 1px solid var(--border-color); border-radius: 6px; overflow: hidden; width: 100%; position: relative; transition: border-color 0.5s ease; }
+        #p1-mini-container { flex-grow: 0; height: 30px; margin-top: auto; background: rgba(var(--highlight-rgb), 0.05); border: 1px solid var(--border-color); border-radius: 6px; overflow: hidden; width: 100%; position: relative; transition: border-color 0.5s ease; }
         #p1-mini-canvas { width: 100%; height: 100%; display: block; }
 
         /* --- FUNDO MÍDIA GRUPO --- */
@@ -358,7 +358,7 @@
         /* --- ESTILOS EXP 2 (RECORDER) --- */
         #p2-canvas-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
         canvas#p2-output-canvas { display: block; width: 100%; height: 100%; }
-        #p2-controls-bar { position: absolute; bottom: 85px; left: 50%; transform: translateX(-50%); background: var(--control-bg); backdrop-filter: blur(10px); border: 1px solid var(--border-color); box-shadow: 0 0 30px rgba(255,200,0,0.15); width: 90vw; max-width: 800px; padding: 20px 25px; border-radius: 8px; z-index: 100; transition: opacity 0.4s, background-color 0.5s ease, border-color 0.5s ease; opacity: 0; pointer-events: none; }
+        #p2-controls-bar { position: absolute; bottom: 85px; left: 50%; transform: translateX(-50%); background: var(--control-bg); backdrop-filter: blur(10px); border: 1px solid var(--border-color); box-shadow: 0 0 30px rgba(var(--highlight-rgb), 0.15); width: 90vw; max-width: 800px; padding: 20px 25px; border-radius: 8px; z-index: 100; transition: opacity 0.4s, background-color 0.5s ease, border-color 0.5s ease; opacity: 0; pointer-events: none; }
         #p2-controls-bar.expanded { opacity: 1; pointer-events: auto; }
         #p2-toggle-button { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); width: 50px; height: 50px; border-radius: 50%; background: var(--control-bg); border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 101; transition: background-color 0.5s ease, border-color 0.5s ease; }
         #p2-toggle-button svg { fill: var(--highlight-color); width: 24px; height: 24px; transition: fill 0.5s ease; }
@@ -371,7 +371,70 @@
         #p2-controls-bar.expanded ~ #p2-create-prompt { opacity: 0; }
         input[type="color"] { width: 100%; height: 30px; border: 1px solid var(--border-color); background: transparent; padding: 0; border-radius: 4px; cursor: pointer; transition: border-color 0.5s ease; }
         input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--highlight-color); cursor: pointer; }
-        #p2-record-btn.recording { background-color: rgba(255, 50, 50, 0.2); border-color: var(--record-color); color: var(--record-color); }
+        #p2-record-btn.recording { background-color: rgba(168, 52, 31, 0.2); border-color: var(--record-color); color: var(--record-color); }
+
+        /* --- ESTILOS EXP 3 (LYRICS TERMINAL) --- */
+        #p3-container { position: relative; width: 100%; height: 100%; overflow: hidden; }
+        #p3-terminal {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            overflow-y: auto; scrollbar-width: none;
+            padding: 120px 20px 220px; box-sizing: border-box;
+            display: flex; justify-content: center;
+        }
+        #p3-terminal::-webkit-scrollbar { display: none; }
+        #p3-lines { width: 100%; max-width: 760px; }
+        .p3-line {
+            display: flex; align-items: baseline; gap: 15px;
+            padding: 10px 0; opacity: 0.2;
+            transition: opacity 0.5s ease, color 0.5s ease, text-shadow 0.5s ease;
+            font-family: 'Silkscreen', cursive; font-size: 1.3rem; line-height: 1.4;
+            color: var(--text-color);
+        }
+        .p3-line .p3-text { transition: opacity 0.3s ease; }
+        .p3-line.past { opacity: 0.3; }
+        .p3-line.future { opacity: 0.35; }
+        .p3-line.future .p3-text { opacity: 0.4; letter-spacing: 1px; }
+        .p3-line.active {
+            opacity: 1; color: var(--highlight-color);
+            text-shadow: 0 0 10px rgba(var(--highlight-rgb), 0.5);
+            font-size: 1.5rem;
+        }
+        @media (max-width: 768px) {
+            #p3-terminal { padding: 100px 20px 200px; }
+            .p3-line { font-size: 1.05rem; }
+            .p3-line.active { font-size: 1.25rem; }
+        }
+
+        #p3-start-prompt {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+            color: var(--text-color); font-size: 1.3rem; text-align: center;
+            font-family: 'Silkscreen', cursive; cursor: pointer; z-index: 20;
+            background: var(--control-bg); border: 1px solid var(--border-color);
+            padding: 20px 30px; border-radius: 8px; transition: opacity 0.4s ease, background-color 0.5s ease, border-color 0.5s ease, color 0.5s ease;
+        }
+        #p3-start-prompt.hidden { opacity: 0; pointer-events: none; }
+
+        #p3-controls-bar {
+            position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+            display: flex; align-items: center; gap: 10px;
+            background: var(--control-bg); backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color); box-shadow: 0 0 30px rgba(var(--highlight-rgb), 0.15);
+            width: 90vw; max-width: 700px; padding: 12px 20px; border-radius: 8px;
+            z-index: 100; opacity: 0; pointer-events: none;
+            transition: opacity 0.4s ease, background-color 0.5s ease, border-color 0.5s ease;
+        }
+        #p3-controls-bar.visible { opacity: 1; pointer-events: auto; }
+        #p3-play-btn svg { fill: var(--highlight-color); transition: fill 0.5s ease; }
+
+        #p3-sync-overlay {
+            display: none; position: absolute; top: 40px; left: 50%; transform: translateX(-50%);
+            background: var(--control-bg); border: 1px solid var(--record-color); border-radius: 8px;
+            padding: 12px 20px; z-index: 200; text-align: center; font-family: 'Silkscreen', cursive;
+            font-size: 11px; color: var(--record-color); max-width: 90vw;
+        }
+        #p3-sync-overlay.active { display: block; }
+        #p3-sync-count { font-size: 1.1rem; margin: 8px 0; }
+        #p3-sync-copy { background: transparent; border: 1px solid var(--record-color); color: var(--record-color); }
 
         /* --- POPUP FIM DE MÚSICA --- */
 
@@ -428,7 +491,7 @@
             display: block;
             width: 100%;
             padding: 15px 20px;
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(var(--highlight-rgb), 0.06);
             border: 1px solid var(--border-color);
             color: var(--highlight-color);
             text-align: center;
@@ -563,6 +626,7 @@
         <div class="nav-menu">
             <button class="nav-item active" id="btn-exp1" onclick="Nav.goToExperience1()">Exp I</button>
             <button class="nav-item" id="btn-exp2" onclick="Nav.goToExperience2()">Exp II</button>
+            <button class="nav-item" id="btn-exp3" onclick="Nav.goToExperience3()">Exp III</button>
             <button class="nav-item" id="btn-presave" onclick="window.open('https://ditto.fm/satisfaz-acredito', '_blank')">Pre-save</button>
             <button class="nav-item" id="btn-links" onclick="Nav.goToSection('links-screen', 'btn-links')">Links</button>
             <button class="nav-item" id="btn-creditos" onclick="Nav.goToSection('credits-screen', 'btn-creditos')">Créditos</button>
@@ -573,6 +637,7 @@
     <div id="mobile-exp-bar">
         <button class="mobile-exp-item active" id="m-btn-exp1" onclick="Nav.goToExperience1()">Exp I</button>
         <button class="mobile-exp-item" id="m-btn-exp2" onclick="Nav.goToExperience2()">Exp II</button>
+        <button class="mobile-exp-item" id="m-btn-exp3" onclick="Nav.goToExperience3()">Exp III</button>
     </div>
 
     <!-- Mobile Menu Overlay -->
@@ -580,6 +645,7 @@
         <button id="mobile-close-btn" onclick="Nav.toggleMobileMenu()">✕</button>
         <div class="mobile-overlay-link" onclick="Nav.goToExperience1()">Exp I</div>
         <div class="mobile-overlay-link" onclick="Nav.goToExperience2(); Nav.toggleMobileMenu()">Exp II</div>
+        <div class="mobile-overlay-link" onclick="Nav.goToExperience3(); Nav.toggleMobileMenu()">Exp III</div>
         <div class="mobile-overlay-link" onclick="window.open('https://ditto.fm/satisfaz-acredito', '_blank')">Pre-save</div>
         <div class="mobile-overlay-link" onclick="Nav.goToSection('links-screen', 'btn-links')">Links</div>
         <div class="mobile-overlay-link" onclick="Nav.goToSection('credits-screen', 'btn-creditos')">Créditos</div>
@@ -604,7 +670,7 @@
                 <div class="controls-grid">
                     <div class="control-group">
                         <label>Reprodução</label>
-                        <div style="display:flex; gap:10px; background:rgba(255,200,0,0.05); padding:10px; border-radius:6px; border:1px solid var(--border-color); transition: border-color 0.5s ease;">
+                        <div style="display:flex; gap:10px; background:rgba(var(--highlight-rgb),0.05); padding:10px; border-radius:6px; border:1px solid var(--border-color); transition: border-color 0.5s ease;">
                             <button id="p1-play-btn" style="width:40px; height:40px; border-radius:50%; padding:0; flex-shrink:0;"><svg viewBox="0 0 24 24" width="24"><path d="M8 5v14l11-7z"/></svg></button>
                             <button id="p1-reverse-btn" style="width:40px; height:40px; border-radius:50%; padding:0; flex-shrink:0;"><svg viewBox="0 0 24 24" width="24"><path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z"/></svg></button>
                             <div style="flex-grow:1; display:flex; flex-direction:column; gap:4px;">
@@ -635,8 +701,8 @@
                             <input type="range" id="p1-eq-high" min="-20" max="20" value="0">
                         </div>
                         <div style="display:flex; gap:10px; width:100%; margin-top:auto;">
-                            <div style="flex:1; display:flex; flex-direction:column; justify-content:flex-end;"><label>Cor Fundo</label><input type="color" id="p1-bg-color" value="#000000"></div>
-                            <div style="flex:1; display:flex; flex-direction:column; justify-content:flex-end;"><label>Cor Foco</label><input type="color" id="p1-fg-color" value="#ffffff"></div>
+                            <div style="flex:1; display:flex; flex-direction:column; justify-content:flex-end;"><label>Cor Fundo</label><input type="color" id="p1-bg-color" value="#ece0c6"></div>
+                            <div style="flex:1; display:flex; flex-direction:column; justify-content:flex-end;"><label>Cor Foco</label><input type="color" id="p1-fg-color" value="#2a1c10"></div>
                         </div>
                     </div>
                 </div>
@@ -666,18 +732,18 @@
                         <button id="p2-clip-btn">Clipe</button><button id="p2-upload-btn">Carregar</button><button id="p2-webcam-btn">Camera</button>
                     </div>
                     <!-- REPRODUTOR EXP 2 AJUSTADO -->
-                    <div style="display:flex; align-items:center; gap:10px; background:#111; padding:10px; border-radius:6px; border:1px solid #444;">
+                    <div style="display:flex; align-items:center; gap:10px; background:#e2d5b0; padding:10px; border-radius:6px; border:1px solid #c7b088;">
                         <button id="p2-play-music" style="width:40px; height:40px; padding:0; flex-shrink:0; border-radius:50%;"><svg id="p2-play-icon" viewBox="0 0 24 24" width="20"><path d="M8 5v14l11-7z"/></svg></button>
                         <div style="flex-grow:1; display:flex; flex-direction:column; gap:4px;">
                             <input type="range" id="p2-music-slider" min="0" value="0" step="1">
-                            <span id="p2-music-time" style="font-size:11px; color:#ccc; align-self:flex-end; font-family:'Silkscreen';">0:00</span>
+                            <span id="p2-music-time" style="font-size:11px; color:#6b5a42; align-self:flex-end; font-family:'Silkscreen';">0:00</span>
                         </div>
                     </div>
                     <!-- FIM REPRODUTOR -->
                     <div style="display:flex; gap:10px;">
                         <button id="p2-export-img">Foto</button><button id="p2-record-btn">Gravar</button>
                     </div>
-                    <div id="p2-ganwalk-label-menu" style="font-family:'Astloch'; font-weight:700; font-size:2.5rem; color:#fff; margin-top:auto;">GANWALK</div>
+                    <div id="p2-ganwalk-label-menu" style="font-family:'Astloch'; font-weight:700; font-size:2.5rem; color:#2a1c10; margin-top:auto;">GANWALK</div>
                 </div>
                 <div class="control-group">
                     <label>Fundo</label><input type="color" id="p2-bg-color">
@@ -700,6 +766,29 @@
         <div id="p2-create-prompt">Clique para <span class="faça-glow">criar</span>.</div>
         <div id="p2-toggle-button"><svg viewBox="0 0 24 24" width="24"><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg></div>
         <div id="p2-camera-tooltip" class="camera-tooltip">Experimente com sua câmera!</div>
+    </section>
+
+    <!-- EXP 3 -->
+    <section id="experience-3" class="screen-section">
+        <div id="p3-container">
+            <div id="p3-terminal"><div id="p3-lines"></div></div>
+            <div id="p3-start-prompt">Clique para <span class="faça-glow">ouvir</span>.</div>
+            <div id="p3-sync-overlay">
+                <div id="p3-sync-status">MODO SYNC — barra de espaço para marcar cada linha. Backspace desfaz.</div>
+                <div id="p3-sync-count">0 / 0</div>
+                <button id="p3-sync-copy">Copiar Timestamps</button>
+            </div>
+        </div>
+
+        <div id="p3-controls-bar">
+            <button id="p3-play-btn" style="width:40px; height:40px; padding:0; flex-shrink:0; border-radius:50%;"><svg id="p3-play-icon" viewBox="0 0 24 24" width="20"><path d="M8 5v14l11-7z"/></svg></button>
+            <div style="flex-grow:1; display:flex; flex-direction:column; gap:4px;">
+                <input type="range" id="p3-progress" min="0" value="0" step="0.1">
+                <span id="p3-time-display" style="font-size:11px; color:var(--text-color); align-self:flex-end; font-family:'Silkscreen'; transition: color 0.5s ease;">0:00</span>
+            </div>
+        </div>
+
+        <audio id="p3-audio" src="https://raw.githubusercontent.com/ganwalk/2026/main/simulacro.mp3" preload="none"></audio>
     </section>
 
     <!-- TEXT PAGES (EMPTY CONTAINERS FOR DYNAMIC CODE) -->
@@ -972,6 +1061,7 @@
                     };
                 });
                 App2.init();
+                App3.init();
             },
             showMarquee: function() {
                 if(!this.marqueeVisible) {
@@ -985,15 +1075,18 @@
             },
             goToExperience1: function() {
                 const r = document.documentElement.style;
-                r.setProperty('--bg-color','#000000'); r.setProperty('--bg-gradient-top','rgba(0,0,0,0.9)'); r.setProperty('--bg-gradient-bottom','rgba(0,0,0,0)'); r.setProperty('--control-bg','rgba(0,0,0,0.9)');
-                r.setProperty('--text-color','#ffffff'); r.setProperty('--highlight-color','#ffffff'); r.setProperty('--highlight-rgb','255, 255, 255');
-                r.setProperty('--border-color','rgba(255,255,255,0.3)'); r.setProperty('--shadow-color','rgba(255,255,255,0.15)');
-                r.setProperty('--nav-inactive-color','#888888'); r.setProperty('--nav-active-color','#ffffff');
+                r.setProperty('--bg-color','#ece0c6'); r.setProperty('--bg-gradient-top','rgba(236,224,198,0.9)'); r.setProperty('--bg-gradient-bottom','rgba(236,224,198,0)'); r.setProperty('--control-bg','rgba(236,224,198,0.9)');
+                r.setProperty('--text-color','#2a1c10'); r.setProperty('--highlight-color','#2a1c10'); r.setProperty('--highlight-rgb','42, 28, 16');
+                r.setProperty('--border-color','rgba(42,28,16,0.3)'); r.setProperty('--shadow-color','rgba(42,28,16,0.15)');
+                r.setProperty('--nav-inactive-color','#a3875f'); r.setProperty('--nav-active-color','#2a1c10');
                 CodeTyper.stop();
                 if (this.currentMode === 'exp2') {
                     App2.transitionOut();
                 }
-                
+                if (this.currentMode === 'exp3') {
+                    App3.transitionOut();
+                }
+
                 if (this.currentMode === 'exp1') {
                     App1.setBackground(false); // Enable visualizer
                     if (!App1.isPlaying) App1.restart();
@@ -1009,16 +1102,19 @@
             },
             goToExperience2: function() {
                 const r = document.documentElement.style;
-                r.setProperty('--bg-color','#000500'); r.setProperty('--bg-gradient-top','rgba(0,5,0,0.9)'); r.setProperty('--bg-gradient-bottom','rgba(0,5,0,0)'); r.setProperty('--control-bg','rgba(0,5,0,0.9)');
-                r.setProperty('--text-color','#ffc800'); r.setProperty('--highlight-color','#ffc800'); r.setProperty('--highlight-rgb','255, 200, 0');
-                r.setProperty('--border-color','rgba(255,200,0,0.3)'); r.setProperty('--shadow-color','rgba(255,200,0,0.15)');
-                r.setProperty('--nav-inactive-color','#997300'); r.setProperty('--nav-active-color','#ffc800');
+                r.setProperty('--bg-color','#ece0c6'); r.setProperty('--bg-gradient-top','rgba(236,224,198,0.9)'); r.setProperty('--bg-gradient-bottom','rgba(236,224,198,0)'); r.setProperty('--control-bg','rgba(236,224,198,0.9)');
+                r.setProperty('--text-color','#a8672e'); r.setProperty('--highlight-color','#a8672e'); r.setProperty('--highlight-rgb','168, 103, 46');
+                r.setProperty('--border-color','rgba(168,103,46,0.3)'); r.setProperty('--shadow-color','rgba(168,103,46,0.15)');
+                r.setProperty('--nav-inactive-color','#b0916a'); r.setProperty('--nav-active-color','#a8672e');
                 CodeTyper.stop();
                 this.showMarquee(); // Mostra caso o usuário navegue antes dos 5s
                 
                 if (this.currentMode === 'exp1') {
                     App1.transitionOut();
-                    document.body.classList.remove('mustard-theme'); 
+                    document.body.classList.remove('mustard-theme');
+                }
+                if (this.currentMode === 'exp3') {
+                    App3.transitionOut();
                 }
 
                 if (this.currentMode === 'exp2') {
@@ -1035,13 +1131,32 @@
                 this.updateMobileExpButtons('m-btn-exp2');
                 setTimeout(() => App2.resume(), 200);
             },
+            goToExperience3: function() {
+                const r = document.documentElement.style;
+                r.setProperty('--bg-color','#ece0c6'); r.setProperty('--bg-gradient-top','rgba(236,224,198,0.9)'); r.setProperty('--bg-gradient-bottom','rgba(236,224,198,0)'); r.setProperty('--control-bg','rgba(236,224,198,0.9)');
+                r.setProperty('--text-color','#2a1c10'); r.setProperty('--highlight-color','#2a1c10'); r.setProperty('--highlight-rgb','42, 28, 16');
+                r.setProperty('--border-color','rgba(42,28,16,0.3)'); r.setProperty('--shadow-color','rgba(42,28,16,0.15)');
+                r.setProperty('--nav-inactive-color','#a3875f'); r.setProperty('--nav-active-color','#2a1c10');
+                CodeTyper.stop();
+                this.showMarquee();
+
+                if (this.currentMode === 'exp1') { App1.transitionOut(); document.body.classList.remove('mustard-theme'); }
+                if (this.currentMode === 'exp2') { App2.transitionOut(); }
+
+                this.currentMode = 'exp3';
+                App3.resume();
+
+                this.nav('experience-3', 'btn-exp3');
+                this.updateMobileExpButtons('m-btn-exp3');
+            },
             goToSection: function(id, btnId) {
-                CodeTyper.stop(); 
+                CodeTyper.stop();
                 this.showMarquee(); // Mostra caso o usuário navegue antes dos 5s
-                
+
                 if (this.currentMode === 'exp1') App1.setLowPass(true);
                 if (this.currentMode === 'exp2') App2.setBackground(true);
-                
+                if (this.currentMode === 'exp3') App3.pause();
+
                 if (this.currentMode === 'exp1' && document.body.classList.contains('mustard-theme')) {
                     document.body.classList.remove('mustard-theme');
                 }
@@ -1120,10 +1235,10 @@
             targetWaveY: -25, targetWaveScale: 1, colorChangedTriggered: false,
             hasStartedOnce: false, // CORREÇÃO: Variável de controlo para a primeira reprodução
 
-            bgColor: '#000000', fgColor: '#ffffff',
-            bgThree: new THREE.Color(0x000000), fgThree: new THREE.Color(0xffffff),
-            
-            mustardYellowThree: new THREE.Color(0xE1AD01),
+            bgColor: '#ece0c6', fgColor: '#2a1c10',
+            bgThree: new THREE.Color(0xece0c6), fgThree: new THREE.Color(0x2a1c10),
+
+            mustardYellowThree: new THREE.Color(0xa8531f),
 
             hex2rgb: function(h) { const b=parseInt(h.slice(1),16); return {r:(b>>16)&255,g:(b>>8)&255,b:b&255}; },
 
@@ -1602,8 +1717,8 @@
                     ['p1-delay','p1-reverb','p1-chorus','p1-filter','p1-overdrive','p1-eq-low','p1-eq-mid','p1-eq-high'].forEach(id => { get(id).value = 0; get(id).dispatchEvent(new Event('input')); });
                     get('p1-pitch').value = 1; get('p1-pitch').dispatchEvent(new Event('input'));
                     
-                    get('p1-bg-color').value = '#000000'; get('p1-bg-color').dispatchEvent(new Event('input'));
-                    get('p1-fg-color').value = '#ffffff'; get('p1-fg-color').dispatchEvent(new Event('input'));
+                    get('p1-bg-color').value = '#ece0c6'; get('p1-bg-color').dispatchEvent(new Event('input'));
+                    get('p1-fg-color').value = '#2a1c10'; get('p1-fg-color').dispatchEvent(new Event('input'));
 
                     document.body.classList.remove('mustard-theme');
                     this.colorChangedTriggered = false;
@@ -1739,7 +1854,7 @@
                 const bgRGB = this.hex2rgb(this.bgColor);
                 ctx.fillStyle = `rgba(${bgRGB.r},${bgRGB.g},${bgRGB.b},${0.02 + 0.98 * Math.pow(1.0 - reverb, 3)})`;
                 ctx.fillRect(0,0,w,hC);
-                const col = this.colorChangedTriggered ? '#E1AD01' : this.fgColor;
+                const col = this.colorChangedTriggered ? '#a8531f' : this.fgColor;
                 const alpha = Math.max(0, ((100-filter)/100))*0.8;
                 ctx.lineWidth = 1 + od*2;
                 const vShift = Math.sin(time*2)*chorus*10;
@@ -1780,7 +1895,7 @@
         };
 
         const App2 = {
-            settings:{bg:'#000500',font1:'#ffc800',font2:'#ff8800',size:10,res:35,thresh:0,invert:false,chaos:0,bgMix:false,bgOp:72},
+            settings:{bg:'#ece0c6',font1:'#2a1c10',font2:'#a8672e',size:10,res:35,thresh:0,invert:false,chaos:0,bgMix:false,bgOp:72},
             video:null,img:null,hiddenC:null,outC:null,ctxH:null,ctxO:null,audio:null,stream:null,mode:'video',loopId:null,rec:null,chunks:[],isActive:false,
             audioCtx: null, audioSource: null, audioGain: null, audioFilter: null, audioDelay: null, audioFeedback: null,
             delayWet: null,
@@ -2069,6 +2184,196 @@
             },
             pause: function() {
                 this.isActive=false; cancelAnimationFrame(this.loopId); if(this.mode==='video')this.video.pause(); this.audio.pause();
+            }
+        };
+
+        const App3 = {
+            audio: null, lineEls: [], isActive: false, hasStarted: false, currentIdx: -1, loopId: null,
+            syncMode: false, syncTaps: [],
+
+            // NOTA: timestamps (t, em segundos) sao uma estimativa estrutural inicial,
+            // baseada na duracao da faixa e no numero de linhas por estrofe.
+            // Use SHIFT+S dentro da Exp III para entrar no Modo Sync e recalibrar
+            // batendo espaco no tempo de cada linha enquanto a musica toca.
+            lines: [
+                {t:6.00,text:"Ahhh você é que me diz"},
+                {t:8.94,text:"Onde é que vaai"},
+                {t:11.88,text:"Para essa historia"},
+                {t:14.82,text:"Cabe mais você que eu"},
+                {t:17.76,text:"Mas tanto faz"},
+                {t:20.70,text:"Eu to feliz por hora"},
+                {t:24.63,text:"A hora que"},
+                {t:27.57,text:"Que você vai"},
+                {t:30.51,text:"E vai pra que"},
+                {t:33.45,text:"Pra onde vai"},
+                {t:36.39,text:"E oque que faz"},
+                {t:39.33,text:"Fazendo o que"},
+                {t:42.27,text:"Quando é que vai"},
+                {t:45.21,text:"Me entender"},
+                {t:49.75,text:"Entender"},
+                {t:52.69,text:"É tão facil entender"},
+                {t:55.63,text:"Oque mostraram um milhão de vezes para você"},
+                {t:58.57,text:"Então vai la"},
+                {t:61.50,text:"Vai chover no molhado"},
+                {t:64.44,text:"Sei que isso eu ja vi não que seja errado"},
+                {t:69.18,text:"Ahhh vou ter que repetir"},
+                {t:72.12,text:"Vai ter que dar"},
+                {t:75.06,text:"Não e nem uma copia"},
+                {t:78.00,text:"Traz nada novo e ai"},
+                {t:80.94,text:"Vai simular"},
+                {t:83.88,text:"O tempo de outra hora"},
+                {t:87.82,text:"A hora que"},
+                {t:90.76,text:"Que você vai"},
+                {t:93.70,text:"E vai pra que"},
+                {t:96.63,text:"Pra onde vai"},
+                {t:99.57,text:"E oque que faz"},
+                {t:102.51,text:"Fazendo o que"},
+                {t:105.45,text:"Quando é que vai"},
+                {t:108.39,text:"Me entender"},
+                {t:112.93,text:"Entender"},
+                {t:115.87,text:"É tão facil entender"},
+                {t:118.81,text:"Oque mostraram um milhão de vezes para você"},
+                {t:121.75,text:"Então vai la"},
+                {t:124.69,text:"Vai chover no molhado"},
+                {t:127.63,text:"Sei que isso eu ja vi não que seja errado"},
+                {t:132.37,text:"Ahhh vou ter que repetir"},
+                {t:135.30,text:"Vai ter que dar"},
+                {t:138.24,text:"Não e nem uma copia"},
+                {t:141.18,text:"Traz nada novo e ai"},
+                {t:144.12,text:"Vai simular"},
+                {t:147.06,text:"O tempo de outra hora"},
+                {t:154.50,text:"A hora que..."}
+            ],
+
+            init: function() {
+                this.audio = document.getElementById('p3-audio');
+                this.renderLines();
+                this.bindUI();
+            },
+
+            mask: function(text) { return text.replace(/\S/g, '▓'); },
+
+            renderLines: function() {
+                const container = document.getElementById('p3-lines');
+                container.innerHTML = this.lines.map((l, i) =>
+                    `<div class="p3-line future" data-idx="${i}"><span class="c-ln">${i+1}</span><span class="p3-text">${this.mask(l.text)}</span></div>`
+                ).join('');
+                this.lineEls = Array.from(container.querySelectorAll('.p3-line'));
+            },
+
+            bindUI: function() {
+                const get = id => document.getElementById(id);
+                get('p3-start-prompt').onclick = () => this.start();
+
+                get('p3-play-btn').onclick = () => { if (this.audio.paused) this.audio.play(); else this.audio.pause(); };
+                this.audio.addEventListener('play', () => this.updatePlayIcon());
+                this.audio.addEventListener('pause', () => this.updatePlayIcon());
+
+                get('p3-progress').addEventListener('input', e => {
+                    this.audio.currentTime = parseFloat(e.target.value);
+                    this.syncTo(this.audio.currentTime, true);
+                });
+                this.audio.addEventListener('loadedmetadata', () => { get('p3-progress').max = this.audio.duration; });
+                this.audio.addEventListener('timeupdate', () => {
+                    get('p3-progress').value = this.audio.currentTime;
+                    this.updateTimeDisplay(this.audio.currentTime);
+                });
+
+                // Modo Sync (uso interno): SHIFT+S liga/desliga, ESPACO marca a linha atual, BACKSPACE desfaz.
+                window.addEventListener('keydown', e => {
+                    if (Nav.currentMode !== 'exp3') return;
+                    if (e.code === 'KeyS' && e.shiftKey) { this.toggleSyncMode(); return; }
+                    if (!this.syncMode) return;
+                    if (e.code === 'Space') { e.preventDefault(); this.tap(); }
+                    if (e.code === 'Backspace') { e.preventDefault(); this.undoTap(); }
+                });
+                get('p3-sync-copy').onclick = () => this.copySyncData();
+            },
+
+            toggleSyncMode: function() {
+                this.syncMode = !this.syncMode;
+                this.syncTaps = [];
+                document.getElementById('p3-sync-overlay').classList.toggle('active', this.syncMode);
+                this.updateSyncCount();
+            },
+
+            tap: function() {
+                if (this.syncTaps.length >= this.lines.length) return;
+                this.syncTaps.push(Math.round(this.audio.currentTime * 100) / 100);
+                this.updateSyncCount();
+            },
+
+            undoTap: function() { this.syncTaps.pop(); this.updateSyncCount(); },
+
+            updateSyncCount: function() {
+                document.getElementById('p3-sync-count').innerText = `${this.syncTaps.length} / ${this.lines.length}`;
+            },
+
+            copySyncData: function() {
+                const out = this.lines.map((l, i) => `{t:${(this.syncTaps[i] ?? l.t).toFixed(2)},text:${JSON.stringify(l.text)}}`).join(',\n                ');
+                const text = 'lines: [\n                ' + out + '\n            ]';
+                navigator.clipboard.writeText(text).then(() => {
+                    document.getElementById('p3-sync-status').innerText = 'Copiado! Cole no array App3.lines.';
+                }).catch(() => {
+                    console.log(text);
+                    document.getElementById('p3-sync-status').innerText = 'Ver console (F12) para copiar.';
+                });
+            },
+
+            start: function() {
+                this.hasStarted = true;
+                document.getElementById('p3-start-prompt').classList.add('hidden');
+                document.getElementById('p3-controls-bar').classList.add('visible');
+                this.audio.play().catch(()=>{});
+                this.resume();
+            },
+
+            updatePlayIcon: function() {
+                const icon = document.getElementById('p3-play-icon');
+                icon.innerHTML = this.audio.paused ? '<path d="M8 5v14l11-7z"/>' : '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+            },
+
+            updateTimeDisplay: function(t) {
+                const fmt = s => `${Math.floor(s/60)}:${Math.floor(s%60).toString().padStart(2,'0')}`;
+                document.getElementById('p3-time-display').innerText = `${fmt(t)} / ${fmt(this.audio.duration||0)}`;
+            },
+
+            syncTo: function(time, force) {
+                let idx = -1;
+                for (let i = 0; i < this.lines.length; i++) { if (time >= this.lines[i].t) idx = i; else break; }
+                if (idx === this.currentIdx && !force) return;
+                this.currentIdx = idx;
+                this.lineEls.forEach((el, i) => {
+                    el.classList.remove('past', 'active', 'future');
+                    const textEl = el.querySelector('.p3-text');
+                    if (i < idx) { el.classList.add('past'); textEl.textContent = this.lines[i].text; }
+                    else if (i === idx) { el.classList.add('active'); textEl.textContent = this.lines[i].text; }
+                    else { el.classList.add('future'); textEl.textContent = this.mask(this.lines[i].text); }
+                });
+                if (idx >= 0 && this.lineEls[idx]) this.lineEls[idx].scrollIntoView({ block: 'center', behavior: 'smooth' });
+            },
+
+            animate: function() {
+                if (!this.isActive) return;
+                this.loopId = requestAnimationFrame(() => this.animate());
+                if (!this.audio.paused) this.syncTo(this.audio.currentTime);
+            },
+
+            resume: function() {
+                this.isActive = true;
+                if (this.loopId) cancelAnimationFrame(this.loopId);
+                this.animate();
+                if (this.hasStarted) this.audio.play().catch(()=>{});
+            },
+
+            pause: function() {
+                this.isActive = false;
+                if (this.loopId) cancelAnimationFrame(this.loopId);
+            },
+
+            transitionOut: function() {
+                this.audio.pause();
+                this.pause();
             }
         };
 

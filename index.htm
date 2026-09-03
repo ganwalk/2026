@@ -29,38 +29,39 @@
         }
 
         :root {
-            --bg-color: #ece0c6;
-            --bg-gradient-top: rgba(236, 224, 198, 0.9);
-            --bg-gradient-bottom: rgba(236, 224, 198, 0);
-            --control-bg: rgba(236, 224, 198, 0.9);
-            --border-color: rgba(42, 28, 16, 0.3);
-            --shadow-color: rgba(42, 28, 16, 0.15);
-            --text-color: #2a1c10;
-            --highlight-color: #2a1c10;
-            --highlight-rgb: 42, 28, 16;
-            --nav-inactive-color: #a3875f;
-            --nav-active-color: #2a1c10;
-            --record-color: #a8341f;
-            --mustard: #a8531f;
+            --bg-color: #120c07;
+            --bg-gradient-top: rgba(18, 12, 7, 0.9);
+            --bg-gradient-bottom: rgba(18, 12, 7, 0);
+            --control-bg: rgba(18, 12, 7, 0.9);
+            --border-color: rgba(236, 224, 198, 0.3);
+            --shadow-color: rgba(236, 224, 198, 0.15);
+            --text-color: #ece0c6;
+            --highlight-color: #ece0c6;
+            --highlight-rgb: 236, 224, 198;
+            --nav-inactive-color: #8a7355;
+            --nav-active-color: #ece0c6;
+            --record-color: #c1442e;
+            --record-rgb: 193, 68, 46;
+            --mustard: #d99a4e;
 
             /* Syntax Highlighting Colors */
-            --code-keyword: #2a1c10;
-            --code-string: #6b4a2a;
-            --code-var: #7a5330;
-            --code-func: #8a5f2e;
-            --code-comment: #8a7a63;
-            --code-operator: #6b5a42;
+            --code-keyword: #ece0c6;
+            --code-string: #c9a876;
+            --code-var: #dcc39a;
+            --code-func: #cf9f66;
+            --code-comment: #6b5a42;
+            --code-operator: #a3835a;
         }
 
         body.mustard-theme {
-            --highlight-color: #a8531f;
-            --highlight-rgb: 168, 83, 31;
-            --border-color: #a8531f;
-            --shadow-color: rgba(168, 83, 31, 0.5);
-            --text-color: #a8531f;
-            --code-keyword: #a8531f;
-            --code-string: #2a1c10;
-            --code-var: #a8531f;
+            --highlight-color: #d99a4e;
+            --highlight-rgb: 217, 154, 78;
+            --border-color: #d99a4e;
+            --shadow-color: rgba(217, 154, 78, 0.5);
+            --text-color: #d99a4e;
+            --code-keyword: #d99a4e;
+            --code-string: #f2e6c8;
+            --code-var: #d99a4e;
         }
 
         html, body {
@@ -371,7 +372,7 @@
         #p2-controls-bar.expanded ~ #p2-create-prompt { opacity: 0; }
         input[type="color"] { width: 100%; height: 30px; border: 1px solid var(--border-color); background: transparent; padding: 0; border-radius: 4px; cursor: pointer; transition: border-color 0.5s ease; }
         input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--highlight-color); cursor: pointer; }
-        #p2-record-btn.recording { background-color: rgba(168, 52, 31, 0.2); border-color: var(--record-color); color: var(--record-color); }
+        #p2-record-btn.recording { background-color: rgba(193, 68, 46, 0.2); border-color: var(--record-color); color: var(--record-color); }
 
         /* --- ESTILOS EXP 3 (LYRICS TERMINAL) --- */
         #p3-container { position: relative; width: 100%; height: 100%; overflow: hidden; }
@@ -403,7 +404,7 @@
         #p3-lines.sync-reveal .p3-line { opacity: 0.55; font-size: 1.1rem; }
         #p3-lines.sync-reveal .p3-line.p3-sync-current {
             opacity: 1; color: var(--record-color);
-            text-shadow: 0 0 10px rgba(var(--record-rgb, 168, 52, 31), 0.5);
+            text-shadow: 0 0 10px rgba(var(--record-rgb), 0.5);
         }
         @media (max-width: 768px) {
             #p3-terminal { padding: 100px 20px 200px; }
@@ -753,8 +754,8 @@
                             <input type="range" id="p1-eq-high" min="-20" max="20" value="0">
                         </div>
                         <div style="display:flex; gap:10px; width:100%; margin-top:auto;">
-                            <div style="flex:1; display:flex; flex-direction:column; justify-content:flex-end;"><label>Cor Fundo</label><input type="color" id="p1-bg-color" value="#ece0c6"></div>
-                            <div style="flex:1; display:flex; flex-direction:column; justify-content:flex-end;"><label>Cor Foco</label><input type="color" id="p1-fg-color" value="#2a1c10"></div>
+                            <div style="flex:1; display:flex; flex-direction:column; justify-content:flex-end;"><label>Cor Fundo</label><input type="color" id="p1-bg-color" value="#120c07"></div>
+                            <div style="flex:1; display:flex; flex-direction:column; justify-content:flex-end;"><label>Cor Foco</label><input type="color" id="p1-fg-color" value="#ece0c6"></div>
                         </div>
                     </div>
                 </div>
@@ -784,18 +785,18 @@
                         <button id="p2-clip-btn">Clipe</button><button id="p2-upload-btn">Carregar</button><button id="p2-webcam-btn">Camera</button>
                     </div>
                     <!-- REPRODUTOR EXP 2 AJUSTADO -->
-                    <div style="display:flex; align-items:center; gap:10px; background:#e2d5b0; padding:10px; border-radius:6px; border:1px solid #c7b088;">
+                    <div style="display:flex; align-items:center; gap:10px; background:#1c130a; padding:10px; border-radius:6px; border:1px solid #4a3a28;">
                         <button id="p2-play-music" style="width:40px; height:40px; padding:0; flex-shrink:0; border-radius:50%;"><svg id="p2-play-icon" viewBox="0 0 24 24" width="20"><path d="M8 5v14l11-7z"/></svg></button>
                         <div style="flex-grow:1; display:flex; flex-direction:column; gap:4px;">
                             <input type="range" id="p2-music-slider" min="0" value="0" step="1">
-                            <span id="p2-music-time" style="font-size:11px; color:#6b5a42; align-self:flex-end; font-family:'Silkscreen';">0:00</span>
+                            <span id="p2-music-time" style="font-size:11px; color:#cdbba0; align-self:flex-end; font-family:'Silkscreen';">0:00</span>
                         </div>
                     </div>
                     <!-- FIM REPRODUTOR -->
                     <div style="display:flex; gap:10px;">
                         <button id="p2-export-img">Foto</button><button id="p2-record-btn">Gravar</button>
                     </div>
-                    <div id="p2-ganwalk-label-menu" style="font-family:'Astloch'; font-weight:700; font-size:2.5rem; color:#2a1c10; margin-top:auto;">GANWALK</div>
+                    <div id="p2-ganwalk-label-menu" style="font-family:'Astloch'; font-weight:700; font-size:2.5rem; color:#ece0c6; margin-top:auto;">GANWALK</div>
                 </div>
                 <div class="control-group">
                     <label>Fundo</label><input type="color" id="p2-bg-color">
@@ -1138,10 +1139,10 @@
             },
             goToExperience1: function() {
                 const r = document.documentElement.style;
-                r.setProperty('--bg-color','#ece0c6'); r.setProperty('--bg-gradient-top','rgba(236,224,198,0.9)'); r.setProperty('--bg-gradient-bottom','rgba(236,224,198,0)'); r.setProperty('--control-bg','rgba(236,224,198,0.9)');
-                r.setProperty('--text-color','#2a1c10'); r.setProperty('--highlight-color','#2a1c10'); r.setProperty('--highlight-rgb','42, 28, 16');
-                r.setProperty('--border-color','rgba(42,28,16,0.3)'); r.setProperty('--shadow-color','rgba(42,28,16,0.15)');
-                r.setProperty('--nav-inactive-color','#a3875f'); r.setProperty('--nav-active-color','#2a1c10');
+                r.setProperty('--bg-color','#120c07'); r.setProperty('--bg-gradient-top','rgba(18,12,7,0.9)'); r.setProperty('--bg-gradient-bottom','rgba(18,12,7,0)'); r.setProperty('--control-bg','rgba(18,12,7,0.9)');
+                r.setProperty('--text-color','#ece0c6'); r.setProperty('--highlight-color','#ece0c6'); r.setProperty('--highlight-rgb','236, 224, 198');
+                r.setProperty('--border-color','rgba(236,224,198,0.3)'); r.setProperty('--shadow-color','rgba(236,224,198,0.15)');
+                r.setProperty('--nav-inactive-color','#8a7355'); r.setProperty('--nav-active-color','#ece0c6');
                 CodeTyper.stop();
                 if (this.currentMode === 'exp2') {
                     App2.transitionOut();
@@ -1165,10 +1166,10 @@
             },
             goToExperience2: function() {
                 const r = document.documentElement.style;
-                r.setProperty('--bg-color','#ece0c6'); r.setProperty('--bg-gradient-top','rgba(236,224,198,0.9)'); r.setProperty('--bg-gradient-bottom','rgba(236,224,198,0)'); r.setProperty('--control-bg','rgba(236,224,198,0.9)');
-                r.setProperty('--text-color','#a8672e'); r.setProperty('--highlight-color','#a8672e'); r.setProperty('--highlight-rgb','168, 103, 46');
-                r.setProperty('--border-color','rgba(168,103,46,0.3)'); r.setProperty('--shadow-color','rgba(168,103,46,0.15)');
-                r.setProperty('--nav-inactive-color','#b0916a'); r.setProperty('--nav-active-color','#a8672e');
+                r.setProperty('--bg-color','#120c07'); r.setProperty('--bg-gradient-top','rgba(18,12,7,0.9)'); r.setProperty('--bg-gradient-bottom','rgba(18,12,7,0)'); r.setProperty('--control-bg','rgba(18,12,7,0.9)');
+                r.setProperty('--text-color','#d99a4e'); r.setProperty('--highlight-color','#d99a4e'); r.setProperty('--highlight-rgb','217, 154, 78');
+                r.setProperty('--border-color','rgba(217,154,78,0.3)'); r.setProperty('--shadow-color','rgba(217,154,78,0.15)');
+                r.setProperty('--nav-inactive-color','#8a6a42'); r.setProperty('--nav-active-color','#d99a4e');
                 CodeTyper.stop();
                 this.showMarquee(); // Mostra caso o usuário navegue antes dos 5s
                 
@@ -1196,10 +1197,10 @@
             },
             goToExperience3: function() {
                 const r = document.documentElement.style;
-                r.setProperty('--bg-color','#ece0c6'); r.setProperty('--bg-gradient-top','rgba(236,224,198,0.9)'); r.setProperty('--bg-gradient-bottom','rgba(236,224,198,0)'); r.setProperty('--control-bg','rgba(236,224,198,0.9)');
-                r.setProperty('--text-color','#2a1c10'); r.setProperty('--highlight-color','#2a1c10'); r.setProperty('--highlight-rgb','42, 28, 16');
-                r.setProperty('--border-color','rgba(42,28,16,0.3)'); r.setProperty('--shadow-color','rgba(42,28,16,0.15)');
-                r.setProperty('--nav-inactive-color','#a3875f'); r.setProperty('--nav-active-color','#2a1c10');
+                r.setProperty('--bg-color','#120c07'); r.setProperty('--bg-gradient-top','rgba(18,12,7,0.9)'); r.setProperty('--bg-gradient-bottom','rgba(18,12,7,0)'); r.setProperty('--control-bg','rgba(18,12,7,0.9)');
+                r.setProperty('--text-color','#ece0c6'); r.setProperty('--highlight-color','#ece0c6'); r.setProperty('--highlight-rgb','236, 224, 198');
+                r.setProperty('--border-color','rgba(236,224,198,0.3)'); r.setProperty('--shadow-color','rgba(236,224,198,0.15)');
+                r.setProperty('--nav-inactive-color','#8a7355'); r.setProperty('--nav-active-color','#ece0c6');
                 CodeTyper.stop();
                 this.showMarquee();
 
@@ -1298,10 +1299,10 @@
             targetWaveY: -25, targetWaveScale: 1, colorChangedTriggered: false,
             hasStartedOnce: false, // CORREÇÃO: Variável de controlo para a primeira reprodução
 
-            bgColor: '#ece0c6', fgColor: '#2a1c10',
-            bgThree: new THREE.Color(0xece0c6), fgThree: new THREE.Color(0x2a1c10),
+            bgColor: '#120c07', fgColor: '#ece0c6',
+            bgThree: new THREE.Color(0x120c07), fgThree: new THREE.Color(0xece0c6),
 
-            mustardYellowThree: new THREE.Color(0xa8531f),
+            mustardYellowThree: new THREE.Color(0xd99a4e),
 
             hex2rgb: function(h) { const b=parseInt(h.slice(1),16); return {r:(b>>16)&255,g:(b>>8)&255,b:b&255}; },
 
@@ -1780,8 +1781,8 @@
                     ['p1-delay','p1-reverb','p1-chorus','p1-filter','p1-overdrive','p1-eq-low','p1-eq-mid','p1-eq-high'].forEach(id => { get(id).value = 0; get(id).dispatchEvent(new Event('input')); });
                     get('p1-pitch').value = 1; get('p1-pitch').dispatchEvent(new Event('input'));
                     
-                    get('p1-bg-color').value = '#ece0c6'; get('p1-bg-color').dispatchEvent(new Event('input'));
-                    get('p1-fg-color').value = '#2a1c10'; get('p1-fg-color').dispatchEvent(new Event('input'));
+                    get('p1-bg-color').value = '#120c07'; get('p1-bg-color').dispatchEvent(new Event('input'));
+                    get('p1-fg-color').value = '#ece0c6'; get('p1-fg-color').dispatchEvent(new Event('input'));
 
                     document.body.classList.remove('mustard-theme');
                     this.colorChangedTriggered = false;
@@ -1917,7 +1918,7 @@
                 const bgRGB = this.hex2rgb(this.bgColor);
                 ctx.fillStyle = `rgba(${bgRGB.r},${bgRGB.g},${bgRGB.b},${0.02 + 0.98 * Math.pow(1.0 - reverb, 3)})`;
                 ctx.fillRect(0,0,w,hC);
-                const col = this.colorChangedTriggered ? '#a8531f' : this.fgColor;
+                const col = this.colorChangedTriggered ? '#d99a4e' : this.fgColor;
                 const alpha = Math.max(0, ((100-filter)/100))*0.8;
                 ctx.lineWidth = 1 + od*2;
                 const vShift = Math.sin(time*2)*chorus*10;
@@ -1958,7 +1959,7 @@
         };
 
         const App2 = {
-            settings:{bg:'#ece0c6',font1:'#2a1c10',font2:'#a8672e',size:10,res:35,thresh:0,invert:false,chaos:0,bgMix:false,bgOp:72},
+            settings:{bg:'#120c07',font1:'#7a4426',font2:'#f0ddb8',size:10,res:35,thresh:0,invert:false,chaos:0,bgMix:false,bgOp:72},
             video:null,img:null,hiddenC:null,outC:null,ctxH:null,ctxO:null,audio:null,stream:null,mode:'video',loopId:null,rec:null,chunks:[],isActive:false,
             audioCtx: null, audioSource: null, audioGain: null, audioFilter: null, audioDelay: null, audioFeedback: null,
             delayWet: null,

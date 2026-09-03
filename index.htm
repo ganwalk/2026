@@ -393,9 +393,10 @@
         .p3-line {
             display: flex; align-items: baseline; gap: 15px;
             padding: 10px 0; opacity: 0.2;
-            transition: opacity 0.5s ease, color 0.5s ease, text-shadow 0.5s ease;
+            transition: opacity 0.5s ease, color 0.5s ease, text-shadow 0.5s ease, font-size 0.15s ease;
             font-family: 'Silkscreen', cursive; font-size: 1.3rem; line-height: 1.4;
             color: var(--text-color);
+            white-space: nowrap; overflow: hidden; width: 100%;
         }
         .p3-line .p3-text { transition: opacity 0.3s ease; }
         .p3-line.past { opacity: 0.3; }
@@ -418,15 +419,6 @@
             .p3-line.active { font-size: 1.25rem; }
             #p3-lines.sync-reveal .p3-line { font-size: 0.95rem; }
         }
-
-        #p3-start-prompt {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
-            color: var(--text-color); font-size: 1.3rem; text-align: center;
-            font-family: 'Silkscreen', cursive; cursor: pointer; z-index: 20;
-            background: var(--control-bg); border: 1px solid var(--border-color);
-            padding: 20px 30px; border-radius: 8px; transition: opacity 0.4s ease, background-color 0.5s ease, border-color 0.5s ease, color 0.5s ease;
-        }
-        #p3-start-prompt.hidden { opacity: 0; pointer-events: none; }
 
         #p3-controls-bar {
             position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
@@ -834,7 +826,6 @@
             <div id="p3-terminal"><div id="p3-lines"></div></div>
             <canvas id="p3-noise-canvas"></canvas>
             <div id="p3-glitch-text"></div>
-            <div id="p3-start-prompt">Clique para <span class="faça-glow">ouvir</span>.</div>
             <div id="p3-sync-overlay">
                 <div id="p3-sync-status">MODO SYNC — espaço marca a linha, backspace desfaz.</div>
                 <div id="p3-sync-count">0 / 0</div>
@@ -1216,7 +1207,7 @@
 
                 this.currentMode = 'exp3';
                 App3.updateGeoColor();
-                App3.resume();
+                if (!App3.hasStarted) App3.start(); else App3.resume();
 
                 this.nav('experience-3', 'btn-exp3');
                 this.updateMobileExpButtons('m-btn-exp3');
@@ -2262,6 +2253,7 @@
         const App3 = {
             audio: null, lineEls: [], isActive: false, hasStarted: false, currentIdx: -1, loopId: null,
             geoScene: null, geoCamera: null, geoRenderer: null, geoMesh: null, geoPulse: 0,
+            geoBaseX: 0, geoBaseY: 0, geoGlitchKick: 0,
             songEnd: 165, // duração real da música (2:45) — o resto do arquivo é silêncio
             FREEZE_AT: 60, // ponto em que o site "trava" e revela o pre-save
             freezeTriggered: false, isFreezing: false, _freezeToken: 0,
@@ -2339,11 +2331,12 @@
                 this.geoRenderer.setSize(window.innerWidth, window.innerHeight);
                 this.geoRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-                const geometry = this.buildMoebiusGeometry(2.6, 1.1, 140, 7, 10);
-                const mat = new THREE.LineBasicMaterial({ transparent: true, opacity: 0.6 });
+                const geometry = this.buildMoebiusGeometry(2.0, 0.9, 140, 7, 10);
+                const mat = new THREE.LineBasicMaterial({ transparent: true, opacity: 0.7 });
                 this.geoMesh = new THREE.LineSegments(geometry, mat);
                 this.geoScene.add(this.geoMesh);
                 this.updateGeoColor();
+                this.onGeoResize();
 
                 window.addEventListener('resize', () => this.onGeoResize());
             },
@@ -2396,6 +2389,11 @@
                 this.geoCamera.aspect = window.innerWidth / window.innerHeight;
                 this.geoCamera.updateProjectionMatrix();
                 this.geoRenderer.setSize(window.innerWidth, window.innerHeight);
+                // Fita fica à direita da coluna de texto (que é centralizada, max-width 760px); em telas
+                // estreitas não há espaço sobrando, então volta a ficar centralizada e discreta.
+                const narrow = window.innerWidth <= 900;
+                this.geoBaseX = narrow ? 0 : 3.6;
+                this.geoBaseY = narrow ? 0 : 0.2;
             },
 
             updateGeoColor: function() {
@@ -2412,7 +2410,8 @@
                 const t = performance.now() * 0.0006;
                 const pos = this.geoMesh.geometry.attributes.position.array;
                 const init = this.geoMesh.geometry.attributes.initialPosition.array;
-                const amp = 0.1 + this.geoPulse * 0.5 + intensity * 0.35;
+                const kick = this.geoGlitchKick;
+                const amp = 0.1 + this.geoPulse * 0.5 + intensity * 0.35 + kick * 0.5;
                 for (let i = 0; i < pos.length; i += 3) {
                     const x = init[i], y = init[i + 1], z = init[i + 2];
                     const n = Math.sin(x * 1.3 + t * 2) + Math.cos(y * 1.3 - t * 1.7) + Math.sin(z * 1.3 + t * 2.3);
@@ -2420,12 +2419,17 @@
                     pos[i] = x * scale; pos[i + 1] = y * scale; pos[i + 2] = z * scale;
                 }
                 this.geoMesh.geometry.attributes.position.needsUpdate = true;
-                this.geoMesh.rotation.y += 0.0015 + this.geoPulse * 0.004 + intensity * 0.01;
-                this.geoMesh.rotation.x += 0.0009 + intensity * 0.006;
+                this.geoMesh.rotation.y += 0.0015 + this.geoPulse * 0.004 + intensity * 0.01 + kick * 0.02;
+                this.geoMesh.rotation.x += 0.0009 + intensity * 0.006 + kick * 0.015;
+                // A fita treme junto quando um glitch procedural dispara (linha corrompida / texto de erro)
+                const jitter = intensity * 0.5 + kick;
+                this.geoMesh.position.x = this.geoBaseX + (Math.random() - 0.5) * jitter * 0.6;
+                this.geoMesh.position.y = this.geoBaseY + (Math.random() - 0.5) * jitter * 0.4;
                 this.geoPulse *= 0.93;
+                this.geoGlitchKick *= 0.85;
 
                 const canvas = document.getElementById('p3-geo-canvas');
-                if (canvas) canvas.style.opacity = Math.min(0.85, 0.3 + this.geoPulse * 0.4 + intensity * 0.2).toFixed(2);
+                if (canvas) canvas.style.opacity = Math.min(0.85, 0.4 + this.geoPulse * 0.4 + intensity * 0.2 + kick * 0.2).toFixed(2);
                 this.geoRenderer.render(this.geoScene, this.geoCamera);
             },
 
@@ -2441,7 +2445,6 @@
 
             bindUI: function() {
                 const get = id => document.getElementById(id);
-                get('p3-start-prompt').onclick = () => this.start();
 
                 get('p3-play-btn').onclick = () => { if (this.audio.paused) this.audio.play(); else this.audio.pause(); };
                 this.audio.addEventListener('play', () => this.updatePlayIcon());
@@ -2476,6 +2479,10 @@
                     if (e.code === 'Backspace') { e.preventDefault(); this.undoTap(); }
                 });
                 get('p3-sync-copy').onclick = () => this.copySyncData();
+
+                window.addEventListener('resize', () => {
+                    if (this.currentIdx >= 0 && this.lineEls[this.currentIdx]) this.fitLineText(this.lineEls[this.currentIdx]);
+                });
             },
 
             toggleSyncMode: function() {
@@ -2533,7 +2540,6 @@
 
             start: function() {
                 this.hasStarted = true;
-                document.getElementById('p3-start-prompt').classList.add('hidden');
                 document.getElementById('p3-controls-bar').classList.add('visible');
                 this.audio.play().catch(()=>{});
                 this.resume();
@@ -2558,11 +2564,30 @@
                 this.lineEls.forEach((el, i) => {
                     el.classList.remove('past', 'active', 'future');
                     const textEl = el.querySelector('.p3-text');
-                    if (i < idx) { el.classList.add('past'); textEl.textContent = this.lines[i].text; }
-                    else if (i === idx) { el.classList.add('active'); textEl.textContent = this.lines[i].text; }
-                    else { el.classList.add('future'); textEl.textContent = this.mask(this.lines[i].text); }
+                    if (i < idx) { el.classList.add('past'); textEl.textContent = this.lines[i].text; el.style.removeProperty('font-size'); }
+                    else if (i === idx) { el.classList.add('active'); textEl.textContent = this.lines[i].text; this.fitLineText(el); }
+                    else { el.classList.add('future'); textEl.textContent = this.mask(this.lines[i].text); el.style.removeProperty('font-size'); }
                 });
                 if (idx >= 0 && this.lineEls[idx]) this.lineEls[idx].scrollIntoView({ block: 'center', behavior: 'smooth' });
+            },
+
+            // Encolhe o tamanho da fonte só o necessário para o verso caber em uma única linha
+            fitLineText: function(el) {
+                const textEl = el.querySelector('.p3-text');
+                if (!textEl) return;
+                el.style.removeProperty('font-size');
+                const cs = getComputedStyle(el);
+                const fontSize = parseFloat(cs.fontSize);
+                if (!this._measureCtx) this._measureCtx = document.createElement('canvas').getContext('2d');
+                this._measureCtx.font = `${fontSize}px ${cs.fontFamily}`;
+                const textWidth = this._measureCtx.measureText(textEl.textContent).width;
+                const gutter = el.querySelector('.c-ln');
+                const gutterWidth = (gutter ? gutter.getBoundingClientRect().width : 30) + 15; // + gap do flex
+                const available = el.parentElement.clientWidth - gutterWidth - 4;
+                if (textWidth > 0 && textWidth > available) {
+                    const scale = Math.max(0.45, (available / textWidth) * 0.97);
+                    el.style.fontSize = (fontSize * scale).toFixed(1) + 'px';
+                }
             },
 
             animate: function() {
@@ -2634,6 +2659,7 @@
                 const original = this.lines[idx].text;
                 textEl.textContent = this.mask(original);
                 el.classList.add('ganwalk-glitch');
+                this.geoGlitchKick = 1;
                 clearTimeout(el._glitchTimer);
                 el._glitchTimer = setTimeout(() => {
                     textEl.textContent = original;
@@ -2645,6 +2671,7 @@
                 const el = document.getElementById('p3-glitch-text');
                 el.textContent = this.glitchTokens[Math.floor(Math.random() * this.glitchTokens.length)];
                 el.classList.add('visible');
+                this.geoGlitchKick = 1;
                 clearTimeout(this._glitchTextTimer);
                 this._glitchTextTimer = setTimeout(() => el.classList.remove('visible'), 220 + Math.random() * 180);
             },

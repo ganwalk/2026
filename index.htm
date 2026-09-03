@@ -434,23 +434,25 @@
         #p3-controls-bar.visible { opacity: 1; pointer-events: auto; }
         #p3-play-btn svg { fill: var(--highlight-color); transition: fill 0.5s ease; }
         #p3-cover-art {
-            width: 44px; height: 44px; border-radius: 4px; object-fit: cover;
+            width: 68px; height: 68px; border-radius: 6px; object-fit: cover;
             flex-shrink: 0; border: 1px solid var(--border-color);
+            box-shadow: 0 0 18px rgba(var(--highlight-rgb), 0.25);
             transition: border-color 0.5s ease;
         }
-        #p3-track-info { flex-shrink: 0; display: flex; flex-direction: column; gap: 2px; max-width: 120px; }
+        #p3-track-info { flex-shrink: 0; display: flex; flex-direction: column; gap: 3px; max-width: 140px; }
         #p3-track-title {
-            font-family: 'Silkscreen', cursive; font-size: 12px; color: var(--highlight-color);
+            font-family: 'Silkscreen', cursive; font-size: 15px; color: var(--highlight-color);
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: color 0.5s ease;
         }
         #p3-track-artist {
-            font-family: 'Silkscreen', cursive; font-size: 9px; color: var(--text-color); opacity: 0.6;
+            font-family: 'Silkscreen', cursive; font-size: 10px; color: var(--text-color); opacity: 0.6;
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: color 0.5s ease;
         }
         @media (max-width: 768px) {
-            #p3-cover-art { width: 36px; height: 36px; }
+            #p3-cover-art { width: 50px; height: 50px; }
             #p3-track-artist { display: none; }
-            #p3-track-info { max-width: 70px; }
+            #p3-track-info { max-width: 80px; }
+            #p3-track-title { font-size: 12px; }
         }
 
         #p3-sync-overlay {
@@ -665,23 +667,23 @@
 <body>
 
     <!-- MARQUEE NO TOPO -->
-    <a href="https://ditto.fm/satisfaz-acredito" target="_blank" id="top-marquee">
+    <a href="https://ditto.fm/simulacro-ganwalk" target="_blank" id="top-marquee">
         <div class="marquee-track">
             <div class="marquee-content">
-                <span>OUÇA AGORA - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
-                <span>OUÇA AGORA - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
-                <span>OUÇA AGORA - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
-                <span>OUÇA AGORA - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
-                <span>OUÇA AGORA - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
-                <span>OUÇA AGORA - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span>PRE-SAVE - SIMULACRO &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span>PRE-SAVE - SIMULACRO &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span>PRE-SAVE - SIMULACRO &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span>PRE-SAVE - SIMULACRO &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span>PRE-SAVE - SIMULACRO &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span>PRE-SAVE - SIMULACRO &nbsp;&nbsp;&nbsp;&nbsp;</span>
             </div>
             <div class="marquee-content" aria-hidden="true">
-                <span>OUÇA AGORA - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
-                <span>OUÇA AGORA - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
-                <span>OUÇA AGORA - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
-                <span>OUÇA AGORA - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
-                <span>OUÇA AGORA - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
-                <span>OUÇA AGORA - SATISFAZ/ACREDITO &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span>PRE-SAVE - SIMULACRO &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span>PRE-SAVE - SIMULACRO &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span>PRE-SAVE - SIMULACRO &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span>PRE-SAVE - SIMULACRO &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span>PRE-SAVE - SIMULACRO &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span>PRE-SAVE - SIMULACRO &nbsp;&nbsp;&nbsp;&nbsp;</span>
             </div>
         </div>
     </a>
@@ -697,10 +699,10 @@
         
         <!-- Desktop Menu -->
         <div class="nav-menu">
-            <button class="nav-item active" id="btn-exp1" onclick="Nav.goToExperience1()">Exp I</button>
+            <button class="nav-item" id="btn-exp1" onclick="Nav.goToExperience1()">Exp I</button>
             <button class="nav-item" id="btn-exp2" onclick="Nav.goToExperience2()">Exp II</button>
-            <button class="nav-item" id="btn-exp3" onclick="Nav.goToExperience3()">Exp III</button>
-            <button class="nav-item" id="btn-presave" onclick="window.open('https://ditto.fm/satisfaz-acredito', '_blank')">Pre-save</button>
+            <button class="nav-item active" id="btn-exp3" onclick="Nav.goToExperience3()">Exp III</button>
+            <button class="nav-item" id="btn-presave">Pre-save</button>
             <button class="nav-item" id="btn-links" onclick="Nav.goToSection('links-screen', 'btn-links')">Links</button>
             <button class="nav-item" id="btn-creditos" onclick="Nav.goToSection('credits-screen', 'btn-creditos')">Créditos</button>
         </div>
@@ -708,9 +710,9 @@
 
     <!-- Mobile Exp Bar (Lado a Lado) -->
     <div id="mobile-exp-bar">
-        <button class="mobile-exp-item active" id="m-btn-exp1" onclick="Nav.goToExperience1()">Exp I</button>
+        <button class="mobile-exp-item" id="m-btn-exp1" onclick="Nav.goToExperience1()">Exp I</button>
         <button class="mobile-exp-item" id="m-btn-exp2" onclick="Nav.goToExperience2()">Exp II</button>
-        <button class="mobile-exp-item" id="m-btn-exp3" onclick="Nav.goToExperience3()">Exp III</button>
+        <button class="mobile-exp-item active" id="m-btn-exp3" onclick="Nav.goToExperience3()">Exp III</button>
     </div>
 
     <!-- Mobile Menu Overlay -->
@@ -719,7 +721,7 @@
         <div class="mobile-overlay-link" onclick="Nav.goToExperience1()">Exp I</div>
         <div class="mobile-overlay-link" onclick="Nav.goToExperience2(); Nav.toggleMobileMenu()">Exp II</div>
         <div class="mobile-overlay-link" onclick="Nav.goToExperience3(); Nav.toggleMobileMenu()">Exp III</div>
-        <div class="mobile-overlay-link" onclick="window.open('https://ditto.fm/satisfaz-acredito', '_blank')">Pre-save</div>
+        <div class="mobile-overlay-link" id="m-btn-presave">Pre-save</div>
         <div class="mobile-overlay-link" onclick="Nav.goToSection('links-screen', 'btn-links')">Links</div>
         <div class="mobile-overlay-link" onclick="Nav.goToSection('credits-screen', 'btn-creditos')">Créditos</div>
     </div>
@@ -901,7 +903,7 @@
 <span class="c-ln">9</span><span class="c-func">render</span>(<span class="c-var">socialLinks</span>);`,
                 render: `
                 <div class="linktree-container">
-                    <a href="https://ditto.fm/satisfaz-acredito" target="_blank" class="linktree-btn">Pre-save</a>
+                    <a href="https://ditto.fm/simulacro-ganwalk" target="_blank" class="linktree-btn" id="links-presave-btn">Pre-save</a>
                     <a href="https://instagram.com/ganwalk" target="_blank" class="linktree-btn">Instagram</a>
                     <a href="https://tiktok.com/@ganwalk" target="_blank" class="linktree-btn">TikTok</a>
                     <a href="https://youtube.com/@ganwalk" target="_blank" class="linktree-btn">YouTube</a>
@@ -1126,8 +1128,39 @@
             }
         };
 
+        // Botões de pre-save do site inteiro apontam para Simulacro; a partir da data de
+        // lançamento o texto vira "Ouvir" (o link do ditto.fm já se adapta sozinho do lado dele).
+        const Presave = {
+            URL: 'https://ditto.fm/simulacro-ganwalk',
+            RELEASE_AT: new Date('2026-09-30T00:00:00'),
+            isReleased: function() { return new Date() >= this.RELEASE_AT; },
+            label: function() { return this.isReleased() ? 'Ouvir' : 'Pre-save'; },
+            apply: function() {
+                const label = this.label();
+                const open = () => window.open(this.URL, '_blank');
+
+                const nav = document.getElementById('btn-presave');
+                if (nav) { nav.textContent = label; nav.onclick = open; }
+
+                const mobile = document.getElementById('m-btn-presave');
+                if (mobile) { mobile.textContent = label; mobile.onclick = () => { open(); Nav.toggleMobileMenu(); }; }
+
+                const linktree = document.getElementById('links-presave-btn');
+                if (linktree) { linktree.textContent = label; linktree.href = this.URL; }
+
+                const marqueeLabel = (this.isReleased() ? 'OUÇA AGORA' : 'PRE-SAVE') + ' - SIMULACRO';
+                const marquee = document.getElementById('top-marquee');
+                if (marquee) {
+                    marquee.href = this.URL;
+                    marquee.querySelectorAll('.marquee-content span').forEach(el => {
+                        el.textContent = marqueeLabel + '    ';
+                    });
+                }
+            }
+        };
+
         const Nav = {
-            currentMode: null, 
+            currentMode: null,
             marqueeVisible: false,
             init: function() {
                 const l = document.getElementById('global-loader');
@@ -1146,7 +1179,7 @@
                         setTimeout(() => l.style.display = 'none', 1500);
                         document.getElementById('top-nav').classList.add('visible');
                         document.getElementById('mobile-exp-bar').classList.add('visible');
-                        this.goToExperience1();
+                        this.goToExperience3();
                     };
                 });
                 App2.init();
@@ -2283,7 +2316,7 @@
             geoBaseX: 0, geoBaseY: 0, geoGlitchKick: 0,
             songEnd: 165, // duração real da música (2:45) — o resto do arquivo é silêncio
             FREEZE_AT: 60, // ponto em que o site "trava" e revela o pre-save
-            freezeTriggered: false, isFreezing: false, _freezeToken: 0,
+            freezeTriggered: false, isFreezing: false, _freezeToken: 0, _rewindToken: 0,
             glitchTokens: ['ERRO_0x7F', 'SINAL INSTÁVEL', 'CONEXÃO PERDIDA', 'SIMULAÇÃO INSTÁVEL', 'REALIDADE.EXE NÃO RESPONDE', 'PACOTE CORROMPIDO', '▓▓▓ FALHA ▓▓▓', 'RECALIBRANDO...'],
             syncMode: false, syncTaps: [],
 
@@ -2761,16 +2794,52 @@
                 }, 300);
             },
 
+            // Ao reiniciar, "rebobina" a faixa (seeks pra trás em blocos cada vez maiores,
+            // como uma fita acelerando) antes de recomeçar do zero normalmente.
             replay: function() {
-                this._freezeToken++;
-                document.getElementById('p3-presave-overlay').classList.remove('visible');
-                this.freezeTriggered = false;
+                this._freezeToken++; // cancela qualquer travamento pendente
                 this.isFreezing = false;
+                this.freezeTriggered = false;
+                document.body.classList.remove('invert-flash');
+                document.getElementById('p3-presave-overlay').classList.remove('visible');
+                document.getElementById('p3-controls-bar').classList.add('visible');
+                this.rewind();
+            },
+
+            rewind: function() {
+                const token = ++this._rewindToken;
+                let time = this.audio.currentTime || this.FREEZE_AT;
+                let tick = 0;
+                const maxTicks = 24;
+
+                const step = () => {
+                    if (token !== this._rewindToken) return;
+                    tick++;
+                    const chunk = time * (0.14 + (tick / maxTicks) * 0.4); // cada passo puxa uma fatia maior
+                    time = Math.max(0, time - chunk);
+                    this.audio.currentTime = time;
+                    this.audio.play().catch(() => {});
+                    this.applyGlitch(1);
+                    this.geoGlitchKick = 1;
+
+                    if (time > 0.05 && tick < maxTicks) {
+                        const delay = Math.max(18, 65 - tick * 2); // acelera a cada passo
+                        setTimeout(step, delay);
+                    } else {
+                        this.finishRewind(token);
+                    }
+                };
+                step();
+            },
+
+            finishRewind: function(token) {
+                if (token !== this._rewindToken) return;
+                this.audio.pause();
                 this.currentIdx = -1;
-                this.audio.currentTime = 0;
                 this.renderLines();
                 this.applyGlitch(0);
-                document.getElementById('p3-controls-bar').classList.add('visible');
+                this.audio.currentTime = 0;
+                this.hasStarted = true;
                 this.audio.play().catch(() => {});
             },
 
@@ -2788,6 +2857,7 @@
 
             transitionOut: function() {
                 this._freezeToken++; // cancela qualquer sequência de travamento em andamento
+                this._rewindToken++; // cancela qualquer rebobinagem em andamento
                 this.isFreezing = false;
                 document.body.classList.remove('invert-flash');
                 this.audio.pause();
@@ -2796,6 +2866,7 @@
         };
 
         window.onload = function() {
+            Presave.apply();
             document.fonts.ready.then(() => Nav.init());
             if (window.innerWidth <= 768) {
                 const grid = document.querySelector('#p1-controls-bar .controls-grid');

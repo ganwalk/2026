@@ -376,11 +376,17 @@
 
         /* --- ESTILOS EXP 3 (LYRICS TERMINAL) --- */
         #p3-container { position: relative; width: 100%; height: 100%; overflow: hidden; }
+        #p3-geo-canvas {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 1; opacity: 0.35;
+            transition: opacity 0.8s ease;
+        }
         #p3-terminal {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             overflow-y: auto; scrollbar-width: none;
             padding: 120px 20px 220px; box-sizing: border-box;
             display: flex; justify-content: center;
+            z-index: 2;
         }
         #p3-terminal::-webkit-scrollbar { display: none; }
         #p3-lines { width: 100%; max-width: 760px; }
@@ -824,6 +830,7 @@
     <!-- EXP 3 -->
     <section id="experience-3" class="screen-section">
         <div id="p3-container">
+            <canvas id="p3-geo-canvas"></canvas>
             <div id="p3-terminal"><div id="p3-lines"></div></div>
             <canvas id="p3-noise-canvas"></canvas>
             <div id="p3-glitch-text"></div>
@@ -1208,6 +1215,7 @@
                 if (this.currentMode === 'exp2') { App2.transitionOut(); }
 
                 this.currentMode = 'exp3';
+                App3.updateGeoColor();
                 App3.resume();
 
                 this.nav('experience-3', 'btn-exp3');
@@ -2253,6 +2261,7 @@
 
         const App3 = {
             audio: null, lineEls: [], isActive: false, hasStarted: false, currentIdx: -1, loopId: null,
+            geoScene: null, geoCamera: null, geoRenderer: null, geoMesh: null, geoPulse: 0,
             songEnd: 165, // duração real da música (2:45) — o resto do arquivo é silêncio
             FREEZE_AT: 60, // ponto em que o site "trava" e revela o pre-save
             freezeTriggered: false, isFreezing: false, _freezeToken: 0,
@@ -2317,6 +2326,107 @@
                 this.audio = document.getElementById('p3-audio');
                 this.renderLines();
                 this.bindUI();
+                this.initGeo();
+            },
+
+            // --- Objeto geométrico fluido que acompanha a letra sendo revelada ---
+            initGeo: function() {
+                const canvas = document.getElementById('p3-geo-canvas');
+                this.geoScene = new THREE.Scene();
+                this.geoCamera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 100);
+                this.geoCamera.position.z = 9;
+                this.geoRenderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+                this.geoRenderer.setSize(window.innerWidth, window.innerHeight);
+                this.geoRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+                const geometry = this.buildMoebiusGeometry(2.6, 1.1, 140, 7, 10);
+                const mat = new THREE.LineBasicMaterial({ transparent: true, opacity: 0.6 });
+                this.geoMesh = new THREE.LineSegments(geometry, mat);
+                this.geoScene.add(this.geoMesh);
+                this.updateGeoColor();
+
+                window.addEventListener('resize', () => this.onGeoResize());
+            },
+
+            // Gera uma fita de Möbius como malha de linhas (anéis ao longo da fita + travessas cruzando a largura)
+            buildMoebiusGeometry: function(radius, halfWidth, segmentsU, segmentsV, rungEvery) {
+                const grid = [];
+                for (let i = 0; i <= segmentsU; i++) {
+                    const u = (i / segmentsU) * Math.PI * 2;
+                    const cu2 = Math.cos(u / 2), su2 = Math.sin(u / 2);
+                    const row = [];
+                    for (let j = 0; j <= segmentsV; j++) {
+                        const v = -halfWidth + (j / segmentsV) * halfWidth * 2;
+                        row.push(
+                            (radius + v * cu2) * Math.cos(u),
+                            (radius + v * cu2) * Math.sin(u),
+                            v * su2
+                        );
+                    }
+                    grid.push(row);
+                }
+
+                const verts = [];
+                // Anéis: contornos ao longo de u, para cada nível de v (dão a forma/torção da fita)
+                for (let j = 0; j <= segmentsV; j++) {
+                    const o = j * 3;
+                    for (let i = 0; i < segmentsU; i++) {
+                        const a = grid[i], b = grid[i + 1];
+                        verts.push(a[o], a[o + 1], a[o + 2], b[o], b[o + 1], b[o + 2]);
+                    }
+                }
+                // Travessas: cruzam a largura da fita a cada poucos passos de u
+                for (let i = 0; i <= segmentsU; i += rungEvery) {
+                    const row = grid[i];
+                    for (let j = 0; j < segmentsV; j++) {
+                        const o = j * 3, o2 = (j + 1) * 3;
+                        verts.push(row[o], row[o + 1], row[o + 2], row[o2], row[o2 + 1], row[o2 + 2]);
+                    }
+                }
+
+                const geometry = new THREE.BufferGeometry();
+                const positions = new Float32Array(verts);
+                geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                geometry.setAttribute('initialPosition', new THREE.BufferAttribute(positions.slice(), 3));
+                return geometry;
+            },
+
+            onGeoResize: function() {
+                if (!this.geoRenderer) return;
+                this.geoCamera.aspect = window.innerWidth / window.innerHeight;
+                this.geoCamera.updateProjectionMatrix();
+                this.geoRenderer.setSize(window.innerWidth, window.innerHeight);
+            },
+
+            updateGeoColor: function() {
+                if (!this.geoMesh) return;
+                const hex = getComputedStyle(document.documentElement).getPropertyValue('--highlight-color').trim();
+                if (hex) { try { this.geoMesh.material.color.set(hex); } catch (e) {} }
+            },
+
+            // Pulso disparado a cada nova linha revelada — a "informação" empurra a forma
+            pulseGeo: function() { this.geoPulse = 1; },
+
+            renderGeo: function(intensity) {
+                if (!this.geoMesh) return;
+                const t = performance.now() * 0.0006;
+                const pos = this.geoMesh.geometry.attributes.position.array;
+                const init = this.geoMesh.geometry.attributes.initialPosition.array;
+                const amp = 0.1 + this.geoPulse * 0.5 + intensity * 0.35;
+                for (let i = 0; i < pos.length; i += 3) {
+                    const x = init[i], y = init[i + 1], z = init[i + 2];
+                    const n = Math.sin(x * 1.3 + t * 2) + Math.cos(y * 1.3 - t * 1.7) + Math.sin(z * 1.3 + t * 2.3);
+                    const scale = 1 + (n / 3) * amp;
+                    pos[i] = x * scale; pos[i + 1] = y * scale; pos[i + 2] = z * scale;
+                }
+                this.geoMesh.geometry.attributes.position.needsUpdate = true;
+                this.geoMesh.rotation.y += 0.0015 + this.geoPulse * 0.004 + intensity * 0.01;
+                this.geoMesh.rotation.x += 0.0009 + intensity * 0.006;
+                this.geoPulse *= 0.93;
+
+                const canvas = document.getElementById('p3-geo-canvas');
+                if (canvas) canvas.style.opacity = Math.min(0.85, 0.3 + this.geoPulse * 0.4 + intensity * 0.2).toFixed(2);
+                this.geoRenderer.render(this.geoScene, this.geoCamera);
             },
 
             mask: function(text) { return text.replace(/\S/g, '▓'); },
@@ -2443,6 +2553,7 @@
                 let idx = -1;
                 for (let i = 0; i < this.lines.length; i++) { if (time >= this.lines[i].t) idx = i; else break; }
                 if (idx === this.currentIdx && !force) return;
+                if (idx >= 0 && idx !== this.currentIdx) this.pulseGeo();
                 this.currentIdx = idx;
                 this.lineEls.forEach((el, i) => {
                     el.classList.remove('past', 'active', 'future');
@@ -2457,17 +2568,19 @@
             animate: function() {
                 if (!this.isActive) return;
                 this.loopId = requestAnimationFrame(() => this.animate());
-                if (this.isFreezing) return; // a sequência de travamento cuida dos próprios visuais
+                if (this.isFreezing) { this.renderGeo(1); return; }
+                let intensity = this.freezeTriggered ? 1 : 0;
                 if (!this.audio.paused) {
                     this.syncTo(this.audio.currentTime);
                     if (!this.freezeTriggered) {
-                        const intensity = Math.min(1, this.audio.currentTime / this.FREEZE_AT);
+                        intensity = Math.min(1, this.audio.currentTime / this.FREEZE_AT);
                         this.applyGlitch(intensity);
                         this.checkFreeze(this.audio.currentTime);
                     }
                 } else if (!this.freezeTriggered) {
                     this.applyGlitch(0);
                 }
+                this.renderGeo(intensity);
             },
 
             // --- Degradação progressiva (0 a FREEZE_AT) ---

@@ -417,7 +417,8 @@
         }
         @media (max-width: 768px) {
             #p3-terminal { padding: 100px 20px 200px; }
-            .p3-line { font-size: 1.05rem; }
+            /* No mobile não dá pra garantir uma linha só — deixa quebrar normalmente */
+            .p3-line { font-size: 1.05rem; white-space: normal; overflow: visible; align-items: flex-start; }
             .p3-line.active { font-size: 1.25rem; }
             #p3-lines.sync-reveal .p3-line { font-size: 0.95rem; }
         }
@@ -2625,11 +2626,13 @@
                 if (idx >= 0 && this.lineEls[idx]) this.lineEls[idx].scrollIntoView({ block: 'center', behavior: 'smooth' });
             },
 
-            // Encolhe o tamanho da fonte só o necessário para o verso caber em uma única linha
+            // Desktop: encolhe a fonte o quanto for preciso pra caber numa linha só (mín. 11px legível).
+            // Mobile: não dá pra garantir uma linha só sem ficar ilegível, então deixa quebrar (ver CSS).
             fitLineText: function(el) {
                 const textEl = el.querySelector('.p3-text');
                 if (!textEl) return;
                 el.style.removeProperty('font-size');
+                if (window.innerWidth <= 768) return;
                 const cs = getComputedStyle(el);
                 const fontSize = parseFloat(cs.fontSize);
                 if (!this._measureCtx) this._measureCtx = document.createElement('canvas').getContext('2d');
@@ -2639,8 +2642,9 @@
                 const gutterWidth = (gutter ? gutter.getBoundingClientRect().width : 30) + 15; // + gap do flex
                 const available = el.parentElement.clientWidth - gutterWidth - 4;
                 if (textWidth > 0 && textWidth > available) {
-                    const scale = Math.max(0.45, (available / textWidth) * 0.97);
-                    el.style.fontSize = (fontSize * scale).toFixed(1) + 'px';
+                    const MIN_PX = 11;
+                    const scaled = fontSize * (available / textWidth) * 0.97;
+                    el.style.fontSize = Math.max(MIN_PX, scaled).toFixed(1) + 'px';
                 }
             },
 

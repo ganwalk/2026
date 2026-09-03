@@ -1,7 +1,7 @@
 # GANWALK — Site Oficial
 
 Site interativo do GANWALK: uma landing page em página única (`index.htm`) com três
-experiências audiovisuais construídas em cima das músicas da banda, além de links e
+experiências audiovisuais construídas em cima das músicas do artista, além de links e
 créditos. Sem framework, sem build step — HTML/CSS/JS puro em um único arquivo,
 pronto para publicar como está.
 

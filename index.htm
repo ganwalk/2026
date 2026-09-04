@@ -417,7 +417,8 @@
         }
         @media (max-width: 768px) {
             #p3-terminal { padding: 100px 20px 200px; }
-            .p3-line { font-size: 1.05rem; }
+            /* No mobile não dá pra garantir uma linha só — deixa quebrar normalmente */
+            .p3-line { font-size: 1.05rem; white-space: normal; overflow: visible; align-items: flex-start; }
             .p3-line.active { font-size: 1.25rem; }
             #p3-lines.sync-reveal .p3-line { font-size: 0.95rem; }
         }
@@ -2319,9 +2320,9 @@
             // Use SHIFT+S dentro da Exp III para entrar no Modo Sync e recalibrar
             // batendo espaco no tempo de cada linha enquanto a musica toca.
             lines: [
-                {t:28.81,text:"Ahhh você é que me diz"},
+                {t:28.81,text:"Ahhh você é quem me diz"},
                 {t:33.04,text:"Onde é que vaai"},
-                {t:35.48,text:"Para essa historia"},
+                {t:35.48,text:"Para essa história"},
                 {t:38.45,text:"Cabe mais você que eu"},
                 {t:42.32,text:"Mas tanto faz"},
                 {t:45.09,text:"Eu to feliz por hora"},
@@ -2329,40 +2330,40 @@
                 {t:48.68,text:"Que você vai"},
                 {t:49.88,text:"E vai pra que"},
                 {t:50.95,text:"Pra onde vai"},
-                {t:52.21,text:"E oque que faz"},
+                {t:52.21,text:"E o que que faz"},
                 {t:53.32,text:"Fazendo o que"},
                 {t:54.50,text:"Quando é que vai"},
                 {t:55.73,text:"Me entender"},
                 {t:57.06,text:"Entender"},
-                {t:59.45,text:"É tão facil entender"},
-                {t:61.70,text:"Oque mostraram um milhão de vezes para você"},
-                {t:66.37,text:"Então vai la"},
+                {t:59.45,text:"É tão fácil entender"},
+                {t:61.70,text:"O que mostraram um milhão de vezes para você"},
+                {t:66.37,text:"Então vai lá"},
                 {t:69.08,text:"Vai chover no molhado"},
-                {t:71.43,text:"Sei que isso eu ja vi não que seja errado"},
+                {t:71.43,text:"Sei que isso eu já vi não que seja errado"},
                 {t:76.82,text:"Ahhh vou ter que repetir"},
                 {t:78.71,text:"Vai ter que dar"},
-                {t:83.40,text:"Não e nem uma copia"},
-                {t:86.48,text:"Traz nada novo e ai"},
+                {t:83.40,text:"Não é nem uma cópia"},
+                {t:86.48,text:"Traz nada novo e aí"},
                 {t:90.34,text:"Vai simular"},
                 {t:93.02,text:"O tempo de outra hora"},
                 {t:95.44,text:"A hora que"},
                 {t:96.66,text:"Que você vai"},
                 {t:97.87,text:"E vai pra que"},
                 {t:99.01,text:"Pra onde vai"},
-                {t:100.21,text:"E oque que faz"},
+                {t:100.21,text:"E o que que faz"},
                 {t:101.38,text:"Fazendo o que"},
                 {t:102.52,text:"Quando é que vai"},
                 {t:103.73,text:"Me entender"},
                 {t:105.06,text:"Entender"},
-                {t:107.53,text:"É tão facil entender"},
-                {t:109.65,text:"Oque mostraram um milhão de vezes para você"},
-                {t:114.47,text:"Então vai la"},
+                {t:107.53,text:"É tão fácil entender"},
+                {t:109.65,text:"O que mostraram um milhão de vezes para você"},
+                {t:114.47,text:"Então vai lá"},
                 {t:117.08,text:"Vai chover no molhado"},
-                {t:119.45,text:"Sei que isso eu ja vi não que seja errado"},
+                {t:119.45,text:"Sei que isso eu já vi não que seja errado"},
                 {t:124.88,text:"Ahhh vou ter que repetir"},
                 {t:128.99,text:"Vai ter que dar"},
-                {t:131.51,text:"Não e nem uma copia"},
-                {t:134.37,text:"Traz nada novo e ai"},
+                {t:131.51,text:"Não é nem uma cópia"},
+                {t:134.37,text:"Traz nada novo e aí"},
                 {t:138.30,text:"Vai simular"},
                 {t:141.09,text:"O tempo de outra hora"},
                 {t:144.04,text:"A hora que..."}
@@ -2625,11 +2626,13 @@
                 if (idx >= 0 && this.lineEls[idx]) this.lineEls[idx].scrollIntoView({ block: 'center', behavior: 'smooth' });
             },
 
-            // Encolhe o tamanho da fonte só o necessário para o verso caber em uma única linha
+            // Desktop: encolhe a fonte o quanto for preciso pra caber numa linha só (mín. 11px legível).
+            // Mobile: não dá pra garantir uma linha só sem ficar ilegível, então deixa quebrar (ver CSS).
             fitLineText: function(el) {
                 const textEl = el.querySelector('.p3-text');
                 if (!textEl) return;
                 el.style.removeProperty('font-size');
+                if (window.innerWidth <= 768) return;
                 const cs = getComputedStyle(el);
                 const fontSize = parseFloat(cs.fontSize);
                 if (!this._measureCtx) this._measureCtx = document.createElement('canvas').getContext('2d');
@@ -2639,8 +2642,9 @@
                 const gutterWidth = (gutter ? gutter.getBoundingClientRect().width : 30) + 15; // + gap do flex
                 const available = el.parentElement.clientWidth - gutterWidth - 4;
                 if (textWidth > 0 && textWidth > available) {
-                    const scale = Math.max(0.45, (available / textWidth) * 0.97);
-                    el.style.fontSize = (fontSize * scale).toFixed(1) + 'px';
+                    const MIN_PX = 11;
+                    const scaled = fontSize * (available / textWidth) * 0.97;
+                    el.style.fontSize = Math.max(MIN_PX, scaled).toFixed(1) + 'px';
                 }
             },
 

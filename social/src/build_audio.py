@@ -64,9 +64,14 @@ v1=np.concatenate(parts); dur1=len(v1)/SR; print('v1 dur',dur1)
 write('v1',v1); json.dump({'fps':FPS,'dur':dur1,'bands':bands(v1,dur1)},open(f'{SP}/v/v1.json','w'))
 # ---------- VIDEO 2 : simulacro ----------
 parts=[]
-P=fade(seg('simulacro',45.0,22.8),0.02,0.01); parts.append(P)         # 0-22.8
-parts.append(stutter('simulacro',67.35,1.4,0.2,0.025))                # 22.8-24.2
-parts.append(np.zeros((int(0.25*SR),2),np.float32))                  # silence hit 24.2-24.45
-E=seg('simulacro',71.2,7.3); n=int(1.6*SR); E[:n]=lowpass(E[:n],300,16000); E=fade(E,0.01,2.2); parts.append(E)  # 24.45-31.75
+# intro (0-2.4): o sinal tentando sintonizar e caindo em "Eu to feliz por hora"
+I1=stutter('simulacro',42.32,1.5,0.14,0.03); I1=lowpass(I1,500,6000)*np.linspace(0.35,0.9,len(I1))[:,None]
+rv=seg('simulacro',45.0,0.9)[::-1].copy(); rv=rv*np.linspace(0.05,1.0,len(rv))[:,None]**2   # reverse swell
+I=np.concatenate([I1,rv]); nz=(np.random.rand(len(I),2).astype(np.float32)-.5)*0.06; env=(np.random.rand(len(I)//2205+1)<0.35).repeat(2205)[:len(I)]
+I=I+nz*env[:,None]; parts.append(I)                                           # 0-2.4
+P=fade(seg('simulacro',45.0,22.8),0.003,0.01); parts.append(P)             # 2.4-25.2
+parts.append(stutter('simulacro',67.35,1.4,0.2,0.025))                      # 25.2-26.6
+parts.append(np.zeros((int(2.6*SR),2),np.float32))                          # 26.6-29.2 silêncio (carregando 0-100%)
+E=seg('simulacro',71.2,7.0); n=int(1.4*SR); E[:n]=lowpass(E[:n],300,16000); E=fade(E,0.005,2.2); parts.append(E)  # 29.2-36.2
 v2=np.concatenate(parts); dur2=len(v2)/SR; print('v2 dur',dur2)
 write('v2',v2); json.dump({'fps':FPS,'dur':dur2,'bands':bands(v2,dur2)},open(f'{SP}/v/v2.json','w'))

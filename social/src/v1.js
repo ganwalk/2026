@@ -17,7 +17,7 @@ function caption(s, y, t0, t, size = 58, color = PAL.cream) {
   g.fillStyle = color === PAL.bg ? 'rgba(236,224,198,0.7)' : 'rgba(18,12,7,0.62)'; g.fillRect(0, y - size * 0.9, W, lines.length * size * 1.25 + size * 0.55);
   lines.forEach((ln, i) => glyphLine(reveal(ln, p, i * 13 + (t0 * 10 | 0)), W / 2, y + i * size * 1.25, size, F.silk, color, 'center', 14));
 }
-function playerBar(name, t, cur, color, y = 1480, cover = false) {
+function playerBar(name, t, cur, color, y = 1480, cover = false, sub = '') {
   g.fillStyle = 'rgba(18,12,7,0.9)'; g.fillRect(70, y - 60, 940, 120); g.strokeStyle = 'rgba(236,224,198,0.3)'; g.lineWidth = 2; g.strokeRect(70, y - 60, 940, 120);
   let tx = 205;
   if (cover) { const [sx, sy, sw, sh] = cropFit('full', 1, 1); g.drawImage(IMG, sx, sy, sw, sh, 90, y - 45, 90, 90); }
@@ -28,7 +28,7 @@ function playerBar(name, t, cur, color, y = 1480, cover = false) {
     g.beginPath(); g.moveTo(205, y - 22); g.lineTo(205, y - 4); g.lineTo(222, y - 10); g.fill(); tx = 290;
   }
   txt(name, tx, y - 15, F.silkB(30), color, 'left'); const m = Math.floor(cur / 60), s = Math.floor(cur % 60);
-  txt(`${m}:${String(s).padStart(2, '0')}`, tx, y + 22, F.silk(22), PAL.dim, 'left');
+  txt(`${m}:${String(s).padStart(2, '0')}` + (sub ? '  ·  ' + sub : ''), tx, y + 22, F.silk(20), PAL.dim, 'left');
   g.fillStyle = 'rgba(236,224,198,0.25)'; g.fillRect(470, y - 2, 500, 4); g.fillStyle = color; g.fillRect(470, y - 2, 500 * ((cur % 60) / 60), 4);
   g.beginPath(); g.arc(470 + 500 * ((cur % 60) / 60), y, 12, 0, 7); g.fill();
 }
@@ -50,7 +50,7 @@ function sLoader(t, f, b) {
   txt('GANWALK', W / 2, 900, F.ast(fitSize('GANWALK', F.ast, 900, 200)), col, 'center', 40);
   const msg = LOADER[mi] + '.'.repeat(1 + Math.floor(t * 6) % 3);
   txt(msg, W / 2, 1030, F.inter(46), col); g.globalAlpha = 1;
-  glyphLine('GANWALK | OFICIAL (C) 2026', W / 2, 200, 26, F.silk, PAL.dim);
+  glyphLine('ganwalk.github.io/2026', W / 2, 200, 28, F.silk, PAL.dim);
   caption('um site que você toca.', 470, 0.15, t, 60);
   if (t > 1.35) { const k = easeOut(prog(t, 1.35, 1.7)); touch(W / 2, 1250 - (1 - k) * 200, t, PAL.cream); txt('CLIQUE PARA ENTRAR', W / 2, 1360, F.silk(30), PAL.dim); }
 }
@@ -103,7 +103,7 @@ function sExp3(t, f, b, gl) {
   // lista de linhas: passadas apagadas, atual em destaque, futuras mascaradas
   const y0 = 820 - cur * 104;
   L3.forEach(([s, x], i) => {
-    const y = y0 + i * 104 + (i > cur ? 40 : 0); if (y < 440 || y > 1450) return;
+    const y = y0 + i * 104 + (i > cur ? 40 : 0); if (y < 440 || y > 1290) return;
     if (i < cur) { g.globalAlpha = 0.3; glyphLine(x, W / 2, y, 44, F.silk, PAL.cream); }
     else if (i === cur) { g.globalAlpha = 1; glyphLine(reveal(x, prog(t, s, s + 0.4), i * 7), W / 2, y + 20, fitSize(x, F.silk, 920, 76), F.silk, PAL.cream, 'center', 22); }
     else { g.globalAlpha = 0.35; glyphLine(maskAll(x), W / 2, y + 20, 44, F.silk, PAL.cream); }
@@ -113,7 +113,7 @@ function sExp3(t, f, b, gl) {
   // corrupção / tokens de erro
   if (R() < gl * 0.35) errToken(R, 38);
   if (R() < gl * 0.5) slices(3 + (gl * 8 | 0), 60 * gl);
-  playerBar('Simulacro', t, 47.3 + (t - 14.75), PAL.cream, 1480, true);
+  playerBar('Simulacro', t, 47.3 + (t - 14.75), PAL.cream, 1380, true, 'ganwalk feat. KF No Beat');
 }
 let frozen = null;
 function sFreeze(t, f, b) {
@@ -132,48 +132,30 @@ function sFreeze(t, f, b) {
   if (p > 0.9) { g.fillStyle = PAL.bg; g.globalAlpha = (p - .9) * 10; g.fillRect(0, 0, W, H); g.globalAlpha = 1; }
 }
 
-// ---------- CRÉDITOS: retrato ASCII "digitado" como no CodeTyper do site ----------
-let ART = null, ARTC = null; const ART_FS = 8.8, ART_CW = ART_FS * 0.602, ART_X = (W - 199 * ART_FS * 0.602) / 2, ART_Y0 = 290;
+// ---------- CRÉDITOS: só o retrato ASCII, "digitado" como no CodeTyper do site ----------
+let ART = null, ARTC = null; const ART_FS = 8.8, ART_CW = ART_FS * 0.602, ART_X = (W - 199 * ART_FS * 0.602) / 2, ART_Y0 = (H - 145 * ART_FS) / 2 + 20;
 async function loadArt() {
   ART = await (await fetch('credits_art.json')).json();
   ARTC = mk(Math.ceil(199 * ART_CW), Math.ceil(145 * ART_FS)); const x = ARTC.getContext('2d');
   x.font = `400 ${ART_FS}px "DejaVu Sans Mono", monospace`; x.textBaseline = 'top'; x.fillStyle = PAL.cream;
   ART.forEach((l, j) => { for (let i = 0; i < l.length; i++) if (l[i] !== ' ') x.fillText(l[i], i * ART_CW, j * ART_FS); });
 }
-const CRED = [['c', '/**'], ['c', '_'], ['k', 'Calma -'], ['c', 'música e experiências por: @ganwalk'], ['c', 'violões e percussões adicionais: @kiiiiiiiron e @jeanuaifi'],
-  ['c', 'mixagem e masterização por: @bodimm_'], ['c', '_'], ['c', '_'], ['k', 'Satisfaz/Acredito -'], ['c', 'música e experiências por: @ganwalk'],
-  ['c', 'mixagem e masterização por: @bodimm_'], ['c', '_'], ['c', '_'], ['c', '(c) 2026'], ['c', '_'], ['c', '_'], ['c', 'Estamos aí! ᕕ(⌐□_□)ᕗ ♪♬']];
 function sCredits(t, f, b) {
   const lt = t - 23.6;
   g.fillStyle = PAL.bg; g.fillRect(0, 0, W, H);
-  const total = 145 * 199, n = Math.floor(total * easeOut(prog(lt, 0.15, 2.7)) ** 0.8);
-  const artH = 145 * ART_FS, credY = ART_Y0 + artH + 50, LH = 44;
-  // texto dos créditos, 3 chars por tick depois da arte
-  const credChars = CRED.map(c => c[1].length + 4), totalC = credChars.reduce((a, c) => a + c, 0);
-  let nc = Math.floor(totalC * prog(lt, 2.75, 4.2));
-  let lastY = n < total ? ART_Y0 + Math.floor(n / 199) * ART_FS : credY;
-  const shownLines = []; for (let i = 0; i < CRED.length && nc > 0; i++) { const k = Math.min(nc, credChars[i]); shownLines.push([i, k]); nc -= credChars[i]; lastY = credY + i * LH; }
-  // scroll automático (container.scrollTop = scrollHeight)
-  const scroll = Math.max(0, lastY - 1400);
-  g.save(); g.translate(0, -scroll);
-  // arte: linhas completas + linha atual parcial + cursor
+  const total = 145 * 199, n = Math.floor(total * easeOut(prog(lt, 0.15, 3.2)) ** 0.8);
   const r = Math.floor(n / 199), c = n % 199;
-  if (r > 0) { g.save(); g.globalCompositeOperation = 'lighter'; g.filter = 'blur(6px)'; g.globalAlpha = 0.7 + b.bass * 0.3; g.drawImage(ARTC, 0, 0, ARTC.width, r * ART_FS, ART_X, ART_Y0, ARTC.width, r * ART_FS); g.restore();
-    g.drawImage(ARTC, 0, 0, ARTC.width, r * ART_FS, ART_X, ART_Y0, ARTC.width, r * ART_FS); }
-  if (r < 145 && c > 0) g.drawImage(ARTC, 0, r * ART_FS, c * ART_CW, ART_FS, ART_X, ART_Y0 + r * ART_FS, c * ART_CW, ART_FS);
-  if (n < total) { g.fillStyle = PAL.cream; g.fillRect(ART_X + c * ART_CW, ART_Y0 + r * ART_FS - 4, 3, ART_FS + 8);
-    // brilho na linha que está sendo gerada
-    g.save(); g.globalCompositeOperation = 'lighter'; g.globalAlpha = 0.25; g.fillStyle = PAL.must; g.fillRect(ART_X, ART_Y0 + r * ART_FS - 3, ARTC.width, ART_FS + 6); g.restore(); }
-  else if (b.on > 0.8 || R() < 0.06) { // depois de pronta, a arte pulsa com o grave
-    const s = snap(); for (let j = 0; j < 3; j++) { const y = ART_Y0 + R() * artH - scroll, h = 4 + R() * 30; g.restore(); g.drawImage(s, 0, y, W, h, (R() - .5) * 60, y, W, h); g.save(); g.translate(0, -scroll); }
+  // linhas completas (com brilho no grave) + linha atual parcial
+  if (r > 0) {
+    g.save(); g.globalCompositeOperation = 'lighter'; g.filter = 'blur(6px)'; g.globalAlpha = 0.7 + b.bass * 0.3;
+    g.drawImage(ARTC, 0, 0, ARTC.width, r * ART_FS, ART_X, ART_Y0, ARTC.width, r * ART_FS); g.restore();
+    g.drawImage(ARTC, 0, 0, ARTC.width, r * ART_FS, ART_X, ART_Y0, ARTC.width, r * ART_FS);
   }
-  shownLines.forEach(([i, k]) => {
-    const [kind, s0] = CRED[i], y = credY + i * LH, full = `${String(i + 1).padStart(2, ' ')}  ${s0}`.slice(0, k);
-    txt(full.slice(0, 4), 50, y, F.mono(25), PAL.comment, 'left');
-    txt(full.slice(4), 50 + 4 * 25 * 0.602, y, kind === 'k' ? F.mono(26) : `400 25px "DejaVu Sans Mono", monospace`, kind === 'k' ? PAL.cream : PAL.dim, 'left');
-    if (i === shownLines.length - 1 && k < credChars[i]) cursor(50 + k * 25 * 0.602 + 6, y, t * 2, 30, PAL.cream);
-  });
-  g.restore();
+  if (r < 145 && c > 0) g.drawImage(ARTC, 0, r * ART_FS, c * ART_CW, ART_FS, ART_X, ART_Y0 + r * ART_FS, c * ART_CW, ART_FS);
+  if (n < total) {
+    g.fillStyle = PAL.cream; g.fillRect(ART_X + c * ART_CW, ART_Y0 + r * ART_FS - 4, 3, ART_FS + 8);
+    g.save(); g.globalCompositeOperation = 'lighter'; g.globalAlpha = 0.25; g.fillStyle = PAL.must; g.fillRect(ART_X, ART_Y0 + r * ART_FS - 3, ARTC.width, ART_FS + 6); g.restore();
+  } else if (b.on > 0.8 || R() < 0.06) slices(3, 30, R, 30);   // pronta: pulsa com o grave
   // barra do topo tipo nav
   g.fillStyle = PAL.bg; g.fillRect(0, 170, W, 100); g.fillStyle = 'rgba(236,224,198,0.3)'; g.fillRect(0, 270, W, 2);
   txt('GANWALK', 90, 222, F.ast(56), PAL.cream, 'left', 12); glyphLine('CRÉDITOS', 990, 222, 30, F.silkB, PAL.must, 'right', 10);
@@ -185,7 +167,6 @@ function sEnd(t, f, b) {
   // ascii fantasma da capa + möbius ao fundo
   ascii('clip', 18, { img: END_BG, alpha: 0.13, chaos: 0.1, seed: f >> 2 });
   const img = MOB.render(t, 0.08 + b.bass * .1, 1, PAL.must); g.globalAlpha = .35; g.drawImage(img, -120, 1120, 700, 700); g.globalAlpha = 1;
-  marquee(t, 'PRE-SAVE - SIMULACRO', 150, 28, 160);
   const k = easeOut(prog(lt, 0, 0.5));
   g.globalAlpha = k; txt('GANWALK', W / 2, 430 - (1 - k) * 60, F.ast(fitSize('GANWALK', F.ast, 920, 210)), PAL.cream, 'center', 40 + b.bass * 30); g.globalAlpha = 1;
   glyphLine(reveal('música · arte · código', prog(lt, .3, .9), 3), W / 2, 580, 40, F.silk, PAL.dim);
@@ -200,8 +181,9 @@ function sEnd(t, f, b) {
   const p2 = prog(lt, 1.8, 2.3);
   if (p2 > 0) {
     glyphLine(reveal('EXPERIMENTE', p2, 5), W / 2, 1210, 96, F.silkB, PAL.cream, 'center', 30 + b.bass * 20);
-    glyphLine(reveal('→ link na bio', prog(lt, 2.2, 2.7), 6), W / 2, 1325, 50, F.silk, PAL.must, 'center', 14);
-    cursor(W / 2 + 230, 1325, t, 46, PAL.must);
+    const url = 'ganwalk.github.io/2026', us = fitSize(url, F.silk, 900, 50);
+    const uw = glyphLine(reveal(url, prog(lt, 2.2, 2.9), 6), W / 2, 1325, us, F.silk, PAL.must, 'center', 14);
+    cursor(W / 2 + uw / 2 + 12, 1325, t, us * 0.9, PAL.must);
   }
   if (lt > 3.2) glyphLine('@ganwalk', W / 2, 1410, 34, F.silk, PAL.dim);
   // entrada com glitch

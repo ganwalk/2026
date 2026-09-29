@@ -192,7 +192,7 @@ function sEnd(t, f, b) {
   glyphLine(reveal('EM TODAS AS PLATAFORMAS', p3, 5), W / 2, 1370, 40, F.silk, PAL.must, 'center', 12);
   if (p4 > 0) glyphLine(reveal('link na bio', p4, 8), W / 2, 1425, 30, F.silk, PAL.dim);
   // a letra continua, baixinho
-  const lp = prog(lt, 0.18, 1.2); if (lp > 0 && lt < 2.2) { g.globalAlpha = 0.7; glyphLine(reveal('...errado.', lp, 4), W / 2, 1150, 30, F.silk, PAL.dim); g.globalAlpha = 1; }
+  const lp = prog(lt, 0.25, 3.3); if (lp > 0 && lt < 5.2) { g.globalAlpha = 0.6; glyphLine(reveal('sei que isso eu já vi...', lp, 4), W / 2, 1150, 28, F.silk, PAL.dim); g.globalAlpha = 1; }
   if (lt < 0.3) { slices(14, 140); rgbSplit(20); if (lt < 0.08) negative(1); }
   if (lt > 9.1) { g.fillStyle = PAL.bg; g.globalAlpha = prog(lt, 9.1, 9.95); g.fillRect(0, 0, W, H); g.globalAlpha = 1; }
 }

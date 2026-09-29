@@ -72,6 +72,6 @@ I=I+nz*env[:,None]; parts.append(I)                                           # 
 P=fade(seg('simulacro',45.0,22.8),0.003,0.01); parts.append(P)             # 2.4-25.2
 parts.append(stutter('simulacro',67.35,1.4,0.2,0.025))                      # 25.2-26.6
 parts.append(np.zeros((int(1.5*SR),2),np.float32))                          # 26.6-28.1 silêncio (carregando 0-100%)
-E=fade(seg('simulacro',74.40,10.0),0.008,2.2); parts.append(E)                # 28.1-38.1 volta em "errado" (74.58s na faixa)
+E=seg('simulacro',71.2,10.0); n=int(1.4*SR); E[:n]=lowpass(E[:n],300,16000); E=fade(E,0.005,2.2); parts.append(E)  # 28.1-38.1 volta em "Sei que isso eu já vi…", filtro abrindo
 v2=np.concatenate(parts); dur2=len(v2)/SR; print('v2 dur',dur2)
 write('v2',v2); json.dump({'fps':FPS,'dur':dur2,'bands':bands(v2,dur2)},open(f'{SP}/v/v2.json','w'))

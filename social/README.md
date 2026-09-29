@@ -7,7 +7,7 @@ de glitch do `index.htm` (máscara `▓`, tokens de erro, estática em baixa res
 | Arquivo | Duração | O quê |
 |---|---|---|
 | `ganwalk-site-reel.mp4` | 34,4s | Convite para o site. Passa pelo loader e pelas Exp I, II e III, o site "trava", reinicia nos Créditos (o retrato ASCII sendo gerado) e termina no card **EXPERIMENTE → ganwalk.github.io/2026** |
-| `simulacro-reel.mp4` | 38,1s | Divulgação de **Simulacro** (ganwalk feat. KF No Beat). Abre com um glitch que cai na letra, a capa vai se degradando, o feedback recursivo mostra "um milhão de vezes", o sistema trava, recarrega de 0 a 100% em 1,5s de silêncio e revela o card, que fica 10s com a música voltando em "errado" **SIMULACRO · EM TODAS AS PLATAFORMAS**. Não cita data, então funciona em qualquer dia |
+| `simulacro-reel.mp4` | 38,1s | Divulgação de **Simulacro** (ganwalk feat. KF No Beat). Abre com um glitch que cai na letra, a capa vai se degradando, o feedback recursivo mostra "um milhão de vezes", o sistema trava, recarrega de 0 a 100% em 1,5s de silêncio e revela o card, que fica 10s com a música voltando em "Sei que isso eu já vi…" **SIMULACRO · EM TODAS AS PLATAFORMAS**. Não cita data, então funciona em qualquer dia |
 
 A capa de *Simulacro* só aparece no que é da Simulacro: no vídeo 1, só no player da Exp III. A Exp II usa o clipe padrão do site (`ORIGINAL_CLIP`) e a Exp I usa o player de play/reverse.
 
@@ -29,7 +29,7 @@ Trilha: *calma* → *satisfaz a crédito* → *simulacro*. As trocas são cortes
 - **28,4–34,4s · card final.** GANWALK · música · arte · código · EXP I / II / III · **EXPERIMENTE → ganwalk.github.io/2026** · @ganwalk. Sem a faixa rolante de pre-save no topo.
 
 ### 2: Simulacro (`simulacro-reel.mp4`)
-Trilha: uma intro em glitch (o sinal tentando sintonizar, com stutter de "Mas tanto faz" e um reverse que suga para dentro) cai em *Simulacro* de 0:45 a 1:07. Depois vêm o travamento, 1,5s de silêncio total e a volta na palavra *"errado"* (74,58s na faixa; o corte é em 74,40s, logo antes do ataque), seguindo a música dali: "Ahhh vou ter que repetir / Vai ter que dar…".
+Trilha: uma intro em glitch (o sinal tentando sintonizar, com stutter de "Mas tanto faz" e um reverse que suga para dentro) cai em *Simulacro* de 0:45 a 1:07. Depois vêm o travamento, 1,5s de silêncio total e a volta em *"Sei que isso eu já vi…"* (1:11 da faixa) com o filtro abrindo, seguindo a música dali.
 
 - **0–2,4s · intro.** Estática, fragmentos da capa em faixas, tokens de erro e "SIMULACRO" tentando se formar sobre "ganwalk feat. KF No Beat". Acaba num flash de negativo exatamente em *"Eu to feliz por hora"*.
 - **2,4–5s.** Título "Simulacro" (com o feat logo abaixo) sobre a capa em sépia, com slit-scan guiado pelo grave.
@@ -39,7 +39,7 @@ Trilha: uma intro em glitch (o sinal tentando sintonizar, com stutter de "Mas ta
 - **19,1–23,8s.** *"O que mostraram um milhão de vezes para você"*. É um túnel de feedback recursivo em que cada frame é uma cópia reduzida do anterior (cópia da cópia, o simulacro), com a capa grande (580px) espiralando para dentro. Um contador sobe até **CÓPIA Nº 1.000.000**.
 - **23,8–26,6s.** *"Então vai lá"*, a degradação chega ao máximo e o sistema trava, como o site faz em 1:00.
 - **26,6–28,1s · silêncio.** O sistema recarrega: um contador de **000% a 100%** que trava em 37%, 68% e 99%, uma barra `▓░` e as frases do loader do site.
-- **28,1–38,1s · card (10s).** A música volta em *"errado"*, que aparece digitado baixinho sob a capa. GANWALK · capa grande (800px) · **SIMULACRO** · ganwalk feat. KF No Beat · **EM TODAS AS PLATAFORMAS** · link na bio.
+- **28,1–38,1s · card (10s).** A música volta em *"Sei que isso eu já vi…"*, que aparece digitado baixinho sob a capa. GANWALK · capa grande (800px) · **SIMULACRO** · ganwalk feat. KF No Beat · **EM TODAS AS PLATAFORMAS** · link na bio.
 
 ## Legendas sugeridas
 

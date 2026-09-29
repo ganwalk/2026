@@ -6,7 +6,7 @@ const LY = [[45.09, 'Eu to feliz por hora'], [47.63, 'A hora que'], [48.68, 'Que
   [59.45, 'É tão fácil entender'], [61.70, 'O que mostraram um milhão de vezes para você'], [66.37, 'Então vai lá']].map(([s, x]) => [s - 45.0, x]);
 const lineAt = t => LY.reduce((a, [s], i) => t >= s ? i : a, -1);
 const T0 = 2.4;  // intro em glitch antes de "Eu to feliz por hora"
-const T_FREEZE = 22.8, T_BLACK = 24.2, T_END = 26.8;  // T_BLACK→T_END: silêncio + carregando 0-100%
+const T_FREEZE = 22.8, T_BLACK = 24.2, T_END = 25.7;  // T_BLACK→T_END: 1,5s de silêncio + carregando 0-100%
 
 const _bg = mk(W, H); const _bgc = _bg.getContext('2d', { willReadFrequently: true });
 // capa em sépia com slit-scan guiado pelo grave
@@ -156,24 +156,23 @@ function sFreeze(t, f, b) {
   if (p > 0.88) { g.fillStyle = PAL.bg; g.globalAlpha = (p - .88) / .12; g.fillRect(0, 0, W, H); g.globalAlpha = 1; }
 }
 // silêncio: o sistema recarrega de 0 a 100% (com travadas) e revela a tela final
-const LOADK = [[0, 0], [0.35, 0], [0.7, 23], [0.95, 37], [1.4, 38], [1.6, 68], [1.9, 71], [2.2, 99], [2.48, 99], [2.52, 100]];
+const LOADK = [[0, 0], [0.15, 0], [0.4, 23], [0.55, 37], [0.75, 38], [0.88, 68], [1.03, 71], [1.22, 99], [1.4, 99], [1.44, 100]];
 const LOADMSG = ['Sintonizando o éter', 'Tecendo a realidade', 'Escutando o vazio', 'Decifrando ecos', 'Recalibrando simulação'];
 function loadPct(lt) { for (let i = 1; i < LOADK.length; i++) if (lt < LOADK[i][0]) { const [t0, v0] = LOADK[i - 1], [t1, v1] = LOADK[i]; return Math.floor(v0 + (v1 - v0) * (lt - t0) / (t1 - t0)); } return 100; }
 function sLoading(t, f) {
   const lt = t - T_BLACK, pc = loadPct(lt), jump = pc - loadPct(lt - 1 / FPS);
   g.fillStyle = PAL.bg; g.fillRect(0, 0, W, H);
-  if (lt < 0.35) { cursor(W / 2 - 15, 960, t * 3, 70, PAL.cream); return; }
+  if (lt < 0.15) { cursor(W / 2 - 15, 960, t * 3, 70, PAL.cream); return; }
   const col = pc === 100 ? PAL.must : PAL.cream;
-  txt('GANWALK', W / 2, 760, F.ast(fitSize('GANWALK', F.ast, 620, 130)), col, 'center', 30);
   g.font = F.silkB(170); const dw = g.measureText(String(pc).padStart(3, '0')).width; g.font = F.interB(140); const pw = g.measureText('%').width;
   txt(String(pc).padStart(3, '0'), W / 2 - (dw + pw + 16) / 2, 960, F.silkB(170), col, 'left', 30);
   txt('%', W / 2 + (dw + pw + 16) / 2 - pw, 966, F.interB(140), col, 'left', 30);
   const cells = 20, on = Math.round(pc / 100 * cells); let bar = ''; for (let i = 0; i < cells; i++) bar += i < on ? '▓' : '░';
   g.globalAlpha = 1; glyphLine(bar, W / 2, 1110, 40, F.silk, col, 'center');
-  const mi = Math.min(LOADMSG.length - 1, Math.floor((lt - 0.35) / 0.45));
+  const mi = Math.min(LOADMSG.length - 1, Math.floor((lt - 0.15) / 0.26));
   txt(LOADMSG[mi] + '.'.repeat(1 + Math.floor(t * 6) % 3), W / 2, 1200, F.inter(40), PAL.dim);
   if (jump > 3) { slices(6, 60); rgbSplit(10); }
-  if (lt > 2.46) { negative(1); slices(10, 120); }
+  if (lt > 1.44) { negative(1); slices(10, 120); }
 }
 function sEnd(t, f, b) {
   const lt = t - T_END;
@@ -193,9 +192,9 @@ function sEnd(t, f, b) {
   glyphLine(reveal('EM TODAS AS PLATAFORMAS', p3, 5), W / 2, 1370, 40, F.silk, PAL.must, 'center', 12);
   if (p4 > 0) glyphLine(reveal('link na bio', p4, 8), W / 2, 1425, 30, F.silk, PAL.dim);
   // a letra continua, baixinho
-  const lp = prog(lt, 0.25, 3.3); if (lp > 0 && lt < 5.2) { g.globalAlpha = 0.6; glyphLine(reveal('sei que isso eu já vi...', lp, 4), W / 2, 1150, 28, F.silk, PAL.dim); g.globalAlpha = 1; }
+  const lp = prog(lt, 0.18, 1.2); if (lp > 0 && lt < 2.2) { g.globalAlpha = 0.7; glyphLine(reveal('...errado.', lp, 4), W / 2, 1150, 30, F.silk, PAL.dim); g.globalAlpha = 1; }
   if (lt < 0.3) { slices(14, 140); rgbSplit(20); if (lt < 0.08) negative(1); }
-  if (lt > 6.1) { g.fillStyle = PAL.bg; g.globalAlpha = prog(lt, 6.1, 6.95); g.fillRect(0, 0, W, H); g.globalAlpha = 1; }
+  if (lt > 9.1) { g.fillStyle = PAL.bg; g.globalAlpha = prog(lt, 9.1, 9.95); g.fillRect(0, 0, W, H); g.globalAlpha = 1; }
 }
 
 // intro: o sinal tentando sintonizar até cair em "Eu to feliz por hora"

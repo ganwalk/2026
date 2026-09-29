@@ -3,6 +3,18 @@
 Histórico das mudanças feitas no site, mais recentes primeiro. Cada entrada
 corresponde a um PR mergeado em `main`.
 
+## Lançamento de Simulacro — de "Pre-save" para "Ouça agora"
+
+- A partir de `Presave.RELEASE_AT` (30/09/2026, 00:00 no horário local de quem
+  visita) tudo que levava ao pre-save passa a chamar para ouvir, sempre no mesmo
+  link do ditto.fm (que já troca sozinho para a página de ouvir):
+  menu e menu mobile ("Ouça agora"), faixa do topo ("OUÇA AGORA - SIMULACRO"),
+  página de Links (botão e o `"Pre-save"` do código digitado) e a tela da Exp III
+  depois do travamento ("simulacro já está disponível em todas as plataformas." /
+  "Ouça Simulacro").
+- Corrigido: o botão da página de Links é injetado depois pelo `CodeTyper`, então
+  nunca recebia o texto novo; agora a troca é feita direto no `ContentGenerator`.
+
 ## Exp III — refinamentos de UX
 
 - Fita de Möbius reposicionada para a direita da coluna de texto (centralizada

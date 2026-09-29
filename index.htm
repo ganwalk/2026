@@ -1124,15 +1124,28 @@
         };
 
         // Botões de pre-save do site inteiro apontam para Simulacro; a partir da data de
-        // lançamento o texto vira "Ouvir" (o link do ditto.fm já se adapta sozinho do lado dele).
+        // lançamento tudo vira "Ouça agora" (o link do ditto.fm já se adapta sozinho do lado dele,
+        // levando para a página de ouvir a música).
         const Presave = {
             URL: 'https://ditto.fm/simulacro-ganwalk',
             RELEASE_AT: new Date('2026-09-30T00:00:00'),
             isReleased: function() { return new Date() >= this.RELEASE_AT; },
-            label: function() { return this.isReleased() ? 'Ouvir' : 'Pre-save'; },
+            label: function() { return this.isReleased() ? 'Ouça agora' : 'Pre-save'; },
             apply: function() {
                 const label = this.label();
                 const open = () => window.open(this.URL, '_blank');
+
+                // página de Links: o conteúdo é injetado depois pelo CodeTyper, então troca na fonte
+                if (this.isReleased()) {
+                    ContentGenerator.links.code = ContentGenerator.links.code.replace('"Pre-save"', `"${label}"`);
+                    ContentGenerator.links.render = ContentGenerator.links.render.replace('id="links-presave-btn">Pre-save<', `id="links-presave-btn">${label}<`);
+                }
+
+                // Exp III: tela que aparece depois do travamento
+                const p3btn = document.getElementById('p3-presave-btn');
+                if (p3btn) { p3btn.textContent = this.isReleased() ? 'Ouça Simulacro' : 'Pre-save Simulacro'; p3btn.href = this.URL; }
+                const p3sub = document.getElementById('p3-presave-sub');
+                if (p3sub && this.isReleased()) p3sub.innerHTML = 'simulacro já está disponível<br>em todas as plataformas.';
 
                 const nav = document.getElementById('btn-presave');
                 if (nav) { nav.textContent = label; nav.onclick = open; }
